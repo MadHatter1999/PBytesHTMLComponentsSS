@@ -53,6 +53,12 @@
       overflow: visible;
     }
 
+    .pb-employee-gaggle--intro .pb-employee-gaggle__circle {
+      opacity: 0;
+      animation: pb-gaggle-spin-in 760ms cubic-bezier(0.2, 0.9, 0.2, 1) forwards;
+      animation-delay: var(--pb-delay, 0ms);
+    }
+
     .pb-employee-gaggle__person:hover .pb-employee-gaggle__circle,
     .pb-employee-gaggle__person:focus-within .pb-employee-gaggle__circle {
       transform: translateY(-8px) scale(1.05);
@@ -129,10 +135,30 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
+      .pb-employee-gaggle--intro .pb-employee-gaggle__circle,
       .pb-employee-gaggle__circle,
       .pb-employee-gaggle__name,
       .pb-employee-gaggle__avatar {
         transition: none;
+        animation: none;
+        opacity: 1;
+      }
+    }
+
+    @keyframes pb-gaggle-spin-in {
+      0% {
+        opacity: 0;
+        transform: rotate(-180deg) scale(0.35);
+      }
+
+      70% {
+        opacity: 1;
+        transform: rotate(12deg) scale(1.08);
+      }
+
+      100% {
+        opacity: 1;
+        transform: rotate(0deg) scale(1);
       }
     }
   </style>
@@ -254,27 +280,38 @@
 
       function getClusterSlots(count, stepX, stepY) {
         var slots = [];
-        var columns = Math.ceil(Math.sqrt(count));
-        var rows = Math.ceil(count / columns);
-        var row;
-        var column;
         var placed = 0;
-        var xOffset = ((columns - 1) * stepX) / 2;
-        var yOffset = ((rows - 1) * stepY) / 2;
+        var ring = 0;
+        var baseRadius = Math.max(stepX, stepY) * 0.92;
 
-        for (row = 0; row < rows; row += 1) {
-          var remaining = count - placed;
-          var itemsInRow = Math.min(columns, remaining);
-          var rowWidth = (itemsInRow - 1) * stepX;
-          var rowOffset = rowWidth / 2;
-
-          for (column = 0; column < itemsInRow; column += 1) {
+        while (placed < count) {
+          if (ring === 0) {
             slots.push({
-              x: column * stepX - rowOffset,
-              y: row * stepY - yOffset
+              x: 0,
+              y: 0
+            });
+            placed += 1;
+            ring += 1;
+            continue;
+          }
+
+          var radiusX = baseRadius * ring;
+          var radiusY = radiusX * 0.88;
+          var circumference = Math.PI * (radiusX + radiusY);
+          var ringCount = Math.max(6, Math.round(circumference / Math.max(stepX, stepY)));
+          var angleOffset = ring % 2 === 0 ? Math.PI / ringCount : Math.PI / (ringCount * 2);
+          var index;
+
+          for (index = 0; index < ringCount && placed < count; index += 1) {
+            var angle = (Math.PI * 2 * index) / ringCount + angleOffset;
+            slots.push({
+              x: Math.cos(angle) * radiusX,
+              y: Math.sin(angle) * radiusY
             });
             placed += 1;
           }
+
+          ring += 1;
         }
 
         return slots;
@@ -287,7 +324,7 @@
         var minSide = Math.min(width, height);
         var stepX = clamp(width * 0.16, 92, 132);
         var stepY = clamp(height * 0.16, 92, 132);
-        var normalizedSize = clamp(minSide * 0.14, 80, 132) + 14;
+        var normalizedSize = clamp(minSide * 0.17, 96, 154) + 18;
         var slots = getClusterSlots(count, stepX, stepY);
 
         return people.map(function (person, index) {
@@ -305,6 +342,7 @@
 
           person.style.width = size.toFixed(1) + "px";
           person.style.setProperty("--pb-layer", String(2 + ((index + 1) % 4)));
+          person.style.setProperty("--pb-delay", String(index * 70) + "ms");
 
           return {
             element: person,
@@ -523,6 +561,11 @@
 
         var nodes = buildNodes(stage, people);
         var physics = createPhysics(stage, nodes);
+        widget.classList.add("pb-employee-gaggle--intro");
+
+        window.setTimeout(function () {
+          widget.classList.remove("pb-employee-gaggle--intro");
+        }, 1800);
 
         if ("ResizeObserver" in window) {
           var resizeObserver = new ResizeObserver(function () {
