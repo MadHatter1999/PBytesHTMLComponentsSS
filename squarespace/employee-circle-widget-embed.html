@@ -1,145 +1,309 @@
-<section class="pb-employee-gaggle">
+<section class="pb-plinko" data-title="Team Plinko">
   <style>
-    .pb-employee-gaggle {
+    .pb-plinko {
       --pb-yellow: #f6c62f;
-      --pb-yellow-soft: rgba(246, 198, 47, 0.2);
       --pb-yellow-strong: rgba(246, 198, 47, 0.34);
+      --pb-yellow-soft: rgba(246, 198, 47, 0.16);
       --pb-ink: #19313c;
       --pb-muted: #62737c;
-      width: min(100%, 1040px);
+      --pb-surface: #f8f7f2;
+      width: min(100%, 1120px);
       margin: 0 auto;
       padding: clamp(12px, 2vw, 24px);
       font-family: "Trebuchet MS", "Segoe UI", sans-serif;
       color: var(--pb-ink);
     }
 
-    .pb-employee-gaggle * {
+    .pb-plinko * {
       box-sizing: border-box;
     }
 
-    .pb-employee-gaggle__stage {
-      position: relative;
-      min-height: clamp(380px, 58vw, 760px);
-      overflow: hidden;
-      isolation: isolate;
+    .pb-plinko__shell {
+      display: grid;
+      gap: 16px;
     }
 
-    .pb-employee-gaggle__person {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: var(--pb-size, 130px);
-      text-align: center;
-      z-index: var(--pb-layer, 2);
-      will-change: transform;
+    .pb-plinko__toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
-    .pb-employee-gaggle__person:hover,
-    .pb-employee-gaggle__person:focus-within {
-      z-index: 999;
+    .pb-plinko__title {
+      margin: 0;
+      font: 800 clamp(1.1rem, 1.8vw, 1.5rem) / 1 "Trebuchet MS", "Segoe UI", sans-serif;
+      letter-spacing: -0.03em;
     }
 
-    .pb-employee-gaggle__circle {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      padding: 3%;
+    .pb-plinko__actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pb-plinko__button {
+      appearance: none;
+      border: 0;
       border-radius: 999px;
-      background: transparent;
-      box-shadow: 0 18px 30px rgba(25, 49, 60, 0.08);
-      transition:
-        transform 180ms ease,
-        box-shadow 180ms ease;
-      overflow: visible;
+      padding: 10px 14px;
+      background: var(--pb-yellow);
+      color: #ffffff;
+      font: 800 0.86rem/1 "Segoe UI", sans-serif;
+      cursor: pointer;
+      box-shadow: 0 10px 20px rgba(246, 198, 47, 0.22);
+      transition: transform 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
     }
 
-    .pb-employee-gaggle__person:hover .pb-employee-gaggle__circle,
-    .pb-employee-gaggle__person:focus-within .pb-employee-gaggle__circle {
-      transform: translateY(-8px) scale(1.05);
-      box-shadow: 0 24px 38px rgba(25, 49, 60, 0.12);
+    .pb-plinko__button:hover,
+    .pb-plinko__button:focus-visible {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 24px rgba(246, 198, 47, 0.28);
+      outline: none;
     }
 
-    .pb-employee-gaggle__avatar {
+    .pb-plinko__button[disabled] {
+      opacity: 0.42;
+      cursor: default;
+      pointer-events: none;
+      box-shadow: 0 10px 20px rgba(246, 198, 47, 0.14);
+    }
+
+    .pb-plinko__board {
       position: relative;
-      z-index: 1;
+      min-height: clamp(520px, 72vw, 920px);
+      border-radius: 30px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0.72)),
+        linear-gradient(180deg, #f9f8f4 0%, #efede6 100%);
+      box-shadow: inset 0 0 0 1px rgba(25, 49, 60, 0.06), 0 24px 46px rgba(25, 49, 60, 0.08);
+    }
+
+    .pb-plinko__board::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)),
+        repeating-linear-gradient(
+          90deg,
+          rgba(25, 49, 60, 0.028) 0 1px,
+          transparent 1px 24px
+        );
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .pb-plinko__drop-zone {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      width: clamp(120px, 20%, 180px);
+      height: 42px;
+      transform: translateX(-50%);
+      border: 2px dashed rgba(25, 49, 60, 0.12);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.52);
+      pointer-events: none;
+    }
+
+    .pb-plinko__drop-zone::after {
+      content: "Drop";
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      font: 800 0.72rem/1 "Segoe UI", sans-serif;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(25, 49, 60, 0.5);
+    }
+
+    .pb-plinko__pegs,
+    .pb-plinko__dividers,
+    .pb-plinko__slots,
+    .pb-plinko__disks {
+      position: absolute;
+      inset: 0;
+    }
+
+    .pb-plinko__peg {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      margin: -6px 0 0 -6px;
+      border-radius: 999px;
+      background: rgba(25, 49, 60, 0.22);
+      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.88);
+      pointer-events: none;
+    }
+
+    .pb-plinko__divider {
+      position: absolute;
+      bottom: 0;
+      width: 6px;
+      border-radius: 999px 999px 0 0;
+      background: rgba(25, 49, 60, 0.14);
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.62);
+      pointer-events: none;
+    }
+
+    .pb-plinko__slot {
+      position: absolute;
+      bottom: 0;
+      display: grid;
+      place-items: end center;
+      padding-bottom: 14px;
+      font: 800 0.72rem/1 "Segoe UI", sans-serif;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(25, 49, 60, 0.42);
+      pointer-events: none;
+    }
+
+    .pb-plinko__disk-button {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      padding: 0;
+      cursor: pointer;
+      transition: transform 160ms ease, opacity 160ms ease, filter 160ms ease;
+    }
+
+    .pb-plinko__disk-button:hover,
+    .pb-plinko__disk-button:focus-visible {
+      transform: translateY(-2px);
+      filter: brightness(1.03);
+      outline: none;
+    }
+
+    .pb-plinko__disk-button[disabled] {
+      opacity: 0.35;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .pb-plinko__queue {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      min-height: 74px;
+    }
+
+    .pb-plinko__queue-empty {
+      font: 700 0.92rem/1.3 "Segoe UI", sans-serif;
+      color: var(--pb-muted);
+    }
+
+    .pb-plinko__disk,
+    .pb-plinko__token {
+      position: relative;
+      width: 72px;
+      aspect-ratio: 1 / 1;
+      border-radius: 999px;
+    }
+
+    .pb-plinko__token {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: var(--pb-size, 112px);
+      height: var(--pb-size, 112px);
+      will-change: transform;
+      z-index: var(--pb-layer, 10);
+      transform: translate(-50%, -50%);
+    }
+
+    .pb-plinko__disk-image,
+    .pb-plinko__token-image {
+      position: absolute;
+      inset: 0;
       width: 100%;
       height: 100%;
       display: block;
       object-fit: contain;
       border-radius: 999px;
-      transform: scale(1.08);
       filter:
-        drop-shadow(0 0 10px rgba(246, 198, 47, 0.26))
-        drop-shadow(0 0 20px rgba(246, 198, 47, 0.18));
-      transition: filter 180ms ease;
+        drop-shadow(0 0 8px rgba(246, 198, 47, 0.24))
+        drop-shadow(0 0 18px rgba(246, 198, 47, 0.16));
+      user-select: none;
+      -webkit-user-drag: none;
     }
 
-    .pb-employee-gaggle__person:hover .pb-employee-gaggle__avatar,
-    .pb-employee-gaggle__person:focus-within .pb-employee-gaggle__avatar {
-      filter:
-        drop-shadow(0 0 12px rgba(246, 198, 47, 0.34))
-        drop-shadow(0 0 24px rgba(246, 198, 47, 0.22));
-    }
-
-    .pb-employee-gaggle__name {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 7px 12px;
+    .pb-plinko__disk-name {
+      position: absolute;
+      left: 50%;
+      bottom: -24px;
+      transform: translateX(-50%);
+      padding: 6px 10px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.92);
-      box-shadow: 0 10px 20px rgba(25, 49, 60, 0.08);
-      font: 800 0.9rem/1.1 "Segoe UI", sans-serif;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 10px 18px rgba(25, 49, 60, 0.08);
+      font: 800 0.74rem/1 "Segoe UI", sans-serif;
       color: var(--pb-ink);
       white-space: nowrap;
       opacity: 0;
-      transform: translateY(-6px) scale(0.96);
-      transition:
-        opacity 180ms ease,
-        transform 180ms ease;
+      transition: opacity 160ms ease, transform 160ms ease;
       pointer-events: none;
     }
 
-    .pb-employee-gaggle__person:hover .pb-employee-gaggle__name,
-    .pb-employee-gaggle__person:focus-within .pb-employee-gaggle__name {
+    .pb-plinko__disk-button:hover .pb-plinko__disk-name,
+    .pb-plinko__disk-button:focus-visible .pb-plinko__disk-name,
+    .pb-plinko__token:hover .pb-plinko__disk-name {
       opacity: 1;
-      transform: translateY(0) scale(1);
+      transform: translateX(-50%) translateY(-2px);
     }
 
-    .pb-employee-gaggle__empty {
-      display: grid;
-      place-items: center;
-      min-height: 260px;
-      text-align: center;
-      color: var(--pb-muted);
-      font: 700 1rem/1.4 "Segoe UI", sans-serif;
-    }
-
-    @media (max-width: 767px) {
-      .pb-employee-gaggle {
+      @media (max-width: 767px) {
+      .pb-plinko {
         padding: 8px;
       }
 
-      .pb-employee-gaggle__stage {
-        min-height: 400px;
+      .pb-plinko__board {
+        min-height: 520px;
+        border-radius: 22px;
       }
 
-      .pb-employee-gaggle__name {
-        font-size: 0.8rem;
+      .pb-plinko__disk,
+      .pb-plinko__token {
+        width: 62px;
       }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .pb-employee-gaggle__circle,
-      .pb-employee-gaggle__name,
-      .pb-employee-gaggle__avatar {
+      .pb-plinko__button,
+      .pb-plinko__disk-button,
+      .pb-plinko__disk-name {
         transition: none;
       }
     }
   </style>
 
-  <div class="pb-employee-gaggle__stage"></div>
+  <div class="pb-plinko__shell">
+    <div class="pb-plinko__toolbar">
+      <h2 class="pb-plinko__title">Team Plinko</h2>
+      <div class="pb-plinko__actions">
+        <button class="pb-plinko__button pb-plinko__drop" type="button">Drop</button>
+        <button class="pb-plinko__button pb-plinko__reset" type="button">Reset</button>
+      </div>
+    </div>
 
-  <script type="application/json" class="pb-employee-gaggle__data">
+    <div class="pb-plinko__board">
+      <div class="pb-plinko__drop-zone"></div>
+      <div class="pb-plinko__pegs"></div>
+      <div class="pb-plinko__dividers"></div>
+      <div class="pb-plinko__slots"></div>
+      <div class="pb-plinko__disks"></div>
+    </div>
+
+    <div class="pb-plinko__queue"></div>
+  </div>
+
+  <script type="application/json" class="pb-plinko__data">
     [
       {
         "name": "Tony Healy",
@@ -198,61 +362,35 @@
 
   <script>
     (function () {
-      var widget = document.currentScript.closest(".pb-employee-gaggle");
+      var widget = document.currentScript.closest(".pb-plinko");
 
-      if (!widget || widget.dataset.pbGaggleReady === "true") {
+      if (!widget || widget.dataset.pbPlinkoReady === "true") {
         return;
       }
+
+      var board = widget.querySelector(".pb-plinko__board");
+      var pegsLayer = widget.querySelector(".pb-plinko__pegs");
+      var dividersLayer = widget.querySelector(".pb-plinko__dividers");
+      var slotsLayer = widget.querySelector(".pb-plinko__slots");
+      var disksLayer = widget.querySelector(".pb-plinko__disks");
+      var queue = widget.querySelector(".pb-plinko__queue");
+      var dropButton = widget.querySelector(".pb-plinko__drop");
+      var resetButton = widget.querySelector(".pb-plinko__reset");
+      var dataNode = widget.querySelector(".pb-plinko__data");
+      var rafId = 0;
+      var resizeObserver = null;
+      var autoDropTimer = 0;
+      var pegs = [];
+      var dividers = [];
+      var disks = [];
+      var available = [];
+      var geometry = null;
 
       function clamp(value, min, max) {
         return Math.max(min, Math.min(max, value));
       }
 
-      function safeParseEmployees(node) {
-        if (!node) {
-          return [];
-        }
-
-        try {
-          var parsed = JSON.parse(node.textContent.trim());
-          return Array.isArray(parsed) ? parsed : [];
-        } catch (error) {
-          return [];
-        }
-      }
-
-      function buildEmployeeCard(employee, index) {
-        var person = document.createElement("article");
-        var circle = document.createElement("div");
-        var avatar = document.createElement("img");
-        var name = document.createElement("div");
-
-        person.className = "pb-employee-gaggle__person";
-        person.dataset.index = String(index);
-        circle.className = "pb-employee-gaggle__circle";
-        avatar.className = "pb-employee-gaggle__avatar";
-        name.className = "pb-employee-gaggle__name";
-
-        avatar.src = employee.img || "";
-        avatar.alt = employee.name ? employee.name + " portrait" : "Employee portrait";
-        avatar.loading = "lazy";
-        avatar.decoding = "async";
-        name.textContent = employee.name || "Team member";
-
-        circle.appendChild(avatar);
-        person.appendChild(circle);
-        person.appendChild(name);
-        return person;
-      }
-
-      function buildEmpty() {
-        var empty = document.createElement("div");
-        empty.className = "pb-employee-gaggle__empty";
-        empty.textContent = "Add a JSON array of { name, img } objects to populate the widget.";
-        return empty;
-      }
-
-      function shuffleArray(items) {
+      function shuffle(items) {
         var copy = items.slice();
         var i;
 
@@ -266,302 +404,504 @@
         return copy;
       }
 
-      function getClusterSlots(count, stepX, stepY) {
-        var slots = [];
-        var columns = Math.ceil(Math.sqrt(count));
-        var rows = Math.ceil(count / columns);
+      function safeParse(node) {
+        if (!node) {
+          return [];
+        }
+
+        try {
+          var parsed = JSON.parse(node.textContent.trim());
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (error) {
+          return [];
+        }
+      }
+
+      function buildQueueDisk(person, index) {
+        var button = document.createElement("button");
+        var disk = document.createElement("div");
+        var image = document.createElement("img");
+        var name = document.createElement("div");
+
+        button.className = "pb-plinko__disk-button";
+        button.type = "button";
+        button.dataset.index = String(index);
+        button.setAttribute("aria-label", "Drop " + person.name);
+
+        disk.className = "pb-plinko__disk";
+        image.className = "pb-plinko__disk-image";
+        name.className = "pb-plinko__disk-name";
+
+        image.src = person.img || "";
+        image.alt = person.name ? person.name + " portrait" : "Team member portrait";
+        image.loading = "lazy";
+        image.decoding = "async";
+        name.textContent = person.name || "Team member";
+
+        disk.appendChild(image);
+        disk.appendChild(name);
+        button.appendChild(disk);
+        button.addEventListener("click", function () {
+          dropPerson(person);
+        });
+        return button;
+      }
+
+      function updateControls() {
+        if (dropButton) {
+          dropButton.disabled = available.length === 0;
+        }
+      }
+
+      function buildToken(person) {
+        var token = document.createElement("div");
+        var image = document.createElement("img");
+        var name = document.createElement("div");
+
+        token.className = "pb-plinko__token";
+        token.style.setProperty("--pb-size", geometry.diskSize + "px");
+
+        image.className = "pb-plinko__token-image";
+        image.src = person.img || "";
+        image.alt = person.name ? person.name + " portrait" : "Team member portrait";
+        image.loading = "lazy";
+        image.decoding = "async";
+
+        name.className = "pb-plinko__disk-name";
+        name.textContent = person.name || "Team member";
+
+        token.appendChild(image);
+        token.appendChild(name);
+        disksLayer.appendChild(token);
+        return token;
+      }
+
+      function computeGeometry() {
+        var width = board.clientWidth;
+        var slots = clamp(Math.round(width / 138), 5, 8);
+        var slotWidth = width / slots;
+        var baseHeight = board.clientHeight;
+        var height = baseHeight;
+        var diskSize = clamp(Math.min(width, height) * 0.1, 70, 98);
+        var pegRadius = 7;
+        var diskRadius = diskSize * 0.5;
+        var pegSpacingX = clamp(diskSize * 1.28, 90, 138);
+        var pegSpacingY = clamp(pegSpacingX * 0.94, 78, 124);
+        var startY = 88;
+        var slotDepth = Math.max(diskSize * 4.6, 320);
+        var laneEntryGap = Math.max(diskSize * 1.5, pegSpacingY * 1.05);
+        var rows = clamp(
+          Math.floor((baseHeight - startY - slotDepth - laneEntryGap - 40) / pegSpacingY),
+          5,
+          8
+        );
+        var lastPegY = startY + (rows - 1) * pegSpacingY;
+        var pegFieldBottom = lastPegY + pegRadius;
+        var dividerTop = pegFieldBottom + laneEntryGap;
+        var requiredHeight = pegFieldBottom + slotDepth + 20;
+
+        if (requiredHeight > height) {
+          height = requiredHeight;
+        }
+
+        var floorY = height - 20;
+        var leftBound = diskRadius + 8;
+        var rightBound = width - diskRadius - 8;
+        var spawnX = width / 2;
+        var spawnY = 34;
+        var bins = [];
+        var i;
+
+        for (i = 0; i < slots; i += 1) {
+          bins.push({
+            left: i * slotWidth,
+            right: (i + 1) * slotWidth,
+            center: i * slotWidth + slotWidth / 2
+          });
+        }
+
+        return {
+          width: width,
+          height: height,
+          slots: slots,
+          slotWidth: slotWidth,
+          floorY: floorY,
+          dividerTop: dividerTop,
+          startY: startY,
+          rows: rows,
+          pegFieldBottom: pegFieldBottom,
+          laneEntryGap: laneEntryGap,
+          slotDepth: slotDepth,
+          diskSize: diskSize,
+          diskRadius: diskRadius,
+          pegRadius: pegRadius,
+          pegSpacingX: pegSpacingX,
+          pegSpacingY: pegSpacingY,
+          leftBound: leftBound,
+          rightBound: rightBound,
+          spawnX: spawnX,
+          spawnY: spawnY,
+          bins: bins
+        };
+      }
+
+      function rebuildBoardScenery() {
+        geometry = computeGeometry();
+        board.style.minHeight = geometry.height + "px";
+        pegs = [];
+        dividers = [];
+        pegsLayer.innerHTML = "";
+        dividersLayer.innerHTML = "";
+        slotsLayer.innerHTML = "";
+
+        var sideMargin = Math.max(geometry.diskRadius + 14, geometry.pegSpacingX * 0.8);
+        var evenColumns = Math.max(
+          5,
+          Math.floor((geometry.width - sideMargin * 2) / geometry.pegSpacingX)
+        );
         var row;
-        var column;
-        var placed = 0;
-        var yOffset = ((rows - 1) * stepY) / 2;
 
-        for (row = 0; row < rows; row += 1) {
-          var remaining = count - placed;
-          var itemsInRow = Math.min(columns, remaining);
-          var rowWidth = (itemsInRow - 1) * stepX;
-          var rowOffset = rowWidth / 2;
+        for (row = 0; row < geometry.rows; row += 1) {
+          var rowColumns = row % 2 === 0 ? evenColumns : Math.max(4, evenColumns - 1);
+          var rowWidth = (rowColumns - 1) * geometry.pegSpacingX;
+          var x = geometry.width / 2 - rowWidth / 2;
+          var y = geometry.startY + row * geometry.pegSpacingY;
+          var placed = 0;
 
-          for (column = 0; column < itemsInRow; column += 1) {
-            slots.push({
-              x: column * stepX - rowOffset,
-              y: row * stepY - yOffset
-            });
+          while (placed < rowColumns) {
+            var peg = { x: x, y: y, radius: geometry.pegRadius };
+            var pegNode = document.createElement("div");
+
+            pegNode.className = "pb-plinko__peg";
+            pegNode.style.left = x + "px";
+            pegNode.style.top = y + "px";
+            pegsLayer.appendChild(pegNode);
+            pegs.push(peg);
+            x += geometry.pegSpacingX;
             placed += 1;
           }
         }
 
-        return slots;
-      }
+        geometry.bins.forEach(function (bin, index) {
+          if (index > 0) {
+            var divider = document.createElement("div");
+            var dividerX = bin.left;
 
-      function buildNodes(stage, people) {
-        var width = stage.clientWidth;
-        var height = stage.clientHeight;
-        var count = people.length;
-        var minSide = Math.min(width, height);
-        var normalizedSize = clamp(minSide * 0.14, 84, 132) + 14;
-        var stepX = normalizedSize * 0.92;
-        var stepY = normalizedSize * 0.88;
-        var slots = getClusterSlots(count, stepX, stepY);
-        var spawnYOffset = -height * 0.26;
-
-        return people.map(function (person, index) {
-          var slot = slots[index % slots.length];
-          var size = normalizedSize;
-          var x = slot.x + (Math.random() - 0.5) * 18;
-          var y = slot.y + spawnYOffset + (Math.random() - 0.5) * 10;
-          var tilt = index % 2 === 0 ? -6 : 6;
-
-          if (width < 768) {
-            x *= 0.9;
-            y *= 0.9;
-            size *= 0.9;
+            divider.className = "pb-plinko__divider";
+            divider.style.left = dividerX - 3 + "px";
+            divider.style.height = geometry.height - geometry.dividerTop + "px";
+            divider.style.top = geometry.dividerTop + "px";
+            dividersLayer.appendChild(divider);
+            dividers.push({
+              x: dividerX,
+              top: geometry.dividerTop,
+              bottom: geometry.floorY,
+              halfWidth: 6
+            });
           }
 
-          person.style.width = size.toFixed(1) + "px";
-          person.style.setProperty("--pb-layer", "2");
-
-          return {
-            element: person,
-            x: x,
-            y: y,
-            vx: 0,
-            vy: 0,
-            size: size,
-            radius: size * 0.5,
-            tilt: tilt,
-            seed: index * 0.7
-          };
+          var slot = document.createElement("div");
+          slot.className = "pb-plinko__slot";
+          slot.style.left = bin.left + "px";
+          slot.style.width = geometry.slotWidth + "px";
+          slot.style.height = geometry.height - geometry.dividerTop + "px";
+          slot.textContent = "Slot " + (index + 1);
+          slotsLayer.appendChild(slot);
         });
       }
 
-      function updateNodeMetrics(stage, nodes) {
-        var width = stage.clientWidth;
-        var height = stage.clientHeight;
-        var minSide = Math.min(width, height);
-        var normalizedSize = clamp(minSide * 0.14, 84, 132) + 14;
+      function renderQueue() {
+        queue.innerHTML = "";
 
-        nodes.forEach(function (node) {
-          var size = width < 768 ? normalizedSize * 0.9 : normalizedSize;
-          var maxX = width / 2 - size * 0.5 - 6;
-          var maxY = height / 2 - size * 0.5 - 6;
-
-          node.size = size;
-          node.radius = size * 0.5;
-          node.element.style.width = size.toFixed(1) + "px";
-          node.x = clamp(node.x, -maxX, maxX);
-          node.y = clamp(node.y, -maxY, maxY);
-        });
-      }
-
-      function renderNodes(nodes) {
-        nodes.forEach(function (node) {
-          var liveTilt = node.tilt + clamp(node.vx * 0.35, -4, 4);
-          if (!node.element.matches(":hover") && !node.element.matches(":focus-within")) {
-            node.element.style.zIndex = String(100 + Math.round(node.y + 400));
-          }
-          node.element.style.transform =
-            "translate(calc(-50% + " +
-            node.x.toFixed(1) +
-            "px), calc(-50% + " +
-            node.y.toFixed(1) +
-            "px)) rotate(" +
-            liveTilt.toFixed(2) +
-            "deg)";
-        });
-      }
-
-      function createPhysics(stage, nodes) {
-        var pointer = { active: false, x: 0, y: 0, radius: 0 };
-        var rafId = 0;
-        var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        var gravity = reducedMotion ? 0 : 0.22;
-
-        function updatePointer(clientX, clientY) {
-          var bounds = stage.getBoundingClientRect();
-          pointer.x = clientX - bounds.left - bounds.width / 2;
-          pointer.y = clientY - bounds.top - bounds.height / 2;
-          pointer.active = true;
+        if (!available.length) {
+          var empty = document.createElement("div");
+          empty.className = "pb-plinko__queue-empty";
+          empty.textContent = "All disks dropped. Hit reset to randomize and play again.";
+          queue.appendChild(empty);
+          updateControls();
+          return;
         }
 
-        stage.addEventListener("mousemove", function (event) {
-          updatePointer(event.clientX, event.clientY);
+        available.forEach(function (person, index) {
+          queue.appendChild(buildQueueDisk(person, index));
+        });
+        updateControls();
+      }
+
+      function findBinCenter(x) {
+        var selected = geometry.bins[0];
+
+        geometry.bins.forEach(function (bin) {
+          if (x >= bin.left && x <= bin.right) {
+            selected = bin;
+          }
         });
 
-        stage.addEventListener(
-          "touchmove",
-          function (event) {
-            if (event.touches && event.touches[0]) {
-              updatePointer(event.touches[0].clientX, event.touches[0].clientY);
+        return selected.center;
+      }
+
+      function spawnDisk(person) {
+        if (!geometry) {
+          return;
+        }
+
+        var token = buildToken(person);
+        var spawnSpread = geometry.slotWidth * 0.32;
+
+        disks.push({
+          person: person,
+          element: token,
+          x: geometry.spawnX + (Math.random() - 0.5) * spawnSpread,
+          y: geometry.spawnY,
+          vx: (Math.random() - 0.5) * 1.4,
+          vy: 0,
+          radius: geometry.diskRadius,
+          settled: false,
+          angle: 0,
+          spin: (Math.random() - 0.5) * 0.08
+        });
+      }
+
+      function dropPerson(person) {
+        if (!person) {
+          return false;
+        }
+
+        spawnDisk(person);
+        available = available.filter(function (candidate) {
+          return candidate !== person;
+        });
+        renderQueue();
+        return true;
+      }
+
+      function queueAutoDrop() {
+        if (autoDropTimer) {
+          window.clearTimeout(autoDropTimer);
+          autoDropTimer = 0;
+        }
+
+        if (!available.length) {
+          updateControls();
+          return;
+        }
+
+        autoDropTimer = window.setTimeout(function () {
+          autoDropTimer = 0;
+          dropPerson(available[0]);
+          queueAutoDrop();
+        }, 900);
+      }
+
+      function resolveDiskCollision(a, b) {
+        var dx = b.x - a.x;
+        var dy = b.y - a.y;
+        var distance = Math.sqrt(dx * dx + dy * dy) || 0.001;
+        var minimum = a.radius + b.radius;
+
+        if (distance >= minimum) {
+          return;
+        }
+
+        var overlap = (minimum - distance) / distance;
+        var pushX = dx * overlap * 0.5;
+        var pushY = dy * overlap * 0.5;
+
+        a.x -= pushX;
+        a.y -= pushY;
+        b.x += pushX;
+        b.y += pushY;
+
+        a.vx -= pushX * 0.05;
+        a.vy -= pushY * 0.05;
+        b.vx += pushX * 0.05;
+        b.vy += pushY * 0.05;
+      }
+
+      function resolvePegCollision(disk, peg) {
+        var dx = disk.x - peg.x;
+        var dy = disk.y - peg.y;
+        var distance = Math.sqrt(dx * dx + dy * dy) || 0.001;
+        var minimum = disk.radius + peg.radius;
+
+        if (distance >= minimum) {
+          return;
+        }
+
+        var nx = dx / distance;
+        var ny = dy / distance;
+        var overlap = minimum - distance;
+        var velocityAlongNormal = disk.vx * nx + disk.vy * ny;
+
+        disk.x += nx * overlap;
+        disk.y += ny * overlap;
+
+        if (velocityAlongNormal < 0) {
+          disk.vx -= 1.34 * velocityAlongNormal * nx;
+          disk.vy -= 1.34 * velocityAlongNormal * ny;
+          disk.vx += nx * 0.16;
+        }
+      }
+
+      function resolveDividerCollision(disk, divider) {
+        if (disk.y + disk.radius < divider.top || disk.y - disk.radius > divider.bottom) {
+          return;
+        }
+
+        var dx = disk.x - divider.x;
+        var reach = disk.radius + divider.halfWidth;
+
+        if (Math.abs(dx) >= reach) {
+          return;
+        }
+
+        var direction = dx < 0 ? -1 : 1;
+        disk.x = divider.x + direction * reach;
+        disk.vx *= -0.68;
+      }
+
+      function stepPhysics() {
+        if (!geometry) {
+          return;
+        }
+
+        var i;
+        var j;
+        var substeps = 2;
+        var gravity = 0.22;
+
+        for (j = 0; j < substeps; j += 1) {
+          disks.forEach(function (disk) {
+            if (disk.settled) {
+              return;
             }
-          },
-          { passive: true }
+
+            disk.vy += gravity / substeps;
+            disk.x += disk.vx / substeps;
+            disk.y += disk.vy / substeps;
+            disk.angle += disk.spin + disk.vx * 0.01;
+
+            if (disk.x < geometry.leftBound) {
+              disk.x = geometry.leftBound;
+              disk.vx *= -0.72;
+            } else if (disk.x > geometry.rightBound) {
+              disk.x = geometry.rightBound;
+              disk.vx *= -0.72;
+            }
+
+            if (disk.y - disk.radius < 6) {
+              disk.y = disk.radius + 6;
+              disk.vy *= -0.35;
+            }
+          });
+
+          for (i = 0; i < disks.length; i += 1) {
+            for (j = i + 1; j < disks.length; j += 1) {
+              resolveDiskCollision(disks[i], disks[j]);
+            }
+          }
+
+          disks.forEach(function (disk) {
+            pegs.forEach(function (peg) {
+              resolvePegCollision(disk, peg);
+            });
+
+            dividers.forEach(function (divider) {
+              resolveDividerCollision(disk, divider);
+            });
+
+            if (disk.y + disk.radius >= geometry.floorY) {
+              disk.y = geometry.floorY - disk.radius;
+              disk.vy *= -0.42;
+              disk.vx *= 0.98;
+
+              if (Math.abs(disk.vy) < 0.3) {
+                disk.vy = 0;
+              }
+
+              if (Math.abs(disk.vx) < 0.05 && Math.abs(disk.vy) === 0) {
+                var center = findBinCenter(disk.x);
+                disk.x += (center - disk.x) * 0.05;
+
+                if (Math.abs(center - disk.x) < 0.6) {
+                  disk.settled = true;
+                  disk.vx = 0;
+                  disk.spin *= 0.82;
+                }
+              }
+            }
+          });
+        }
+      }
+
+      function renderDisks() {
+        disks.forEach(function (disk) {
+          disk.element.style.left = disk.x.toFixed(1) + "px";
+          disk.element.style.top = disk.y.toFixed(1) + "px";
+          disk.element.style.transform =
+            "translate(-50%, -50%) rotate(" +
+            disk.angle.toFixed(2) +
+            "rad)";
+        });
+      }
+
+      function frame() {
+        stepPhysics();
+        renderDisks();
+        rafId = window.requestAnimationFrame(frame);
+      }
+
+      function resetGame() {
+        if (autoDropTimer) {
+          window.clearTimeout(autoDropTimer);
+          autoDropTimer = 0;
+        }
+
+        available = shuffle(
+          safeParse(dataNode).filter(function (person) {
+            return person && person.name && person.img;
+          })
         );
-
-        function clearPointer() {
-          pointer.active = false;
-        }
-
-        stage.addEventListener("mouseleave", clearPointer);
-        stage.addEventListener("touchend", clearPointer);
-        stage.addEventListener("touchcancel", clearPointer);
-
-        function tick() {
-          var width = stage.clientWidth;
-          var height = stage.clientHeight;
-          var maxX = width / 2;
-          var maxY = height / 2;
-          var i;
-          var j;
-
-          for (i = 0; i < nodes.length; i += 1) {
-            var node = nodes[i];
-            node.vy += gravity;
-            node.vx += Math.sin(Date.now() * 0.001 + node.seed) * 0.003;
-          }
-
-          for (i = 0; i < nodes.length; i += 1) {
-            for (j = i + 1; j < nodes.length; j += 1) {
-              var a = nodes[i];
-              var b = nodes[j];
-              var dx = b.x - a.x;
-              var dy = b.y - a.y;
-              var distance = Math.sqrt(dx * dx + dy * dy) || 0.001;
-              var minimum = a.radius + b.radius;
-
-              if (distance < minimum) {
-                var overlap = (minimum - distance) / distance;
-                var pushX = dx * overlap * 0.5;
-                var pushY = dy * overlap * 0.5;
-
-                a.x -= pushX;
-                a.y -= pushY;
-                b.x += pushX;
-                b.y += pushY;
-
-                a.vx -= pushX * 0.03;
-                a.vy -= pushY * 0.03;
-                b.vx += pushX * 0.03;
-                b.vy += pushY * 0.03;
-              }
-            }
-          }
-
-          if (pointer.active) {
-            for (i = 0; i < nodes.length; i += 1) {
-              var currentNode = nodes[i];
-              var dxMouse = currentNode.x - pointer.x;
-              var dyMouse = currentNode.y - pointer.y;
-              var mouseDistance = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse) || 0.001;
-              var mouseMinimum = currentNode.radius + pointer.radius;
-
-              if (mouseDistance < mouseMinimum) {
-                var mouseOverlap = (mouseMinimum - mouseDistance) / mouseDistance;
-                var mousePushX = dxMouse * mouseOverlap;
-                var mousePushY = dyMouse * mouseOverlap;
-
-                currentNode.x += mousePushX;
-                currentNode.y += mousePushY;
-                currentNode.vx += mousePushX * 0.08;
-                currentNode.vy += mousePushY * 0.08;
-              }
-            }
-          }
-
-          for (i = 0; i < nodes.length; i += 1) {
-            var current = nodes[i];
-            var limitX = maxX - current.radius - 6;
-            var ceilingY = -maxY + current.radius + 6;
-            var floorY = maxY - current.radius - 6;
-
-            current.vx *= 0.992;
-            current.vy *= 0.992;
-
-            current.x += current.vx;
-            current.y += current.vy;
-
-            if (current.x > limitX) {
-              current.x = limitX;
-              current.vx *= -0.72;
-            } else if (current.x < -limitX) {
-              current.x = -limitX;
-              current.vx *= -0.72;
-            }
-
-            if (current.y > floorY) {
-              current.y = floorY;
-              current.vy *= -0.46;
-              current.vx *= 0.96;
-
-              if (Math.abs(current.vy) < 0.16) {
-                current.vy = 0;
-              }
-            } else if (current.y < ceilingY) {
-              current.y = ceilingY;
-              current.vy *= -0.3;
-            }
-          }
-
-          renderNodes(nodes);
-          rafId = window.requestAnimationFrame(tick);
-        }
-
-        renderNodes(nodes);
-
-        if (!reducedMotion) {
-          rafId = window.requestAnimationFrame(tick);
-        }
-
-        return {
-          stop: function () {
-            if (rafId) {
-              window.cancelAnimationFrame(rafId);
-            }
-          },
-          relayout: function () {
-            updateNodeMetrics(stage, nodes);
-            renderNodes(nodes);
-          }
-        };
+        disks.forEach(function (disk) {
+          disk.element.remove();
+        });
+        disks = [];
+        rebuildBoardScenery();
+        renderQueue();
       }
 
       function init() {
-        var stage = widget.querySelector(".pb-employee-gaggle__stage");
-        var dataNode = widget.querySelector(".pb-employee-gaggle__data");
-        var employees = safeParseEmployees(dataNode).filter(function (employee) {
-          return employee && employee.name && employee.img;
+        var people = safeParse(dataNode).filter(function (person) {
+          return person && person.name && person.img;
         });
 
-        if (!stage) {
+        if (!people.length || !board || !queue || !disksLayer) {
           return;
         }
 
-        stage.innerHTML = "";
+        available = shuffle(people);
+        rebuildBoardScenery();
+        renderQueue();
 
-        if (!employees.length) {
-          stage.appendChild(buildEmpty());
-          widget.dataset.pbGaggleReady = "true";
-          return;
-        }
+        dropButton.addEventListener("click", function () {
+          if (!available.length) {
+            return;
+          }
 
-        var people = shuffleArray(employees).map(buildEmployeeCard);
-        people.forEach(function (person) {
-          stage.appendChild(person);
+          dropPerson(available[0]);
+          queueAutoDrop();
         });
-
-        var nodes = buildNodes(stage, people);
-        var physics = createPhysics(stage, nodes);
+        resetButton.addEventListener("click", resetGame);
 
         if ("ResizeObserver" in window) {
-          var resizeObserver = new ResizeObserver(function () {
-            physics.relayout();
+          resizeObserver = new ResizeObserver(function () {
+            resetGame();
           });
-          resizeObserver.observe(stage);
-          widget.pbResizeObserver = resizeObserver;
-        } else {
-          window.addEventListener("resize", physics.relayout);
+          resizeObserver.observe(board);
         }
 
-        widget.dataset.pbGaggleReady = "true";
+        rafId = window.requestAnimationFrame(frame);
+        widget.dataset.pbPlinkoReady = "true";
       }
 
       init();
