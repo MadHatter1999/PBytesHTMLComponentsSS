@@ -20,7 +20,7 @@
     .pb-employee-gaggle__stage {
       position: relative;
       min-height: clamp(380px, 58vw, 760px);
-      overflow: visible;
+      overflow: hidden;
       isolation: isolate;
     }
 
@@ -252,6 +252,20 @@
         return empty;
       }
 
+      function shuffleArray(items) {
+        var copy = items.slice();
+        var i;
+
+        for (i = copy.length - 1; i > 0; i -= 1) {
+          var swapIndex = Math.floor(Math.random() * (i + 1));
+          var temp = copy[i];
+          copy[i] = copy[swapIndex];
+          copy[swapIndex] = temp;
+        }
+
+        return copy;
+      }
+
       function getClusterSlots(count, stepX, stepY) {
         var slots = [];
         var columns = Math.ceil(Math.sqrt(count));
@@ -259,7 +273,6 @@
         var row;
         var column;
         var placed = 0;
-        var xOffset = ((columns - 1) * stepX) / 2;
         var yOffset = ((rows - 1) * stepY) / 2;
 
         for (row = 0; row < rows; row += 1) {
@@ -285,66 +298,67 @@
         var height = stage.clientHeight;
         var count = people.length;
         var minSide = Math.min(width, height);
-        var stepX = clamp(width * 0.16, 92, 132);
-        var stepY = clamp(height * 0.16, 92, 132);
-        var normalizedSize = clamp(minSide * 0.14, 80, 132) + 14;
+        var normalizedSize = clamp(minSide * 0.14, 84, 132) + 14;
+        var stepX = normalizedSize * 0.92;
+        var stepY = normalizedSize * 0.88;
         var slots = getClusterSlots(count, stepX, stepY);
+        var spawnYOffset = -height * 0.26;
 
         return people.map(function (person, index) {
           var slot = slots[index % slots.length];
           var size = normalizedSize;
-          var x = slot.x;
-          var y = slot.y;
+          var x = slot.x + (Math.random() - 0.5) * 18;
+          var y = slot.y + spawnYOffset + (Math.random() - 0.5) * 10;
           var tilt = index % 2 === 0 ? -6 : 6;
 
           if (width < 768) {
             x *= 0.9;
-            y *= 0.92;
+            y *= 0.9;
             size *= 0.9;
           }
 
           person.style.width = size.toFixed(1) + "px";
-          person.style.setProperty("--pb-layer", String(2 + ((index + 1) % 4)));
+          person.style.setProperty("--pb-layer", "2");
 
           return {
             element: person,
-            targetX: x,
-            targetY: y,
-            x: x + (index % 2 === 0 ? -18 : 18),
-            y: y + (index % 3 === 0 ? -12 : 12),
+            x: x,
+            y: y,
             vx: 0,
             vy: 0,
             size: size,
-            radius: size * 0.47,
+            radius: size * 0.5,
             tilt: tilt,
             seed: index * 0.7
           };
         });
       }
 
-      function updateNodeTargets(stage, nodes) {
-        var refreshed = buildNodes(
-          stage,
-          nodes.map(function (node) {
-            return node.element;
-          })
-        );
+      function updateNodeMetrics(stage, nodes) {
+        var width = stage.clientWidth;
+        var height = stage.clientHeight;
+        var minSide = Math.min(width, height);
+        var normalizedSize = clamp(minSide * 0.14, 84, 132) + 14;
 
-        refreshed.forEach(function (nextNode, index) {
-          var node = nodes[index];
-          node.targetX = nextNode.targetX;
-          node.targetY = nextNode.targetY;
-          node.size = nextNode.size;
-          node.radius = nextNode.radius;
-          node.tilt = nextNode.tilt;
-          node.element.style.width = nextNode.size.toFixed(1) + "px";
-          node.element.style.setProperty("--pb-layer", nextNode.element.style.getPropertyValue("--pb-layer"));
+        nodes.forEach(function (node) {
+          var size = width < 768 ? normalizedSize * 0.9 : normalizedSize;
+          var maxX = width / 2 - size * 0.5 - 6;
+          var maxY = height / 2 - size * 0.5 - 6;
+
+          node.size = size;
+          node.radius = size * 0.5;
+          node.element.style.width = size.toFixed(1) + "px";
+          node.x = clamp(node.x, -maxX, maxX);
+          node.y = clamp(node.y, -maxY, maxY);
         });
       }
 
       function renderNodes(nodes) {
         nodes.forEach(function (node) {
           var liveTilt = node.tilt + clamp(node.vx * 0.35, -4, 4);
+          if (!node.element.matches(":hover") && !node.element.matches(":focus-within")) {
+            node.element.style.zIndex = String(100 + Math.round(node.y + 400));
+          }
           node.element.style.transform =
             "translate(calc(-50% + " +
             node.x.toFixed(1) +
@@ -357,9 +371,10 @@
       }
 
       function createPhysics(stage, nodes) {
-        var pointer = { active: false, x: 0, y: 0 };
+        var pointer = { active: false, x: 0, y: 0, radius: 0 };
         var rafId = 0;
         var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        var gravity = reducedMotion ? 0 : 0.22;
 
         function updatePointer(clientX, clientY) {
           var bounds = stage.getBoundingClientRect();
@@ -400,23 +415,8 @@
 
           for (i = 0; i < nodes.length; i += 1) {
             var node = nodes[i];
-            var drift = Math.sin(Date.now() * 0.0014 + node.seed) * 1.4;
-
-            node.vx += (node.targetX - node.x) * 0.009;
-            node.vy += (node.targetY - node.y) * 0.009 + drift * 0.002;
-
-            if (pointer.active) {
-              var dxPointer = node.x - pointer.x;
-              var dyPointer = node.y - pointer.y;
-              var pointerDistance = Math.sqrt(dxPointer * dxPointer + dyPointer * dyPointer) || 1;
-              var pointerReach = node.radius + 90;
-
-              if (pointerDistance < pointerReach) {
-                var pointerPush = (pointerReach - pointerDistance) * 0.012;
-                node.vx += (dxPointer / pointerDistance) * pointerPush;
-                node.vy += (dyPointer / pointerDistance) * pointerPush;
-              }
-            }
+            node.vy += gravity;
+            node.vx += Math.sin(Date.now() * 0.001 + node.seed) * 0.003;
           }
 
           for (i = 0; i < nodes.length; i += 1) {
@@ -426,7 +426,7 @@
               var dx = b.x - a.x;
               var dy = b.y - a.y;
               var distance = Math.sqrt(dx * dx + dy * dy) || 0.001;
-              var minimum = a.radius + b.radius + 16;
+              var minimum = a.radius + b.radius;
 
               if (distance < minimum) {
                 var overlap = (minimum - distance) / distance;
@@ -446,31 +446,58 @@
             }
           }
 
+          if (pointer.active) {
+            for (i = 0; i < nodes.length; i += 1) {
+              var currentNode = nodes[i];
+              var dxMouse = currentNode.x - pointer.x;
+              var dyMouse = currentNode.y - pointer.y;
+              var mouseDistance = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse) || 0.001;
+              var mouseMinimum = currentNode.radius + pointer.radius;
+
+              if (mouseDistance < mouseMinimum) {
+                var mouseOverlap = (mouseMinimum - mouseDistance) / mouseDistance;
+                var mousePushX = dxMouse * mouseOverlap;
+                var mousePushY = dyMouse * mouseOverlap;
+
+                currentNode.x += mousePushX;
+                currentNode.y += mousePushY;
+                currentNode.vx += mousePushX * 0.08;
+                currentNode.vy += mousePushY * 0.08;
+              }
+            }
+          }
+
           for (i = 0; i < nodes.length; i += 1) {
             var current = nodes[i];
-            var limitX = maxX - current.radius;
-            var limitY = maxY - current.radius - 12;
+            var limitX = maxX - current.radius - 6;
+            var ceilingY = -maxY + current.radius + 6;
+            var floorY = maxY - current.radius - 6;
 
-            current.vx *= 0.92;
-            current.vy *= 0.92;
+            current.vx *= 0.992;
+            current.vy *= 0.992;
 
             current.x += current.vx;
             current.y += current.vy;
 
             if (current.x > limitX) {
               current.x = limitX;
-              current.vx *= -0.55;
+              current.vx *= -0.72;
             } else if (current.x < -limitX) {
               current.x = -limitX;
-              current.vx *= -0.55;
+              current.vx *= -0.72;
             }
 
-            if (current.y > limitY) {
-              current.y = limitY;
-              current.vy *= -0.5;
-            } else if (current.y < -limitY) {
-              current.y = -limitY;
-              current.vy *= -0.5;
+            if (current.y > floorY) {
+              current.y = floorY;
+              current.vy *= -0.46;
+              current.vx *= 0.96;
+
+              if (Math.abs(current.vy) < 0.16) {
+                current.vy = 0;
+              }
+            } else if (current.y < ceilingY) {
+              current.y = ceilingY;
+              current.vy *= -0.3;
             }
           }
 
@@ -491,7 +518,7 @@
             }
           },
           relayout: function () {
-            updateNodeTargets(stage, nodes);
+            updateNodeMetrics(stage, nodes);
             renderNodes(nodes);
           }
         };
@@ -516,7 +543,7 @@
           return;
         }
 
-        var people = employees.map(buildEmployeeCard);
+        var people = shuffleArray(employees).map(buildEmployeeCard);
         people.forEach(function (person) {
           stage.appendChild(person);
         });
