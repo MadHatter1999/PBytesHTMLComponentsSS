@@ -1,0 +1,543 @@
+<section class="pb-employee-gaggle">
+  <style>
+    .pb-employee-gaggle {
+      --pb-yellow: #f6c62f;
+      --pb-yellow-soft: rgba(246, 198, 47, 0.2);
+      --pb-yellow-strong: rgba(246, 198, 47, 0.34);
+      --pb-ink: #19313c;
+      --pb-muted: #62737c;
+      width: min(100%, 1040px);
+      margin: 0 auto;
+      padding: clamp(12px, 2vw, 24px);
+      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+      color: var(--pb-ink);
+    }
+
+    .pb-employee-gaggle * {
+      box-sizing: border-box;
+    }
+
+    .pb-employee-gaggle__stage {
+      position: relative;
+      min-height: clamp(380px, 58vw, 760px);
+      overflow: visible;
+      isolation: isolate;
+    }
+
+    .pb-employee-gaggle__person {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: var(--pb-size, 130px);
+      text-align: center;
+      z-index: var(--pb-layer, 2);
+      will-change: transform;
+    }
+
+    .pb-employee-gaggle__person:hover,
+    .pb-employee-gaggle__person:focus-within {
+      z-index: 999;
+    }
+
+    .pb-employee-gaggle__circle {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      padding: 3%;
+      border-radius: 999px;
+      background: transparent;
+      box-shadow: 0 18px 30px rgba(25, 49, 60, 0.08);
+      transition:
+        transform 180ms ease,
+        box-shadow 180ms ease;
+      overflow: visible;
+    }
+
+    .pb-employee-gaggle__person:hover .pb-employee-gaggle__circle,
+    .pb-employee-gaggle__person:focus-within .pb-employee-gaggle__circle {
+      transform: translateY(-8px) scale(1.05);
+      box-shadow: 0 24px 38px rgba(25, 49, 60, 0.12);
+    }
+
+    .pb-employee-gaggle__avatar {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: contain;
+      border-radius: 999px;
+      transform: scale(1.08);
+      filter:
+        drop-shadow(0 0 10px rgba(246, 198, 47, 0.26))
+        drop-shadow(0 0 20px rgba(246, 198, 47, 0.18));
+      transition: filter 180ms ease;
+    }
+
+    .pb-employee-gaggle__person:hover .pb-employee-gaggle__avatar,
+    .pb-employee-gaggle__person:focus-within .pb-employee-gaggle__avatar {
+      filter:
+        drop-shadow(0 0 12px rgba(246, 198, 47, 0.34))
+        drop-shadow(0 0 24px rgba(246, 198, 47, 0.22));
+    }
+
+    .pb-employee-gaggle__name {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 10px 20px rgba(25, 49, 60, 0.08);
+      font: 800 0.9rem/1.1 "Segoe UI", sans-serif;
+      color: var(--pb-ink);
+      white-space: nowrap;
+      opacity: 0;
+      transform: translateY(-6px) scale(0.96);
+      transition:
+        opacity 180ms ease,
+        transform 180ms ease;
+      pointer-events: none;
+    }
+
+    .pb-employee-gaggle__person:hover .pb-employee-gaggle__name,
+    .pb-employee-gaggle__person:focus-within .pb-employee-gaggle__name {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .pb-employee-gaggle__empty {
+      display: grid;
+      place-items: center;
+      min-height: 260px;
+      text-align: center;
+      color: var(--pb-muted);
+      font: 700 1rem/1.4 "Segoe UI", sans-serif;
+    }
+
+    @media (max-width: 767px) {
+      .pb-employee-gaggle {
+        padding: 8px;
+      }
+
+      .pb-employee-gaggle__stage {
+        min-height: 400px;
+      }
+
+      .pb-employee-gaggle__name {
+        font-size: 0.8rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .pb-employee-gaggle__circle,
+      .pb-employee-gaggle__name,
+      .pb-employee-gaggle__avatar {
+        transition: none;
+      }
+    }
+  </style>
+
+  <div class="pb-employee-gaggle__stage"></div>
+
+  <script type="application/json" class="pb-employee-gaggle__data">
+    [
+      {
+        "name": "Tony Healy",
+        "img": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/1741201364266-3SXTF87I3JUJEV9RAJO5/0AnthonyHealy.png"
+      },
+      {
+        "name": "Victoria",
+        "img": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/1741201393742-ZQWK0ZFEGDE8F0P84F4H/VictoriaC.png"
+      },
+      {
+        "name": "Hussain",
+        "img": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/1741201392737-D1VPQ58U6GIYZWGJEP0I/HussainA.png"
+      },
+      {
+        "name": "Brandi",
+        "img": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/1744714392184-SUSAIV7FB0RJI79VNRLY/Brandi.png"
+      },
+      {
+        "name": "Olivia",
+        "img": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/1744043852004-4HAUITZYBMT2MP5S0VD0/Olivia.png"
+      },
+      {
+        "name": "Dylan",
+        "img": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/1741201392797-Q4NP91JNX9RXK04045J0/DylanS.png"
+      },
+      {
+        "name": "Stephen Aucoin",
+        "img": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/1592399709204-YQ3G4JVSG7JQ61K5RV26/Pineapple+Bytes+Round+Headshots-NOCOLOUR-03.png"
+      },
+      {
+        "name": "Kevin",
+        "img": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/1741958215047-U1K3YGFJ9G0KU8HSW0Y5/Kevin.png"
+      },
+      {
+        "name": "James",
+        "img": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/1741958215050-QU07LJJYE3WFORF96T6T/James3.png"
+      },
+      {
+        "name": "Wayman",
+        "img": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/1741958216099-I8JNRAB355HR1Y83VHQP/Wayman.png"
+      },
+      {
+        "name": "Christian",
+        "img": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/1741202063228-XEL601RYM38YY1Q843FJ/ChristianD.png"
+      },
+      {
+        "name": "Rickey",
+        "img": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/1742843825205-PX2O1NJDVPS3GNGYQ8MV/Rickey.png"
+      },
+      {
+        "name": "Tarick",
+        "img": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/1771006770069-U251P8IHKG6ARFTQSQCT/Pineapple%2BBytes%2BRound%2BHeadshots-Tarick-Website.png"
+      }
+    ]
+  </script>
+
+  <script>
+    (function () {
+      var widget = document.currentScript.closest(".pb-employee-gaggle");
+
+      if (!widget || widget.dataset.pbGaggleReady === "true") {
+        return;
+      }
+
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function safeParseEmployees(node) {
+        if (!node) {
+          return [];
+        }
+
+        try {
+          var parsed = JSON.parse(node.textContent.trim());
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (error) {
+          return [];
+        }
+      }
+
+      function buildEmployeeCard(employee, index) {
+        var person = document.createElement("article");
+        var circle = document.createElement("div");
+        var avatar = document.createElement("img");
+        var name = document.createElement("div");
+
+        person.className = "pb-employee-gaggle__person";
+        person.dataset.index = String(index);
+        circle.className = "pb-employee-gaggle__circle";
+        avatar.className = "pb-employee-gaggle__avatar";
+        name.className = "pb-employee-gaggle__name";
+
+        avatar.src = employee.img || "";
+        avatar.alt = employee.name ? employee.name + " portrait" : "Employee portrait";
+        avatar.loading = "lazy";
+        avatar.decoding = "async";
+        name.textContent = employee.name || "Team member";
+
+        circle.appendChild(avatar);
+        person.appendChild(circle);
+        person.appendChild(name);
+        return person;
+      }
+
+      function buildEmpty() {
+        var empty = document.createElement("div");
+        empty.className = "pb-employee-gaggle__empty";
+        empty.textContent = "Add a JSON array of { name, img } objects to populate the widget.";
+        return empty;
+      }
+
+      function getClusterSlots(count, stepX, stepY) {
+        var slots = [];
+        var columns = Math.ceil(Math.sqrt(count));
+        var rows = Math.ceil(count / columns);
+        var row;
+        var column;
+        var placed = 0;
+        var xOffset = ((columns - 1) * stepX) / 2;
+        var yOffset = ((rows - 1) * stepY) / 2;
+
+        for (row = 0; row < rows; row += 1) {
+          var remaining = count - placed;
+          var itemsInRow = Math.min(columns, remaining);
+          var rowWidth = (itemsInRow - 1) * stepX;
+          var rowOffset = rowWidth / 2;
+
+          for (column = 0; column < itemsInRow; column += 1) {
+            slots.push({
+              x: column * stepX - rowOffset,
+              y: row * stepY - yOffset
+            });
+            placed += 1;
+          }
+        }
+
+        return slots;
+      }
+
+      function buildNodes(stage, people) {
+        var width = stage.clientWidth;
+        var height = stage.clientHeight;
+        var count = people.length;
+        var minSide = Math.min(width, height);
+        var stepX = clamp(width * 0.16, 92, 132);
+        var stepY = clamp(height * 0.16, 92, 132);
+        var normalizedSize = clamp(minSide * 0.14, 80, 132) + 14;
+        var slots = getClusterSlots(count, stepX, stepY);
+
+        return people.map(function (person, index) {
+          var slot = slots[index % slots.length];
+          var size = normalizedSize;
+          var x = slot.x;
+          var y = slot.y;
+          var tilt = index % 2 === 0 ? -6 : 6;
+
+          if (width < 768) {
+            x *= 0.9;
+            y *= 0.92;
+            size *= 0.9;
+          }
+
+          person.style.width = size.toFixed(1) + "px";
+          person.style.setProperty("--pb-layer", String(2 + ((index + 1) % 4)));
+
+          return {
+            element: person,
+            targetX: x,
+            targetY: y,
+            x: x + (index % 2 === 0 ? -18 : 18),
+            y: y + (index % 3 === 0 ? -12 : 12),
+            vx: 0,
+            vy: 0,
+            size: size,
+            radius: size * 0.47,
+            tilt: tilt,
+            seed: index * 0.7
+          };
+        });
+      }
+
+      function updateNodeTargets(stage, nodes) {
+        var refreshed = buildNodes(
+          stage,
+          nodes.map(function (node) {
+            return node.element;
+          })
+        );
+
+        refreshed.forEach(function (nextNode, index) {
+          var node = nodes[index];
+          node.targetX = nextNode.targetX;
+          node.targetY = nextNode.targetY;
+          node.size = nextNode.size;
+          node.radius = nextNode.radius;
+          node.tilt = nextNode.tilt;
+          node.element.style.width = nextNode.size.toFixed(1) + "px";
+          node.element.style.setProperty("--pb-layer", nextNode.element.style.getPropertyValue("--pb-layer"));
+        });
+      }
+
+      function renderNodes(nodes) {
+        nodes.forEach(function (node) {
+          var liveTilt = node.tilt + clamp(node.vx * 0.35, -4, 4);
+          node.element.style.transform =
+            "translate(calc(-50% + " +
+            node.x.toFixed(1) +
+            "px), calc(-50% + " +
+            node.y.toFixed(1) +
+            "px)) rotate(" +
+            liveTilt.toFixed(2) +
+            "deg)";
+        });
+      }
+
+      function createPhysics(stage, nodes) {
+        var pointer = { active: false, x: 0, y: 0 };
+        var rafId = 0;
+        var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        function updatePointer(clientX, clientY) {
+          var bounds = stage.getBoundingClientRect();
+          pointer.x = clientX - bounds.left - bounds.width / 2;
+          pointer.y = clientY - bounds.top - bounds.height / 2;
+          pointer.active = true;
+        }
+
+        stage.addEventListener("mousemove", function (event) {
+          updatePointer(event.clientX, event.clientY);
+        });
+
+        stage.addEventListener(
+          "touchmove",
+          function (event) {
+            if (event.touches && event.touches[0]) {
+              updatePointer(event.touches[0].clientX, event.touches[0].clientY);
+            }
+          },
+          { passive: true }
+        );
+
+        function clearPointer() {
+          pointer.active = false;
+        }
+
+        stage.addEventListener("mouseleave", clearPointer);
+        stage.addEventListener("touchend", clearPointer);
+        stage.addEventListener("touchcancel", clearPointer);
+
+        function tick() {
+          var width = stage.clientWidth;
+          var height = stage.clientHeight;
+          var maxX = width / 2;
+          var maxY = height / 2;
+          var i;
+          var j;
+
+          for (i = 0; i < nodes.length; i += 1) {
+            var node = nodes[i];
+            var drift = Math.sin(Date.now() * 0.0014 + node.seed) * 1.4;
+
+            node.vx += (node.targetX - node.x) * 0.009;
+            node.vy += (node.targetY - node.y) * 0.009 + drift * 0.002;
+
+            if (pointer.active) {
+              var dxPointer = node.x - pointer.x;
+              var dyPointer = node.y - pointer.y;
+              var pointerDistance = Math.sqrt(dxPointer * dxPointer + dyPointer * dyPointer) || 1;
+              var pointerReach = node.radius + 90;
+
+              if (pointerDistance < pointerReach) {
+                var pointerPush = (pointerReach - pointerDistance) * 0.012;
+                node.vx += (dxPointer / pointerDistance) * pointerPush;
+                node.vy += (dyPointer / pointerDistance) * pointerPush;
+              }
+            }
+          }
+
+          for (i = 0; i < nodes.length; i += 1) {
+            for (j = i + 1; j < nodes.length; j += 1) {
+              var a = nodes[i];
+              var b = nodes[j];
+              var dx = b.x - a.x;
+              var dy = b.y - a.y;
+              var distance = Math.sqrt(dx * dx + dy * dy) || 0.001;
+              var minimum = a.radius + b.radius + 16;
+
+              if (distance < minimum) {
+                var overlap = (minimum - distance) / distance;
+                var pushX = dx * overlap * 0.5;
+                var pushY = dy * overlap * 0.5;
+
+                a.x -= pushX;
+                a.y -= pushY;
+                b.x += pushX;
+                b.y += pushY;
+
+                a.vx -= pushX * 0.03;
+                a.vy -= pushY * 0.03;
+                b.vx += pushX * 0.03;
+                b.vy += pushY * 0.03;
+              }
+            }
+          }
+
+          for (i = 0; i < nodes.length; i += 1) {
+            var current = nodes[i];
+            var limitX = maxX - current.radius;
+            var limitY = maxY - current.radius - 12;
+
+            current.vx *= 0.92;
+            current.vy *= 0.92;
+
+            current.x += current.vx;
+            current.y += current.vy;
+
+            if (current.x > limitX) {
+              current.x = limitX;
+              current.vx *= -0.55;
+            } else if (current.x < -limitX) {
+              current.x = -limitX;
+              current.vx *= -0.55;
+            }
+
+            if (current.y > limitY) {
+              current.y = limitY;
+              current.vy *= -0.5;
+            } else if (current.y < -limitY) {
+              current.y = -limitY;
+              current.vy *= -0.5;
+            }
+          }
+
+          renderNodes(nodes);
+          rafId = window.requestAnimationFrame(tick);
+        }
+
+        renderNodes(nodes);
+
+        if (!reducedMotion) {
+          rafId = window.requestAnimationFrame(tick);
+        }
+
+        return {
+          stop: function () {
+            if (rafId) {
+              window.cancelAnimationFrame(rafId);
+            }
+          },
+          relayout: function () {
+            updateNodeTargets(stage, nodes);
+            renderNodes(nodes);
+          }
+        };
+      }
+
+      function init() {
+        var stage = widget.querySelector(".pb-employee-gaggle__stage");
+        var dataNode = widget.querySelector(".pb-employee-gaggle__data");
+        var employees = safeParseEmployees(dataNode).filter(function (employee) {
+          return employee && employee.name && employee.img;
+        });
+
+        if (!stage) {
+          return;
+        }
+
+        stage.innerHTML = "";
+
+        if (!employees.length) {
+          stage.appendChild(buildEmpty());
+          widget.dataset.pbGaggleReady = "true";
+          return;
+        }
+
+        var people = employees.map(buildEmployeeCard);
+        people.forEach(function (person) {
+          stage.appendChild(person);
+        });
+
+        var nodes = buildNodes(stage, people);
+        var physics = createPhysics(stage, nodes);
+
+        if ("ResizeObserver" in window) {
+          var resizeObserver = new ResizeObserver(function () {
+            physics.relayout();
+          });
+          resizeObserver.observe(stage);
+          widget.pbResizeObserver = resizeObserver;
+        } else {
+          window.addEventListener("resize", physics.relayout);
+        }
+
+        widget.dataset.pbGaggleReady = "true";
+      }
+
+      init();
+    })();
+  </script>
+</section>
