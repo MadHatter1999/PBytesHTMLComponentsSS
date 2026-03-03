@@ -170,6 +170,7 @@
       padding: 0;
       cursor: pointer;
       transition: transform 160ms ease, opacity 160ms ease, filter 160ms ease;
+      touch-action: none;
     }
 
     .pb-plinko__disk-button:hover,
@@ -216,6 +217,18 @@
       will-change: transform;
       z-index: var(--pb-layer, 10);
       transform: translate(-50%, -50%);
+    }
+
+    .pb-plinko__drag-ghost {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 78px;
+      height: 78px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.94;
     }
 
     .pb-plinko__disk-image,
@@ -380,6 +393,7 @@
       var rafId = 0;
       var resizeObserver = null;
       var autoDropTimer = 0;
+      var dragState = null;
       var pegs = [];
       var dividers = [];
       var disks = [];
@@ -441,7 +455,14 @@
         disk.appendChild(image);
         disk.appendChild(name);
         button.appendChild(disk);
+        button.addEventListener("pointerdown", function (event) {
+          beginQueueDrag(event, person, button);
+        });
         button.addEventListener("click", function () {
+          if (button.dataset.pbSuppressClick === "true") {
+            button.dataset.pbSuppressClick = "false";
+            return;
+          }
           dropPerson(person);
         });
         return button;
@@ -474,6 +495,19 @@
         token.appendChild(name);
         disksLayer.appendChild(token);
         return token;
+      }
+
+      function buildDragGhost(person) {
+        var ghost = document.createElement("div");
+        var image = document.createElement("img");
+
+        ghost.className = "pb-plinko__drag-ghost";
+        image.className = "pb-plinko__token-image";
+        image.src = person.img || "";
+        image.alt = "";
+        ghost.appendChild(image);
+        document.body.appendChild(ghost);
+        return ghost;
       }
 
       function computeGeometry() {
@@ -509,6 +543,8 @@
         var rightBound = width - diskRadius - 8;
         var spawnX = width / 2;
         var spawnY = 34;
+        var dropMinX = leftBound;
+        var dropMaxX = rightBound;
         var bins = [];
         var i;
 
@@ -541,6 +577,8 @@
           rightBound: rightBound,
           spawnX: spawnX,
           spawnY: spawnY,
+          dropMinX: dropMinX,
+          dropMaxX: dropMaxX,
           bins: bins
         };
       }
@@ -646,12 +684,13 @@
         }
 
         var token = buildToken(person);
-        var spawnSpread = geometry.slotWidth * 0.32;
+        var randomX =
+          geometry.dropMinX + Math.random() * (geometry.dropMaxX - geometry.dropMinX);
 
         disks.push({
           person: person,
           element: token,
-          x: geometry.spawnX + (Math.random() - 0.5) * spawnSpread,
+          x: randomX,
           y: geometry.spawnY,
           vx: (Math.random() - 0.5) * 1.4,
           vy: 0,
@@ -662,17 +701,124 @@
         });
       }
 
-      function dropPerson(person) {
+      function spawnDiskAt(person, x) {
+        if (!geometry) {
+          return;
+        }
+
+        var token = buildToken(person);
+        var clampedX = clamp(x, geometry.dropMinX, geometry.dropMaxX);
+
+        disks.push({
+          person: person,
+          element: token,
+          x: clampedX,
+          y: geometry.spawnY,
+          vx: (Math.random() - 0.5) * 0.9,
+          vy: 0,
+          radius: geometry.diskRadius,
+          settled: false,
+          angle: 0,
+          spin: (Math.random() - 0.5) * 0.08
+        });
+      }
+
+      function dropPerson(person, x) {
         if (!person) {
           return false;
         }
 
-        spawnDisk(person);
+        if (typeof x === "number") {
+          spawnDiskAt(person, x);
+        } else {
+          spawnDisk(person);
+        }
         available = available.filter(function (candidate) {
           return candidate !== person;
         });
         renderQueue();
         return true;
+      }
+
+      function pointerInsideBoard(clientX, clientY) {
+        var bounds = board.getBoundingClientRect();
+        return (
+          clientX >= bounds.left &&
+          clientX <= bounds.right &&
+          clientY >= bounds.top &&
+          clientY <= bounds.top + geometry.dividerTop
+        );
+      }
+
+      function pointerToBoardX(clientX) {
+        var bounds = board.getBoundingClientRect();
+        return clamp(clientX - bounds.left, geometry.dropMinX, geometry.dropMaxX);
+      }
+
+      function updateDragGhost(clientX, clientY) {
+        if (dragState && dragState.ghost) {
+          dragState.ghost.style.left = clientX + "px";
+          dragState.ghost.style.top = clientY + "px";
+        }
+      }
+
+      function endQueueDrag(event) {
+        if (!dragState) {
+          return;
+        }
+
+        window.removeEventListener("pointermove", onQueueDragMove);
+        window.removeEventListener("pointerup", endQueueDrag);
+        window.removeEventListener("pointercancel", endQueueDrag);
+
+        if (dragState.ghost) {
+          dragState.ghost.remove();
+        }
+
+        if (dragState.dragging && pointerInsideBoard(event.clientX, event.clientY)) {
+          dragState.button.dataset.pbSuppressClick = "true";
+          dropPerson(dragState.person, pointerToBoardX(event.clientX));
+        }
+
+        dragState = null;
+      }
+
+      function onQueueDragMove(event) {
+        if (!dragState) {
+          return;
+        }
+
+        var dx = event.clientX - dragState.startX;
+        var dy = event.clientY - dragState.startY;
+
+        if (!dragState.dragging && Math.sqrt(dx * dx + dy * dy) > 8) {
+          dragState.dragging = true;
+          dragState.ghost = buildDragGhost(dragState.person);
+          dragState.button.dataset.pbSuppressClick = "true";
+        }
+
+        if (dragState.dragging) {
+          updateDragGhost(event.clientX, event.clientY);
+        }
+      }
+
+      function beginQueueDrag(event, person, button) {
+        if (!geometry || button.disabled || autoDropTimer) {
+          return;
+        }
+
+        dragState = {
+          person: person,
+          button: button,
+          startX: event.clientX,
+          startY: event.clientY,
+          dragging: false,
+          ghost: null
+        };
+
+        window.addEventListener("pointermove", onQueueDragMove);
+        window.addEventListener("pointerup", endQueueDrag);
+        window.addEventListener("pointercancel", endQueueDrag);
       }
 
       function queueAutoDrop() {
