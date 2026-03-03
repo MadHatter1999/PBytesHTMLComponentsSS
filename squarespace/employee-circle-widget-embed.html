@@ -543,8 +543,9 @@
         var rightBound = width - diskRadius - 8;
         var spawnX = width / 2;
         var spawnY = 34;
-        var dropMinX = leftBound;
-        var dropMaxX = rightBound;
+        var edgeBuffer = Math.max(slotWidth * 0.7, diskRadius * 1.4);
+        var dropMinX = leftBound + edgeBuffer;
+        var dropMaxX = rightBound - edgeBuffer;
         var bins = [];
         var i;
 
@@ -602,7 +603,9 @@
         for (row = 0; row < geometry.rows; row += 1) {
           var rowColumns = row % 2 === 0 ? evenColumns : Math.max(4, evenColumns - 1);
           var rowWidth = (rowColumns - 1) * geometry.pegSpacingX;
-          var x = geometry.width / 2 - rowWidth / 2;
+          var rowStartX = geometry.width / 2 - rowWidth / 2;
+          var rowEndX = rowStartX + rowWidth;
+          var x = rowStartX;
           var y = geometry.startY + row * geometry.pegSpacingY;
           var placed = 0;
 
@@ -617,6 +620,33 @@
             pegs.push(peg);
             x += geometry.pegSpacingX;
             placed += 1;
+          }
+
+          if (row > 0 && row < geometry.rows - 1) {
+            var leftExtraX = rowStartX - geometry.pegSpacingX;
+            var rightExtraX = rowEndX + geometry.pegSpacingX;
+
+            if (leftExtraX > geometry.leftBound + geometry.pegRadius) {
+              var leftExtraPeg = { x: leftExtraX, y: y, radius: geometry.pegRadius };
+              var leftExtraNode = document.createElement("div");
+
+              leftExtraNode.className = "pb-plinko__peg";
+              leftExtraNode.style.left = leftExtraX + "px";
+              leftExtraNode.style.top = y + "px";
+              pegsLayer.appendChild(leftExtraNode);
+              pegs.push(leftExtraPeg);
+            }
+
+            if (rightExtraX < geometry.rightBound - geometry.pegRadius) {
+              var rightExtraPeg = { x: rightExtraX, y: y, radius: geometry.pegRadius };
+              var rightExtraNode = document.createElement("div");
+
+              rightExtraNode.className = "pb-plinko__peg";
+              rightExtraNode.style.left = rightExtraX + "px";
+              rightExtraNode.style.top = y + "px";
+              pegsLayer.appendChild(rightExtraNode);
+              pegs.push(rightExtraPeg);
+            }
           }
         }
 
