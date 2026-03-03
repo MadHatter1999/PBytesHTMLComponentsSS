@@ -63,6 +63,24 @@
       z-index: 999;
     }
 
+    .pb-employee-gaggle--party .pb-employee-gaggle__circle {
+      animation: pb-gaggle-dance 1180ms ease-in-out infinite;
+      animation-delay: calc(var(--pb-delay, 0ms) * -1);
+    }
+
+    .pb-employee-gaggle--party .pb-employee-gaggle__avatar {
+      animation: pb-gaggle-hue 3600ms linear infinite;
+      animation-delay: calc(var(--pb-delay, 0ms) * -1);
+    }
+
+    .pb-employee-gaggle--party .pb-employee-gaggle__person:nth-child(3n) .pb-employee-gaggle__circle {
+      animation-duration: 980ms;
+    }
+
+    .pb-employee-gaggle--party .pb-employee-gaggle__person:nth-child(4n) .pb-employee-gaggle__circle {
+      animation-duration: 1320ms;
+    }
+
     .pb-employee-gaggle--secret-whirl .pb-employee-gaggle__name {
       opacity: 0 !important;
       transform: translateY(-8px) scale(0.88) !important;
@@ -205,6 +223,70 @@
       100% {
         opacity: 1;
         transform: rotate(0deg) scale(1);
+      }
+    }
+
+    @keyframes pb-gaggle-dance {
+      0% {
+        transform: translateY(0) rotate(-4deg) scale(1);
+      }
+
+      25% {
+        transform: translateY(-11px) rotate(5deg) scale(1.04);
+      }
+
+      50% {
+        transform: translateY(4px) rotate(-3deg) scale(0.98);
+      }
+
+      75% {
+        transform: translateY(-7px) rotate(3deg) scale(1.03);
+      }
+
+      100% {
+        transform: translateY(0) rotate(-4deg) scale(1);
+      }
+    }
+
+    @keyframes pb-gaggle-hue {
+      0% {
+        filter:
+          hue-rotate(0deg)
+          saturate(1)
+          drop-shadow(0 0 10px rgba(246, 198, 47, 0.26))
+          drop-shadow(0 0 20px rgba(246, 198, 47, 0.18));
+      }
+
+      25% {
+        filter:
+          hue-rotate(70deg)
+          saturate(1.15)
+          drop-shadow(0 0 12px rgba(246, 198, 47, 0.28))
+          drop-shadow(0 0 22px rgba(246, 198, 47, 0.2));
+      }
+
+      50% {
+        filter:
+          hue-rotate(150deg)
+          saturate(1.22)
+          drop-shadow(0 0 12px rgba(246, 198, 47, 0.3))
+          drop-shadow(0 0 24px rgba(246, 198, 47, 0.22));
+      }
+
+      75% {
+        filter:
+          hue-rotate(235deg)
+          saturate(1.1)
+          drop-shadow(0 0 11px rgba(246, 198, 47, 0.28))
+          drop-shadow(0 0 22px rgba(246, 198, 47, 0.2));
+      }
+
+      100% {
+        filter:
+          hue-rotate(360deg)
+          saturate(1)
+          drop-shadow(0 0 10px rgba(246, 198, 47, 0.26))
+          drop-shadow(0 0 20px rgba(246, 198, 47, 0.18));
       }
     }
 
@@ -1279,39 +1361,16 @@
         window.requestAnimationFrame(frame);
       }
 
-      function runTonyTransformation(stage, physics, employees) {
-        var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-        if (widget.dataset.pbTonySecretTriggered === "true") {
+      function runTonyParty() {
+        if (widget.dataset.pbTonyPartyTriggered === "true") {
           return;
         }
 
-        widget.dataset.pbTonySecretTriggered = "true";
-
-        if (physics && typeof physics.stop === "function") {
-          physics.stop();
-        }
-
-        if (widget.pbResizeObserver && typeof widget.pbResizeObserver.disconnect === "function") {
-          widget.pbResizeObserver.disconnect();
-        }
-
-        if (reducedMotion) {
-          renderTonyPlinko(null, employees);
-          return;
-        }
-
-        widget.classList.add("pb-employee-gaggle--secret-whirl");
-        animateSecretWhirl(physics, function () {
-          widget.classList.add("pb-employee-gaggle--secret-icon-in");
-        });
-
-        window.setTimeout(function () {
-          renderTonyPlinko(null, employees);
-        }, 1820);
+        widget.dataset.pbTonyPartyTriggered = "true";
+        widget.classList.add("pb-employee-gaggle--party");
       }
 
-      function attachTonyHoverTrigger(stage, people, physics, employees) {
+      function attachTonyHoverTrigger(people) {
         var hoverTimer = 0;
         var tonyCard = people.find(function (person) {
           return (person.dataset.personName || "").toLowerCase() === "tony healy";
@@ -1332,8 +1391,8 @@
           clearTrigger();
           hoverTimer = window.setTimeout(function () {
             hoverTimer = 0;
-            runTonyTransformation(stage, physics, employees);
-          }, 300000);
+            runTonyParty();
+          }, 10000);
         }
 
         tonyCard.addEventListener("mouseenter", armTrigger);
@@ -1361,14 +1420,6 @@
           return;
         }
 
-        var secretIcon = document.createElement("img");
-        secretIcon.className = "pb-employee-gaggle__secret-icon";
-        secretIcon.src =
-          "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/1593530549579-RCB47Q7O2EA2LAL7N92M/Pineapple+Slice.png?content-type=image%2Fpng";
-        secretIcon.alt = "";
-        secretIcon.decoding = "async";
-        stage.appendChild(secretIcon);
-
         var people = employees.map(buildEmployeeCard);
         people.forEach(function (person) {
           stage.appendChild(person);
@@ -1376,7 +1427,7 @@
 
         var nodes = buildNodes(stage, people);
         var physics = createPhysics(stage, nodes);
-        attachTonyHoverTrigger(stage, people, physics, employees);
+        attachTonyHoverTrigger(people);
         widget.classList.add("pb-employee-gaggle--intro");
 
         window.setTimeout(function () {
