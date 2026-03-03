@@ -24,6 +24,26 @@
       isolation: isolate;
     }
 
+    .pb-employee-gaggle__secret-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: clamp(120px, 18vw, 220px);
+      max-width: 42%;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, -50%) scale(0.2) rotate(-320deg);
+      transform-origin: center;
+      filter:
+        drop-shadow(0 0 18px rgba(246, 198, 47, 0.22))
+        drop-shadow(0 20px 30px rgba(25, 49, 60, 0.08));
+      transition:
+        opacity 420ms ease,
+        transform 900ms cubic-bezier(0.2, 0.88, 0.22, 1),
+        filter 900ms ease;
+      z-index: 1200;
+    }
+
     .pb-employee-gaggle__person {
       position: absolute;
       top: 50%;
@@ -32,11 +52,32 @@
       text-align: center;
       z-index: var(--pb-layer, 2);
       will-change: transform;
+      transition:
+        transform 1200ms cubic-bezier(0.2, 0.86, 0.24, 1),
+        opacity 900ms ease,
+        filter 900ms ease;
     }
 
     .pb-employee-gaggle__person:hover,
     .pb-employee-gaggle__person:focus-within {
       z-index: 999;
+    }
+
+    .pb-employee-gaggle--secret-whirl .pb-employee-gaggle__name {
+      opacity: 0 !important;
+      transform: translateY(-8px) scale(0.88) !important;
+    }
+
+    .pb-employee-gaggle--secret-whirl .pb-employee-gaggle__person {
+      pointer-events: none;
+    }
+
+    .pb-employee-gaggle--secret-icon-in .pb-employee-gaggle__secret-icon {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1) rotate(0deg);
+      filter:
+        drop-shadow(0 0 22px rgba(246, 198, 47, 0.28))
+        drop-shadow(0 24px 34px rgba(25, 49, 60, 0.1));
     }
 
     .pb-employee-gaggle__circle {
@@ -143,6 +184,11 @@
         animation: none;
         opacity: 1;
       }
+
+      .pb-employee-gaggle__person,
+      .pb-employee-gaggle__secret-icon {
+        transition: none;
+      }
     }
 
     @keyframes pb-gaggle-spin-in {
@@ -161,6 +207,7 @@
         transform: rotate(0deg) scale(1);
       }
     }
+
   </style>
 
   <div class="pb-employee-gaggle__stage"></div>
@@ -222,6 +269,8 @@
     ]
   </script>
 
+  <template class="pb-tony-secret-template"></template>
+
   <script>
     (function () {
       var widget = document.currentScript.closest(".pb-employee-gaggle");
@@ -255,6 +304,7 @@
 
         person.className = "pb-employee-gaggle__person";
         person.dataset.index = String(index);
+        person.dataset.personName = employee.name || "";
         circle.className = "pb-employee-gaggle__circle";
         avatar.className = "pb-employee-gaggle__avatar";
         name.className = "pb-employee-gaggle__name";
@@ -531,8 +581,765 @@
           relayout: function () {
             updateNodeTargets(stage, nodes);
             renderNodes(nodes);
+          },
+          snapshot: function () {
+            return nodes.map(function (node) {
+              return {
+                element: node.element,
+                x: node.x,
+                y: node.y,
+                vx: node.vx,
+                vy: node.vy,
+                tilt: node.tilt
+              };
+            });
           }
         };
+      }
+
+      function shuffle(items) {
+        var copy = items.slice();
+        var i;
+
+        for (i = copy.length - 1; i > 0; i -= 1) {
+          var swapIndex = Math.floor(Math.random() * (i + 1));
+          var temp = copy[i];
+          copy[i] = copy[swapIndex];
+          copy[swapIndex] = temp;
+        }
+
+        return copy;
+      }
+
+      function buildTonyPlinkoMarkup() {
+        return (
+          '<style>' +
+          '.pb-plinko{--pb-yellow:#f6c62f;--pb-ink:#19313c;--pb-muted:#62737c;width:min(100%,840px);margin:0 auto;padding:clamp(8px,1.4vw,16px);font-family:"Trebuchet MS","Segoe UI",sans-serif;color:var(--pb-ink)}' +
+          '.pb-plinko *{box-sizing:border-box}.pb-plinko__shell{display:grid;gap:12px}.pb-plinko__toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.pb-plinko__title{margin:0;font:800 clamp(1rem,1.4vw,1.24rem)/1 "Trebuchet MS","Segoe UI",sans-serif;letter-spacing:-.03em}.pb-plinko__actions{display:flex;gap:8px;flex-wrap:wrap}' +
+          '.pb-plinko__button{appearance:none;border:0;border-radius:999px;padding:8px 12px;background:var(--pb-yellow);color:#fff;font:800 .78rem/1 "Segoe UI",sans-serif;cursor:pointer;box-shadow:0 10px 20px rgba(246,198,47,.22);transition:transform .16s ease,box-shadow .16s ease,opacity .16s ease}.pb-plinko__button:hover,.pb-plinko__button:focus-visible{transform:translateY(-1px);box-shadow:0 14px 24px rgba(246,198,47,.28);outline:none}.pb-plinko__button[disabled]{opacity:.42;cursor:default;pointer-events:none}' +
+          '.pb-plinko__board{position:relative;min-height:clamp(420px,56vw,640px);border-radius:24px;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.84),rgba(255,255,255,.72)),linear-gradient(180deg,#f9f8f4 0%,#efede6 100%);box-shadow:inset 0 0 0 1px rgba(25,49,60,.06),0 24px 46px rgba(25,49,60,.08)}.pb-plinko__board::before{content:"";position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.1),rgba(255,255,255,.1)),repeating-linear-gradient(90deg,rgba(25,49,60,.028) 0 1px,transparent 1px 24px);opacity:.6;pointer-events:none}.pb-plinko__drop-zone,.pb-plinko__pegs,.pb-plinko__dividers,.pb-plinko__slots,.pb-plinko__disks{position:absolute;inset:0}.pb-plinko__drop-zone{top:14px;left:50%;inset:auto auto auto 50%;width:clamp(96px,16%,144px);height:34px;transform:translateX(-50%);border:2px dashed rgba(25,49,60,.12);border-radius:999px;background:rgba(255,255,255,.52);pointer-events:none}.pb-plinko__drop-zone::after{content:"Drop";position:absolute;inset:0;display:grid;place-items:center;font:800 .64rem/1 "Segoe UI",sans-serif;letter-spacing:.14em;text-transform:uppercase;color:rgba(25,49,60,.5)}' +
+          '.pb-plinko__peg{position:absolute;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:999px;background:rgba(25,49,60,.22);box-shadow:0 0 0 4px rgba(255,255,255,.88);pointer-events:none}.pb-plinko__divider{position:absolute;bottom:0;width:6px;border-radius:999px 999px 0 0;background:rgba(25,49,60,.14);box-shadow:0 0 0 1px rgba(255,255,255,.62);pointer-events:none}.pb-plinko__slot{position:absolute;bottom:0;display:grid;place-items:end center;padding-bottom:12px;font:800 .66rem/1 "Segoe UI",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:rgba(25,49,60,.42);pointer-events:none}.pb-plinko__queue{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center;min-height:58px}.pb-plinko__queue-empty{font:700 .84rem/1.3 "Segoe UI",sans-serif;color:var(--pb-muted)}' +
+          '.pb-plinko__disk-button{appearance:none;border:0;background:transparent;padding:0;cursor:pointer;transition:transform .16s ease,opacity .16s ease,filter .16s ease;touch-action:none}.pb-plinko__disk-button:hover,.pb-plinko__disk-button:focus-visible{transform:translateY(-2px);filter:brightness(1.03);outline:none}.pb-plinko__disk,.pb-plinko__token{position:relative;width:56px;aspect-ratio:1/1;border-radius:999px}.pb-plinko__token{position:absolute;top:0;left:0;width:var(--pb-size,84px);height:var(--pb-size,84px);will-change:transform;z-index:10;transform:translate(-50%,-50%)}.pb-plinko__drag-ghost{position:fixed;top:0;left:0;width:62px;height:62px;transform:translate(-50%,-50%);pointer-events:none;z-index:9999;opacity:.94}.pb-plinko__disk-image,.pb-plinko__token-image{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:contain;border-radius:999px;filter:drop-shadow(0 0 8px rgba(246,198,47,.24)) drop-shadow(0 0 18px rgba(246,198,47,.16));user-select:none;-webkit-user-drag:none}.pb-plinko__disk-name{position:absolute;left:50%;bottom:-22px;transform:translateX(-50%);padding:5px 9px;border-radius:999px;background:rgba(255,255,255,.94);box-shadow:0 10px 18px rgba(25,49,60,.08);font:800 .68rem/1 "Segoe UI",sans-serif;color:var(--pb-ink);white-space:nowrap;opacity:0;transition:opacity .16s ease,transform .16s ease;pointer-events:none}.pb-plinko__disk-button:hover .pb-plinko__disk-name,.pb-plinko__disk-button:focus-visible .pb-plinko__disk-name,.pb-plinko__token:hover .pb-plinko__disk-name{opacity:1;transform:translateX(-50%) translateY(-2px)}' +
+          '@media (max-width:767px){.pb-plinko{padding:8px}.pb-plinko__board{min-height:380px;border-radius:20px}.pb-plinko__disk,.pb-plinko__token{width:50px}}@media (prefers-reduced-motion:reduce){.pb-plinko__button,.pb-plinko__disk-button,.pb-plinko__disk-name{transition:none}}' +
+          '</style>' +
+          '<div class="pb-plinko__shell"><div class="pb-plinko__toolbar"><h2 class="pb-plinko__title">Team Plinko</h2><div class="pb-plinko__actions"><button class="pb-plinko__button pb-plinko__drop" type="button">Drop</button><button class="pb-plinko__button pb-plinko__reset" type="button">Reset</button></div></div><div class="pb-plinko__board"><div class="pb-plinko__drop-zone"></div><div class="pb-plinko__pegs"></div><div class="pb-plinko__dividers"></div><div class="pb-plinko__slots"></div><div class="pb-plinko__disks"></div></div><div class="pb-plinko__queue"></div></div>'
+        );
+      }
+
+      function initTonyPlinko(plinkoWidget, employees) {
+        var board = plinkoWidget.querySelector(".pb-plinko__board");
+        var pegsLayer = plinkoWidget.querySelector(".pb-plinko__pegs");
+        var dividersLayer = plinkoWidget.querySelector(".pb-plinko__dividers");
+        var slotsLayer = plinkoWidget.querySelector(".pb-plinko__slots");
+        var disksLayer = plinkoWidget.querySelector(".pb-plinko__disks");
+        var queue = plinkoWidget.querySelector(".pb-plinko__queue");
+        var dropButton = plinkoWidget.querySelector(".pb-plinko__drop");
+        var resetButton = plinkoWidget.querySelector(".pb-plinko__reset");
+        var autoDropTimer = 0;
+        var dragState = null;
+        var pegs = [];
+        var dividers = [];
+        var disks = [];
+        var available = [];
+        var geometry = null;
+        var resizeFrame = 0;
+
+        function buildQueueDisk(person, index) {
+          var button = document.createElement("button");
+          var disk = document.createElement("div");
+          var image = document.createElement("img");
+          var name = document.createElement("div");
+
+          button.className = "pb-plinko__disk-button";
+          button.type = "button";
+          button.dataset.index = String(index);
+          button.setAttribute("aria-label", "Drop " + person.name);
+          disk.className = "pb-plinko__disk";
+          image.className = "pb-plinko__disk-image";
+          name.className = "pb-plinko__disk-name";
+          image.src = person.img || "";
+          image.alt = person.name ? person.name + " portrait" : "Team member portrait";
+          image.loading = "lazy";
+          image.decoding = "async";
+          name.textContent = person.name || "Team member";
+          disk.appendChild(image);
+          disk.appendChild(name);
+          button.appendChild(disk);
+          button.addEventListener("pointerdown", function (event) {
+            beginQueueDrag(event, person, button);
+          });
+          button.addEventListener("click", function () {
+            if (button.dataset.pbSuppressClick === "true") {
+              button.dataset.pbSuppressClick = "false";
+              return;
+            }
+            dropPerson(person);
+          });
+          return button;
+        }
+
+        function buildToken(person) {
+          var token = document.createElement("div");
+          var image = document.createElement("img");
+          var name = document.createElement("div");
+
+          token.className = "pb-plinko__token";
+          token.style.setProperty("--pb-size", geometry.diskSize + "px");
+          image.className = "pb-plinko__token-image";
+          image.src = person.img || "";
+          image.alt = person.name ? person.name + " portrait" : "Team member portrait";
+          image.loading = "lazy";
+          image.decoding = "async";
+          name.className = "pb-plinko__disk-name";
+          name.textContent = person.name || "Team member";
+          token.appendChild(image);
+          token.appendChild(name);
+          disksLayer.appendChild(token);
+          return token;
+        }
+
+        function buildDragGhost(person) {
+          var ghost = document.createElement("div");
+          var image = document.createElement("img");
+
+          ghost.className = "pb-plinko__drag-ghost";
+          image.className = "pb-plinko__token-image";
+          image.src = person.img || "";
+          image.alt = "";
+          ghost.appendChild(image);
+          document.body.appendChild(ghost);
+          return ghost;
+        }
+
+        function computeGeometry() {
+          var width = board.clientWidth;
+          var slots = clamp(Math.round(width / 96), 7, 10);
+          var slotWidth = width / slots;
+          var baseHeight = board.clientHeight;
+          var height = baseHeight;
+          var diskSize = clamp(Math.min(width, height) * 0.074, 48, 68);
+          var pegRadius = 7;
+          var diskRadius = diskSize * 0.5;
+          var pegSpacingX = clamp(diskSize * 1.34, 68, 98);
+          var pegSpacingY = clamp(pegSpacingX * 0.9, 60, 88);
+          var startY = 64;
+          var slotDepth = Math.max(diskSize * 3.6, 206);
+          var laneEntryGap = Math.max(diskSize * 1.18, pegSpacingY * 0.92);
+          var rows = clamp(Math.floor((baseHeight - startY - slotDepth - laneEntryGap - 24) / pegSpacingY), 6, 10);
+          var lastPegY = startY + (rows - 1) * pegSpacingY;
+          var pegFieldBottom = lastPegY + pegRadius;
+          var dividerTop = pegFieldBottom + laneEntryGap;
+          var requiredHeight = pegFieldBottom + slotDepth + 20;
+          var floorY;
+          var leftBound;
+          var rightBound;
+          var edgeBuffer;
+          var dropMinX;
+          var dropMaxX;
+          var bins = [];
+          var i;
+
+          if (requiredHeight > height) {
+            height = requiredHeight;
+          }
+
+          floorY = height - 20;
+          leftBound = diskRadius + 8;
+          rightBound = width - diskRadius - 8;
+          edgeBuffer = Math.max(slotWidth * 0.7, diskRadius * 1.4);
+          dropMinX = leftBound + edgeBuffer;
+          dropMaxX = rightBound - edgeBuffer;
+
+          for (i = 0; i < slots; i += 1) {
+            bins.push({ left: i * slotWidth, right: (i + 1) * slotWidth, center: i * slotWidth + slotWidth / 2 });
+          }
+
+          return {
+            width: width,
+            height: height,
+            slots: slots,
+            slotWidth: slotWidth,
+            floorY: floorY,
+            dividerTop: dividerTop,
+            startY: startY,
+            rows: rows,
+            diskSize: diskSize,
+            diskRadius: diskRadius,
+            pegRadius: pegRadius,
+            pegSpacingX: pegSpacingX,
+            pegSpacingY: pegSpacingY,
+            leftBound: leftBound,
+            rightBound: rightBound,
+            spawnY: 34,
+            dropMinX: dropMinX,
+            dropMaxX: dropMaxX,
+            bins: bins
+          };
+        }
+
+        function rebuildBoard() {
+          geometry = computeGeometry();
+          board.style.minHeight = geometry.height + "px";
+          pegs = [];
+          dividers = [];
+          pegsLayer.innerHTML = "";
+          dividersLayer.innerHTML = "";
+          slotsLayer.innerHTML = "";
+
+          var sideMargin = Math.max(geometry.diskRadius + 14, geometry.pegSpacingX * 0.8);
+          var evenColumns = Math.max(5, Math.floor((geometry.width - sideMargin * 2) / geometry.pegSpacingX));
+          var row;
+
+          for (row = 0; row < geometry.rows; row += 1) {
+            var rowColumns = row % 2 === 0 ? evenColumns : Math.max(4, evenColumns - 1);
+            var rowWidth = (rowColumns - 1) * geometry.pegSpacingX;
+            var x = geometry.width / 2 - rowWidth / 2;
+            var y = geometry.startY + row * geometry.pegSpacingY;
+            var placed = 0;
+
+            while (placed < rowColumns) {
+              var pegNode = document.createElement("div");
+              pegNode.className = "pb-plinko__peg";
+              pegNode.style.left = x + "px";
+              pegNode.style.top = y + "px";
+              pegsLayer.appendChild(pegNode);
+              pegs.push({ x: x, y: y, radius: geometry.pegRadius });
+              x += geometry.pegSpacingX;
+              placed += 1;
+            }
+          }
+
+          geometry.bins.forEach(function (bin, index) {
+            if (index > 0) {
+              var divider = document.createElement("div");
+              divider.className = "pb-plinko__divider";
+              divider.style.left = bin.left - 3 + "px";
+              divider.style.height = geometry.height - geometry.dividerTop + "px";
+              divider.style.top = geometry.dividerTop + "px";
+              dividersLayer.appendChild(divider);
+              dividers.push({ x: bin.left, top: geometry.dividerTop, bottom: geometry.floorY, halfWidth: 6 });
+            }
+
+            var slot = document.createElement("div");
+            slot.className = "pb-plinko__slot";
+            slot.style.left = bin.left + "px";
+            slot.style.width = geometry.slotWidth + "px";
+            slot.style.height = geometry.height - geometry.dividerTop + "px";
+            slot.textContent = "Slot " + (index + 1);
+            slotsLayer.appendChild(slot);
+          });
+        }
+
+        function syncDiskToGeometry(disk, previousGeometry) {
+          var xRatio;
+          var yRatio;
+
+          disk.radius = geometry.diskRadius;
+          disk.element.style.setProperty("--pb-size", geometry.diskSize + "px");
+
+          if (!previousGeometry) {
+            disk.x = clamp(disk.x, geometry.leftBound, geometry.rightBound);
+            disk.y = clamp(disk.y, geometry.diskRadius + 6, geometry.floorY - geometry.diskRadius);
+            return;
+          }
+
+          xRatio = previousGeometry.width > 0 ? disk.x / previousGeometry.width : 0.5;
+          yRatio = previousGeometry.height > 0 ? disk.y / previousGeometry.height : 0.2;
+
+          disk.x = clamp(xRatio * geometry.width, geometry.leftBound, geometry.rightBound);
+          disk.y = clamp(yRatio * geometry.height, geometry.diskRadius + 6, geometry.floorY - geometry.diskRadius);
+
+          if (disk.settled) {
+            disk.y = geometry.floorY - geometry.diskRadius;
+            disk.x = clamp(findBinCenter(disk.x), geometry.leftBound, geometry.rightBound);
+          }
+        }
+
+        function relayoutBoard() {
+          var previousGeometry = geometry;
+
+          rebuildBoard();
+          disks.forEach(function (disk) {
+            syncDiskToGeometry(disk, previousGeometry);
+          });
+        }
+
+        function renderQueue() {
+          queue.innerHTML = "";
+
+          if (!available.length) {
+            var empty = document.createElement("div");
+            empty.className = "pb-plinko__queue-empty";
+            empty.textContent = "All disks dropped. Hit reset to randomize and play again.";
+            queue.appendChild(empty);
+            dropButton.disabled = true;
+            return;
+          }
+
+          available.forEach(function (person, index) {
+            queue.appendChild(buildQueueDisk(person, index));
+          });
+          dropButton.disabled = false;
+        }
+
+        function findBinCenter(x) {
+          var selected = geometry.bins[0];
+          geometry.bins.forEach(function (bin) {
+            if (x >= bin.left && x <= bin.right) {
+              selected = bin;
+            }
+          });
+          return selected.center;
+        }
+
+        function spawnDisk(person, x) {
+          var token = buildToken(person);
+          var startX = typeof x === "number" ? clamp(x, geometry.dropMinX, geometry.dropMaxX) : geometry.dropMinX + Math.random() * (geometry.dropMaxX - geometry.dropMinX);
+
+          disks.push({
+            person: person,
+            element: token,
+            x: startX,
+            y: geometry.spawnY,
+            vx: (Math.random() - 0.5) * 1.2,
+            vy: 0,
+            radius: geometry.diskRadius,
+            settled: false,
+            angle: 0,
+            spin: (Math.random() - 0.5) * 0.08
+          });
+        }
+
+        function dropPerson(person, x) {
+          if (!person) {
+            return;
+          }
+
+          spawnDisk(person, x);
+          available = available.filter(function (candidate) {
+            return candidate !== person;
+          });
+          renderQueue();
+        }
+
+        function pointerInsideBoard(clientX, clientY) {
+          var bounds = board.getBoundingClientRect();
+          return clientX >= bounds.left && clientX <= bounds.right && clientY >= bounds.top && clientY <= bounds.top + geometry.dividerTop;
+        }
+
+        function pointerToBoardX(clientX) {
+          var bounds = board.getBoundingClientRect();
+          return clamp(clientX - bounds.left, geometry.dropMinX, geometry.dropMaxX);
+        }
+
+        function updateDragGhost(clientX, clientY) {
+          if (dragState && dragState.ghost) {
+            dragState.ghost.style.left = clientX + "px";
+            dragState.ghost.style.top = clientY + "px";
+          }
+        }
+
+        function endQueueDrag(event) {
+          if (!dragState) {
+            return;
+          }
+
+          window.removeEventListener("pointermove", onQueueDragMove);
+          window.removeEventListener("pointerup", endQueueDrag);
+          window.removeEventListener("pointercancel", endQueueDrag);
+
+          if (dragState.ghost) {
+            dragState.ghost.remove();
+          }
+
+          if (dragState.dragging && pointerInsideBoard(event.clientX, event.clientY)) {
+            dragState.button.dataset.pbSuppressClick = "true";
+            dropPerson(dragState.person, pointerToBoardX(event.clientX));
+          }
+
+          dragState = null;
+        }
+
+        function onQueueDragMove(event) {
+          if (!dragState) {
+            return;
+          }
+
+          var dx = event.clientX - dragState.startX;
+          var dy = event.clientY - dragState.startY;
+
+          if (!dragState.dragging && Math.sqrt(dx * dx + dy * dy) > 8) {
+            dragState.dragging = true;
+            dragState.ghost = buildDragGhost(dragState.person);
+            dragState.button.dataset.pbSuppressClick = "true";
+          }
+
+          if (dragState.dragging) {
+            updateDragGhost(event.clientX, event.clientY);
+          }
+        }
+
+        function beginQueueDrag(event, person, button) {
+          if (!geometry || button.disabled || autoDropTimer) {
+            return;
+          }
+
+          dragState = { person: person, button: button, startX: event.clientX, startY: event.clientY, dragging: false, ghost: null };
+          window.addEventListener("pointermove", onQueueDragMove);
+          window.addEventListener("pointerup", endQueueDrag);
+          window.addEventListener("pointercancel", endQueueDrag);
+        }
+
+        function queueAutoDrop() {
+          if (autoDropTimer) {
+            window.clearTimeout(autoDropTimer);
+          }
+
+          if (!available.length) {
+            dropButton.disabled = true;
+            autoDropTimer = 0;
+            return;
+          }
+
+          autoDropTimer = window.setTimeout(function () {
+            autoDropTimer = 0;
+            dropPerson(available[0]);
+            queueAutoDrop();
+          }, 900);
+        }
+
+        function resolveDiskCollision(a, b) {
+          var dx = b.x - a.x;
+          var dy = b.y - a.y;
+          var distance = Math.sqrt(dx * dx + dy * dy) || 0.001;
+          var minimum = a.radius + b.radius;
+
+          if (distance >= minimum) {
+            return;
+          }
+
+          var overlap = (minimum - distance) / distance;
+          var pushX = dx * overlap * 0.5;
+          var pushY = dy * overlap * 0.5;
+
+          a.x -= pushX;
+          a.y -= pushY;
+          b.x += pushX;
+          b.y += pushY;
+          a.vx -= pushX * 0.05;
+          a.vy -= pushY * 0.05;
+          b.vx += pushX * 0.05;
+          b.vy += pushY * 0.05;
+        }
+
+        function resolvePegCollision(disk, peg) {
+          var dx = disk.x - peg.x;
+          var dy = disk.y - peg.y;
+          var distance = Math.sqrt(dx * dx + dy * dy) || 0.001;
+          var minimum = disk.radius + peg.radius;
+
+          if (distance >= minimum) {
+            return;
+          }
+
+          var nx = dx / distance;
+          var ny = dy / distance;
+          var overlap = minimum - distance;
+          var velocityAlongNormal = disk.vx * nx + disk.vy * ny;
+
+          disk.x += nx * overlap;
+          disk.y += ny * overlap;
+
+          if (velocityAlongNormal < 0) {
+            disk.vx -= 1.34 * velocityAlongNormal * nx;
+            disk.vy -= 1.34 * velocityAlongNormal * ny;
+            disk.vx += nx * 0.16;
+          }
+        }
+
+        function resolveDividerCollision(disk, divider) {
+          if (disk.y + disk.radius < divider.top || disk.y - disk.radius > divider.bottom) {
+            return;
+          }
+
+          var dx = disk.x - divider.x;
+          var reach = disk.radius + divider.halfWidth;
+
+          if (Math.abs(dx) >= reach) {
+            return;
+          }
+
+          disk.x = divider.x + (dx < 0 ? -1 : 1) * reach;
+          disk.vx *= -0.68;
+        }
+
+        function frame() {
+          var i;
+          var j;
+
+          if (!document.body.contains(plinkoWidget)) {
+            return;
+          }
+
+          for (j = 0; j < 2; j += 1) {
+            disks.forEach(function (disk) {
+              if (disk.settled) {
+                return;
+              }
+
+              disk.vy += 0.11;
+              disk.x += disk.vx * 0.5;
+              disk.y += disk.vy * 0.5;
+              disk.angle += disk.spin + disk.vx * 0.008;
+              disk.spin *= 0.988;
+
+              if (disk.x < geometry.leftBound) {
+                disk.x = geometry.leftBound;
+                disk.vx *= -0.72;
+              } else if (disk.x > geometry.rightBound) {
+                disk.x = geometry.rightBound;
+                disk.vx *= -0.72;
+              }
+
+              if (disk.y - disk.radius < 6) {
+                disk.y = disk.radius + 6;
+                disk.vy *= -0.35;
+              }
+            });
+
+            for (i = 0; i < disks.length; i += 1) {
+              for (j = i + 1; j < disks.length; j += 1) {
+                resolveDiskCollision(disks[i], disks[j]);
+              }
+            }
+
+            disks.forEach(function (disk) {
+              pegs.forEach(function (peg) {
+                resolvePegCollision(disk, peg);
+              });
+
+              dividers.forEach(function (divider) {
+                resolveDividerCollision(disk, divider);
+              });
+
+              if (disk.y + disk.radius >= geometry.floorY) {
+                disk.y = geometry.floorY - disk.radius;
+                disk.vy *= -0.42;
+                disk.vx *= 0.96;
+                disk.spin *= 0.94;
+
+                if (Math.abs(disk.vy) < 0.3) {
+                  disk.vy = 0;
+                }
+
+                if (Math.abs(disk.vx) < 0.05 && disk.vy === 0) {
+                  var center = findBinCenter(disk.x);
+                  disk.x += (center - disk.x) * 0.05;
+
+                  if (Math.abs(center - disk.x) < 0.6) {
+                    disk.settled = true;
+                    disk.vx = 0;
+                    disk.spin *= 0.7;
+                  }
+                }
+              }
+            });
+          }
+
+          disks.forEach(function (disk) {
+            disk.element.style.left = disk.x.toFixed(1) + "px";
+            disk.element.style.top = disk.y.toFixed(1) + "px";
+            disk.element.style.transform = "translate(-50%, -50%) rotate(" + disk.angle.toFixed(2) + "rad)";
+          });
+
+          window.requestAnimationFrame(frame);
+        }
+
+        function resetGame() {
+          if (autoDropTimer) {
+            window.clearTimeout(autoDropTimer);
+            autoDropTimer = 0;
+          }
+
+          available = shuffle(employees);
+          disks.forEach(function (disk) {
+            disk.element.remove();
+          });
+          disks = [];
+          rebuildBoard();
+          renderQueue();
+        }
+
+        dropButton.addEventListener("click", function () {
+          if (!available.length) {
+            return;
+          }
+
+          dropPerson(available[0]);
+          queueAutoDrop();
+        });
+        resetButton.addEventListener("click", resetGame);
+        if ("ResizeObserver" in window) {
+          var resizeObserver = new ResizeObserver(function () {
+            if (resizeFrame) {
+              window.cancelAnimationFrame(resizeFrame);
+            }
+
+            resizeFrame = window.requestAnimationFrame(function () {
+              resizeFrame = 0;
+              relayoutBoard();
+            });
+          });
+          resizeObserver.observe(board);
+        }
+
+        resetGame();
+        window.requestAnimationFrame(frame);
+      }
+
+      function renderTonyPlinko(physics, employees) {
+        var nextWidget;
+
+        if (!widget.parentNode) {
+          return;
+        }
+
+        if (physics && typeof physics.stop === "function") {
+          physics.stop();
+        }
+
+        if (widget.pbResizeObserver && typeof widget.pbResizeObserver.disconnect === "function") {
+          widget.pbResizeObserver.disconnect();
+        }
+
+        nextWidget = document.createElement("section");
+        nextWidget.className = "pb-plinko";
+        nextWidget.setAttribute("data-title", "Team Plinko");
+        nextWidget.innerHTML = buildTonyPlinkoMarkup();
+        widget.replaceWith(nextWidget);
+        initTonyPlinko(nextWidget, employees);
+      }
+
+      function animateSecretWhirl(physics, done) {
+        var snapshot = physics && typeof physics.snapshot === "function" ? physics.snapshot() : [];
+        var startTime = 0;
+        var duration = 1080;
+
+        function easeOutCubic(value) {
+          return 1 - Math.pow(1 - value, 3);
+        }
+
+        function frame(time) {
+          var progress;
+          var eased;
+
+          if (!startTime) {
+            startTime = time;
+          }
+
+          progress = clamp((time - startTime) / duration, 0, 1);
+          eased = easeOutCubic(progress);
+
+          snapshot.forEach(function (node) {
+            var angle = eased * Math.PI * 3.8;
+            var orbitScale = 1 - eased * 0.8;
+            var blurAmount = eased * 7;
+            var opacity = progress < 0.58 ? 1 : 1 - (progress - 0.58) / 0.42;
+            var liveTilt = node.tilt + clamp(node.vx * 0.35, -4, 4);
+            var scaledX = node.x * orbitScale;
+            var scaledY = node.y * orbitScale;
+            var x = scaledX * Math.cos(angle) - scaledY * Math.sin(angle);
+            var y = scaledX * Math.sin(angle) + scaledY * Math.cos(angle);
+            var scale = 1 - eased * 0.72;
+
+            node.element.style.opacity = clamp(opacity, 0, 1).toFixed(3);
+            node.element.style.filter = "blur(" + blurAmount.toFixed(2) + "px)";
+            node.element.style.transform =
+              "translate(calc(-50% + " +
+              x.toFixed(1) +
+              "px), calc(-50% + " +
+              y.toFixed(1) +
+              "px)) scale(" +
+              scale.toFixed(3) +
+              ") rotate(" +
+              liveTilt.toFixed(2) +
+              "deg)";
+          });
+
+          if (progress < 1) {
+            window.requestAnimationFrame(frame);
+            return;
+          }
+
+          if (typeof done === "function") {
+            done();
+          }
+        }
+
+        window.requestAnimationFrame(frame);
+      }
+
+      function runTonyTransformation(stage, physics, employees) {
+        var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        if (widget.dataset.pbTonySecretTriggered === "true") {
+          return;
+        }
+
+        widget.dataset.pbTonySecretTriggered = "true";
+
+        if (physics && typeof physics.stop === "function") {
+          physics.stop();
+        }
+
+        if (widget.pbResizeObserver && typeof widget.pbResizeObserver.disconnect === "function") {
+          widget.pbResizeObserver.disconnect();
+        }
+
+        if (reducedMotion) {
+          renderTonyPlinko(null, employees);
+          return;
+        }
+
+        widget.classList.add("pb-employee-gaggle--secret-whirl");
+        animateSecretWhirl(physics, function () {
+          widget.classList.add("pb-employee-gaggle--secret-icon-in");
+        });
+
+        window.setTimeout(function () {
+          renderTonyPlinko(null, employees);
+        }, 1820);
+      }
+
+      function attachTonyHoverTrigger(stage, people, physics, employees) {
+        var hoverTimer = 0;
+        var tonyCard = people.find(function (person) {
+          return (person.dataset.personName || "").toLowerCase() === "tony healy";
+        });
+
+        if (!tonyCard) {
+          return;
+        }
+
+        function clearTrigger() {
+          if (hoverTimer) {
+            window.clearTimeout(hoverTimer);
+            hoverTimer = 0;
+          }
+        }
+
+        function armTrigger() {
+          clearTrigger();
+          hoverTimer = window.setTimeout(function () {
+            hoverTimer = 0;
+            runTonyTransformation(stage, physics, employees);
+          }, 300000);
+        }
+
+        tonyCard.addEventListener("mouseenter", armTrigger);
+        tonyCard.addEventListener("mouseleave", clearTrigger);
+        tonyCard.addEventListener("focusin", armTrigger);
+        tonyCard.addEventListener("focusout", clearTrigger);
       }
 
       function init() {
@@ -554,6 +1361,14 @@
           return;
         }
 
+        var secretIcon = document.createElement("img");
+        secretIcon.className = "pb-employee-gaggle__secret-icon";
+        secretIcon.src =
+          "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/1593530549579-RCB47Q7O2EA2LAL7N92M/Pineapple+Slice.png?content-type=image%2Fpng";
+        secretIcon.alt = "";
+        secretIcon.decoding = "async";
+        stage.appendChild(secretIcon);
+
         var people = employees.map(buildEmployeeCard);
         people.forEach(function (person) {
           stage.appendChild(person);
@@ -561,6 +1376,7 @@
 
         var nodes = buildNodes(stage, people);
         var physics = createPhysics(stage, nodes);
+        attachTonyHoverTrigger(stage, people, physics, employees);
         widget.classList.add("pb-employee-gaggle--intro");
 
         window.setTimeout(function () {
