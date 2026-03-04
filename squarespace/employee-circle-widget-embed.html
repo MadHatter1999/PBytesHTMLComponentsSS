@@ -6,6 +6,8 @@
       --pb-yellow-strong: rgba(246, 198, 47, 0.34);
       --pb-ink: #19313c;
       --pb-muted: #62737c;
+      --pb-anchor-x: 46%;
+      --pb-anchor-y: 30%;
       width: min(100%, 1040px);
       margin: 0 auto;
       padding: clamp(12px, 2vw, 24px);
@@ -19,15 +21,15 @@
 
     .pb-employee-gaggle__stage {
       position: relative;
-      min-height: clamp(380px, 58vw, 760px);
+      min-height: clamp(340px, 50vw, 660px);
       overflow: visible;
       isolation: isolate;
     }
 
     .pb-employee-gaggle__secret-icon {
       position: absolute;
-      top: 50%;
-      left: 50%;
+      top: var(--pb-anchor-y);
+      left: var(--pb-anchor-x);
       width: clamp(120px, 18vw, 220px);
       max-width: 42%;
       opacity: 0;
@@ -46,8 +48,8 @@
 
     .pb-employee-gaggle__person {
       position: absolute;
-      top: 50%;
-      left: 50%;
+      top: var(--pb-anchor-y);
+      left: var(--pb-anchor-x);
       width: var(--pb-size, 130px);
       text-align: center;
       z-index: var(--pb-layer, 2);
@@ -297,7 +299,7 @@
   <script type="application/json" class="pb-employee-gaggle__data">
     [
       {
-        "name": "Tony Healy",
+        "name": "Tony",
         "img": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/1741201364266-3SXTF87I3JUJEV9RAJO5/0AnthonyHealy.png"
       },
       {
@@ -321,7 +323,7 @@
         "img": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/1741201392797-Q4NP91JNX9RXK04045J0/DylanS.png"
       },
       {
-        "name": "Stephen Aucoin",
+        "name": "Steve",
         "img": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/1592399709204-YQ3G4JVSG7JQ61K5RV26/Pineapple+Bytes+Round+Headshots-NOCOLOUR-03.png"
       },
       {
@@ -341,7 +343,7 @@
         "img": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/1741202063228-XEL601RYM38YY1Q843FJ/ChristianD.png"
       },
       {
-        "name": "Rickey",
+        "name": "Ricky",
         "img": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/1742843825205-PX2O1NJDVPS3GNGYQ8MV/Rickey.png"
       },
       {
@@ -378,28 +380,45 @@
         }
       }
 
+      function normalizeName(value) {
+        if (typeof value === "string") {
+          return value.trim();
+        }
+
+        if (value === undefined || value === null) {
+          return "";
+        }
+
+        return String(value).trim();
+      }
+
       function buildEmployeeCard(employee, index) {
         var person = document.createElement("article");
         var circle = document.createElement("div");
         var avatar = document.createElement("img");
-        var name = document.createElement("div");
+        var employeeName = normalizeName(employee.name);
 
         person.className = "pb-employee-gaggle__person";
         person.dataset.index = String(index);
-        person.dataset.personName = employee.name || "";
+        person.dataset.personName = employeeName;
         circle.className = "pb-employee-gaggle__circle";
         avatar.className = "pb-employee-gaggle__avatar";
-        name.className = "pb-employee-gaggle__name";
 
         avatar.src = employee.img || "";
-        avatar.alt = employee.name ? employee.name + " portrait" : "Employee portrait";
+        avatar.alt = employeeName ? employeeName + " portrait" : "Employee portrait";
         avatar.loading = "lazy";
         avatar.decoding = "async";
-        name.textContent = employee.name || "Team member";
 
         circle.appendChild(avatar);
         person.appendChild(circle);
-        person.appendChild(name);
+
+        if (employeeName) {
+          var name = document.createElement("div");
+          name.className = "pb-employee-gaggle__name";
+          name.textContent = employeeName;
+          person.appendChild(name);
+        }
+
         return person;
       }
 
@@ -456,7 +475,9 @@
         var minSide = Math.min(width, height);
         var stepX = clamp(width * 0.16, 92, 132);
         var stepY = clamp(height * 0.16, 92, 132);
-        var normalizedSize = clamp(minSide * 0.17, 96, 154) + 18;
+        var normalizedSize = clamp(minSide * 0.17, 96, 154) + 36;
+        var clusterOffsetX = width < 768 ? clamp(width * 0.055, 14, 30) : clamp(width * 0.11, 44, 110);
+        var clusterOffsetY = width < 768 ? clamp(height * 0.075, 18, 36) : clamp(height * 0.16, 64, 150);
         var slots = getClusterSlots(count, stepX, stepY);
 
         return people.map(function (person, index) {
@@ -471,6 +492,9 @@
             y *= 0.92;
             size *= 0.9;
           }
+
+          x -= clusterOffsetX;
+          y -= clusterOffsetY;
 
           person.style.width = size.toFixed(1) + "px";
           person.style.setProperty("--pb-layer", String(2 + ((index + 1) % 4)));
@@ -701,8 +725,8 @@
           '.pb-plinko__button{appearance:none;border:0;border-radius:999px;padding:8px 12px;background:var(--pb-yellow);color:#fff;font:800 .78rem/1 "Segoe UI",sans-serif;cursor:pointer;box-shadow:0 10px 20px rgba(246,198,47,.22);transition:transform .16s ease,box-shadow .16s ease,opacity .16s ease}.pb-plinko__button:hover,.pb-plinko__button:focus-visible{transform:translateY(-1px);box-shadow:0 14px 24px rgba(246,198,47,.28);outline:none}.pb-plinko__button[disabled]{opacity:.42;cursor:default;pointer-events:none}' +
           '.pb-plinko__board{position:relative;min-height:clamp(420px,56vw,640px);border-radius:24px;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.84),rgba(255,255,255,.72)),linear-gradient(180deg,#f9f8f4 0%,#efede6 100%);box-shadow:inset 0 0 0 1px rgba(25,49,60,.06),0 24px 46px rgba(25,49,60,.08)}.pb-plinko__board::before{content:"";position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.1),rgba(255,255,255,.1)),repeating-linear-gradient(90deg,rgba(25,49,60,.028) 0 1px,transparent 1px 24px);opacity:.6;pointer-events:none}.pb-plinko__drop-zone,.pb-plinko__pegs,.pb-plinko__dividers,.pb-plinko__slots,.pb-plinko__disks{position:absolute;inset:0}.pb-plinko__drop-zone{top:14px;left:50%;inset:auto auto auto 50%;width:clamp(96px,16%,144px);height:34px;transform:translateX(-50%);border:2px dashed rgba(25,49,60,.12);border-radius:999px;background:rgba(255,255,255,.52);pointer-events:none}.pb-plinko__drop-zone::after{content:"Drop";position:absolute;inset:0;display:grid;place-items:center;font:800 .64rem/1 "Segoe UI",sans-serif;letter-spacing:.14em;text-transform:uppercase;color:rgba(25,49,60,.5)}' +
           '.pb-plinko__peg{position:absolute;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:999px;background:rgba(25,49,60,.22);box-shadow:0 0 0 4px rgba(255,255,255,.88);pointer-events:none}.pb-plinko__divider{position:absolute;bottom:0;width:6px;border-radius:999px 999px 0 0;background:rgba(25,49,60,.14);box-shadow:0 0 0 1px rgba(255,255,255,.62);pointer-events:none}.pb-plinko__slot{position:absolute;bottom:0;display:grid;place-items:end center;padding-bottom:12px;font:800 .66rem/1 "Segoe UI",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:rgba(25,49,60,.42);pointer-events:none}.pb-plinko__queue{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center;min-height:58px}.pb-plinko__queue-empty{font:700 .84rem/1.3 "Segoe UI",sans-serif;color:var(--pb-muted)}' +
-          '.pb-plinko__disk-button{appearance:none;border:0;background:transparent;padding:0;cursor:pointer;transition:transform .16s ease,opacity .16s ease,filter .16s ease;touch-action:none}.pb-plinko__disk-button:hover,.pb-plinko__disk-button:focus-visible{transform:translateY(-2px);filter:brightness(1.03);outline:none}.pb-plinko__disk,.pb-plinko__token{position:relative;width:56px;aspect-ratio:1/1;border-radius:999px}.pb-plinko__token{position:absolute;top:0;left:0;width:var(--pb-size,84px);height:var(--pb-size,84px);will-change:transform;z-index:10;transform:translate(-50%,-50%)}.pb-plinko__drag-ghost{position:fixed;top:0;left:0;width:62px;height:62px;transform:translate(-50%,-50%);pointer-events:none;z-index:9999;opacity:.94}.pb-plinko__disk-image,.pb-plinko__token-image{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:contain;border-radius:999px;filter:drop-shadow(0 0 8px rgba(246,198,47,.24)) drop-shadow(0 0 18px rgba(246,198,47,.16));user-select:none;-webkit-user-drag:none}.pb-plinko__disk-name{position:absolute;left:50%;bottom:-22px;transform:translateX(-50%);padding:5px 9px;border-radius:999px;background:rgba(255,255,255,.94);box-shadow:0 10px 18px rgba(25,49,60,.08);font:800 .68rem/1 "Segoe UI",sans-serif;color:var(--pb-ink);white-space:nowrap;opacity:0;transition:opacity .16s ease,transform .16s ease;pointer-events:none}.pb-plinko__disk-button:hover .pb-plinko__disk-name,.pb-plinko__disk-button:focus-visible .pb-plinko__disk-name,.pb-plinko__token:hover .pb-plinko__disk-name{opacity:1;transform:translateX(-50%) translateY(-2px)}' +
-          '@media (max-width:767px){.pb-plinko{padding:8px}.pb-plinko__board{min-height:380px;border-radius:20px}.pb-plinko__disk,.pb-plinko__token{width:50px}}@media (prefers-reduced-motion:reduce){.pb-plinko__button,.pb-plinko__disk-button,.pb-plinko__disk-name{transition:none}}' +
+          '.pb-plinko__disk-button{appearance:none;border:0;background:transparent;padding:0;cursor:pointer;transition:transform .16s ease,opacity .16s ease,filter .16s ease;touch-action:none}.pb-plinko__disk-button:hover,.pb-plinko__disk-button:focus-visible{transform:translateY(-2px);filter:brightness(1.03);outline:none}.pb-plinko__disk,.pb-plinko__token{position:relative;width:66px;aspect-ratio:1/1;border-radius:999px}.pb-plinko__token{position:absolute;top:0;left:0;width:var(--pb-size,84px);height:var(--pb-size,84px);will-change:transform;z-index:10;transform:translate(-50%,-50%)}.pb-plinko__drag-ghost{position:fixed;top:0;left:0;width:72px;height:72px;transform:translate(-50%,-50%);pointer-events:none;z-index:9999;opacity:.94}.pb-plinko__disk-image,.pb-plinko__token-image{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:contain;border-radius:999px;filter:drop-shadow(0 0 8px rgba(246,198,47,.24)) drop-shadow(0 0 18px rgba(246,198,47,.16));user-select:none;-webkit-user-drag:none}.pb-plinko__disk-name{position:absolute;left:50%;bottom:-22px;transform:translateX(-50%);padding:5px 9px;border-radius:999px;background:rgba(255,255,255,.94);box-shadow:0 10px 18px rgba(25,49,60,.08);font:800 .68rem/1 "Segoe UI",sans-serif;color:var(--pb-ink);white-space:nowrap;opacity:0;transition:opacity .16s ease,transform .16s ease;pointer-events:none}.pb-plinko__disk-button:hover .pb-plinko__disk-name,.pb-plinko__disk-button:focus-visible .pb-plinko__disk-name,.pb-plinko__token:hover .pb-plinko__disk-name{opacity:1;transform:translateX(-50%) translateY(-2px)}' +
+          '@media (max-width:767px){.pb-plinko{padding:8px}.pb-plinko__board{min-height:380px;border-radius:20px}.pb-plinko__disk,.pb-plinko__token{width:60px}}@media (prefers-reduced-motion:reduce){.pb-plinko__button,.pb-plinko__disk-button,.pb-plinko__disk-name{transition:none}}' +
           '</style>' +
           '<div class="pb-plinko__shell"><div class="pb-plinko__toolbar"><h2 class="pb-plinko__title">Team Plinko</h2><div class="pb-plinko__actions"><button class="pb-plinko__button pb-plinko__drop" type="button">Drop</button><button class="pb-plinko__button pb-plinko__reset" type="button">Reset</button></div></div><div class="pb-plinko__board"><div class="pb-plinko__drop-zone"></div><div class="pb-plinko__pegs"></div><div class="pb-plinko__dividers"></div><div class="pb-plinko__slots"></div><div class="pb-plinko__disks"></div></div><div class="pb-plinko__queue"></div></div>'
         );
@@ -730,22 +754,27 @@
           var button = document.createElement("button");
           var disk = document.createElement("div");
           var image = document.createElement("img");
-          var name = document.createElement("div");
+          var personName = normalizeName(person.name);
 
           button.className = "pb-plinko__disk-button";
           button.type = "button";
           button.dataset.index = String(index);
-          button.setAttribute("aria-label", "Drop " + person.name);
+          button.setAttribute("aria-label", personName ? "Drop " + personName : "Drop team member");
           disk.className = "pb-plinko__disk";
           image.className = "pb-plinko__disk-image";
-          name.className = "pb-plinko__disk-name";
           image.src = person.img || "";
-          image.alt = person.name ? person.name + " portrait" : "Team member portrait";
+          image.alt = personName ? personName + " portrait" : "Team member portrait";
           image.loading = "lazy";
           image.decoding = "async";
-          name.textContent = person.name || "Team member";
           disk.appendChild(image);
-          disk.appendChild(name);
+
+          if (personName) {
+            var name = document.createElement("div");
+            name.className = "pb-plinko__disk-name";
+            name.textContent = personName;
+            disk.appendChild(name);
+          }
+
           button.appendChild(disk);
           button.addEventListener("pointerdown", function (event) {
             beginQueueDrag(event, person, button);
@@ -763,19 +792,24 @@
         function buildToken(person) {
           var token = document.createElement("div");
           var image = document.createElement("img");
-          var name = document.createElement("div");
+          var personName = normalizeName(person.name);
 
           token.className = "pb-plinko__token";
           token.style.setProperty("--pb-size", geometry.diskSize + "px");
           image.className = "pb-plinko__token-image";
           image.src = person.img || "";
-          image.alt = person.name ? person.name + " portrait" : "Team member portrait";
+          image.alt = personName ? personName + " portrait" : "Team member portrait";
           image.loading = "lazy";
           image.decoding = "async";
-          name.className = "pb-plinko__disk-name";
-          name.textContent = person.name || "Team member";
           token.appendChild(image);
-          token.appendChild(name);
+
+          if (personName) {
+            var name = document.createElement("div");
+            name.className = "pb-plinko__disk-name";
+            name.textContent = personName;
+            token.appendChild(name);
+          }
+
           disksLayer.appendChild(token);
           return token;
         }
@@ -799,7 +833,7 @@
           var slotWidth = width / slots;
           var baseHeight = board.clientHeight;
           var height = baseHeight;
-          var diskSize = clamp(Math.min(width, height) * 0.074, 48, 68);
+          var diskSize = clamp(Math.min(width, height) * 0.086, 54, 78);
           var pegRadius = 7;
           var diskRadius = diskSize * 0.5;
           var pegSpacingX = clamp(diskSize * 1.34, 68, 98);
@@ -1373,7 +1407,7 @@
       function attachTonyHoverTrigger(people) {
         var hoverTimer = 0;
         var tonyCard = people.find(function (person) {
-          return (person.dataset.personName || "").toLowerCase() === "tony healy";
+          return (person.dataset.personName || "").toLowerCase() === "tony";
         });
 
         if (!tonyCard) {
@@ -1405,7 +1439,7 @@
         var stage = widget.querySelector(".pb-employee-gaggle__stage");
         var dataNode = widget.querySelector(".pb-employee-gaggle__data");
         var employees = safeParseEmployees(dataNode).filter(function (employee) {
-          return employee && employee.name && employee.img;
+          return employee && employee.img;
         });
 
         if (!stage) {
