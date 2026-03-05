@@ -16,7 +16,7 @@
       box-sizing: border-box;
     }
 
-    .pb-locations-map__frame {
+    .pb-locations-map_frame {
       position: relative;
       width: 100%;
       aspect-ratio: 1005 / 660;
@@ -26,7 +26,7 @@
       isolation: isolate;
     }
 
-    .pb-locations-map__geo {
+    .pb-locations-map_geo {
       position: absolute;
       inset: 0;
       width: 100%;
@@ -35,16 +35,15 @@
       z-index: 0;
     }
 
-    .pb-locations-map__geo-path {
+    .pb-locations-map_geo-path {
       fill: var(--pb-magenta);
-      stroke: rgba(0, 0, 0, 0.62);
-      stroke-width: 1.2;
-      stroke-dasharray: 3 3;
+      stroke: var(--pb-magenta);
+      stroke-width: 0.6;
       vector-effect: non-scaling-stroke;
       fill-rule: evenodd;
     }
 
-    .pb-locations-map__map {
+    .pb-locations-map_map {
       position: absolute;
       inset: 0;
       width: 100%;
@@ -59,14 +58,14 @@
       transition: opacity 140ms ease;
     }
 
-    .pb-locations-map__overlay {
+    .pb-locations-map_overlay {
       position: absolute;
       inset: 0;
       pointer-events: none;
       z-index: 1;
     }
 
-    .pb-locations-map__marker {
+    .pb-locations-map_marker {
       position: absolute;
       transform: translate(-50%, -50%);
       border: 0;
@@ -76,7 +75,7 @@
       filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.35));
     }
 
-    .pb-locations-map__icon {
+    .pb-locations-map_icon {
       position: absolute;
       inset: 0;
       width: 100%;
@@ -87,25 +86,7 @@
       pointer-events: none;
     }
 
-    .pb-locations-map__count {
-      position: absolute;
-      top: -4px;
-      right: -4px;
-      min-width: 16px;
-      height: 16px;
-      padding: 0 4px;
-      border-radius: 999px;
-      background: #111;
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      display: grid;
-      place-items: center;
-      font: 700 10px/1 "Segoe UI", sans-serif;
-      color: #fff;
-      z-index: 1;
-      pointer-events: none;
-    }
-
-    .pb-locations-map__logo {
+    .pb-locations-map_logo {
       position: absolute;
       top: clamp(10px, 2.2vw, 22px);
       right: clamp(10px, 2.2vw, 24px);
@@ -119,7 +100,7 @@
       filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
     }
 
-    .pb-locations-map__hint {
+    .pb-locations-map_hint {
       position: absolute;
       left: 50%;
       bottom: 10px;
@@ -139,11 +120,11 @@
         padding: 6px;
       }
 
-      .pb-locations-map__logo {
+      .pb-locations-map_logo {
         width: clamp(130px, 40%, 260px);
       }
 
-      .pb-locations-map__hint {
+      .pb-locations-map_hint {
         max-width: calc(100% - 20px);
         white-space: normal;
         text-align: center;
@@ -151,12 +132,12 @@
     }
   </style>
 
-  <div class="pb-locations-map__frame">
-    <svg class="pb-locations-map__geo" data-role="geo" aria-hidden="true"></svg>
-    <img class="pb-locations-map__map" alt="Locations map" data-role="map" />
-    <div class="pb-locations-map__overlay" data-role="overlay"></div>
-    <img class="pb-locations-map__logo" alt="Pineapple Bytes logo" data-role="logo" />
-    <div class="pb-locations-map__hint" data-role="hint"></div>
+  <div class="pb-locations-map_frame">
+    <svg class="pb-locations-map_geo" data-role="geo" aria-hidden="true"></svg>
+    <img class="pb-locations-map_map" alt="Locations map" data-role="map" />
+    <div class="pb-locations-map_overlay" data-role="overlay"></div>
+    <img class="pb-locations-map_logo" alt="Pineapple Bytes logo" data-role="logo" />
+    <div class="pb-locations-map_hint" data-role="hint"></div>
   </div>
 
   <script type="application/json" class="pb-locations-map__data">
@@ -165,7 +146,7 @@
       "mapImage": "",
       "logoImage": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/1576776312533-007SE27KBNR5PFCNDUQH/pineapplebyteslogo+TRANSPARENT.png?content-type=image%2Fpng",
       "iconImage": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/1593530549579-RCB47Q7O2EA2LAL7N92M/Pineapple+Slice.png?content-type=image%2Fpng",
-      "clusterRadiusPx": 24,
+      "clusterRadiusPx": 22,
       "mapPaddingPx": 12,
       "marker": {
         "min": 14,
@@ -174,18 +155,73 @@
         "max": 48
       },
       "points": [
-        { "name": "Vancouver", "lon": -123.1207, "lat": 49.2827 },
-        { "name": "Calgary", "lon": -114.0719, "lat": 51.0447 },
-        { "name": "Edmonton", "lon": -113.4909, "lat": 53.5461 },
-        { "name": "Winnipeg", "lon": -97.1384, "lat": 49.8951 },
-        { "name": "Toronto", "lon": -79.3832, "lat": 43.6532 },
-        { "name": "Mississauga", "lon": -79.6441, "lat": 43.5890 },
-        { "name": "Hamilton", "lon": -79.8711, "lat": 43.2557 },
-        { "name": "Ottawa", "lon": -75.6972, "lat": 45.4215 },
-        { "name": "Montreal", "lon": -73.5673, "lat": 45.5017 },
-        { "name": "Quebec City", "lon": -71.2080, "lat": 46.8139 },
-        { "name": "Halifax", "lon": -63.5752, "lat": 44.6488 },
-        { "name": "St John's", "lon": -52.7126, "lat": 47.5615 }
+        { "name": "Halifax, NS", "lon": -63.5752, "lat": 44.6488, "weight": 1 },
+        { "name": "Bedford, NS", "lon": -63.66, "lat": 44.73, "weight": 2 },
+        { "name": "Dartmouth, NS", "lon": -63.567, "lat": 44.666, "weight": 1 },
+        { "name": "Truro, NS", "lon": -63.279, "lat": 45.365, "weight": 1 },
+        { "name": "St John's, NL", "lon": -52.7126, "lat": 47.5615, "weight": 1 },
+        { "name": "Sydney, NS", "lon": -60.1942, "lat": 46.1368, "weight": 1 },
+        { "name": "Moncton, NB", "lon": -64.7782, "lat": 46.0878, "weight": 1 },
+        { "name": "Calgary, AB", "lon": -114.0719, "lat": 51.0447, "weight": 2 },
+        { "name": "Petawawa, ON", "lon": -77.28, "lat": 45.9, "weight": 1 },
+        { "name": "Airdrie, AB", "lon": -114.0133, "lat": 51.2922, "weight": 1 },
+        { "name": "Edmonton, AB", "lon": -113.4938, "lat": 53.5461, "weight": 4 },
+        { "name": "Grande Prairie, AB", "lon": -118.7947, "lat": 55.1707, "weight": 2 },
+        { "name": "Nepean, ON", "lon": -75.83, "lat": 45.31, "weight": 1 },
+        { "name": "Red Deer, AB", "lon": -113.8112, "lat": 52.2681, "weight": 1 },
+        { "name": "Labrador City, NL", "lon": -66.9114, "lat": 52.9399, "weight": 1 },
+        { "name": "New Glasgow, NS", "lon": -62.6455, "lat": 45.5926, "weight": 1 },
+        { "name": "Saskatoon, SK", "lon": -106.67, "lat": 52.1332, "weight": 1 },
+        { "name": "Ottawa, ON", "lon": -75.6972, "lat": 45.4215, "weight": 2 },
+        { "name": "Charlottetown, PE", "lon": -63.1311, "lat": 46.2382, "weight": 1 },
+        { "name": "Chilliwack, BC", "lon": -121.9515, "lat": 49.1579, "weight": 1 },
+        { "name": "Regina, SK", "lon": -104.6189, "lat": 50.4452, "weight": 1 },
+        { "name": "Dieppe, NB", "lon": -64.7374, "lat": 46.0951, "weight": 1 },
+        { "name": "Lloydminster, AB", "lon": -110.006, "lat": 53.278, "weight": 1 },
+        { "name": "Lethbridge, AB", "lon": -112.8451, "lat": 49.6956, "weight": 1 },
+        { "name": "Scarborough, ON", "lon": -79.2318, "lat": 43.7764, "weight": 1 },
+        { "name": "Moose Jaw, SK", "lon": -105.551, "lat": 50.3913, "weight": 1 },
+        { "name": "Barrie, ON", "lon": -79.6903, "lat": 44.3894, "weight": 1 },
+        { "name": "Cold Lake, AB", "lon": -110.182, "lat": 54.465, "weight": 1 },
+        { "name": "Fort St. John, BC", "lon": -120.847, "lat": 56.246, "weight": 1 },
+        { "name": "Kelowna, BC", "lon": -119.496, "lat": 49.8879, "weight": 1 },
+        { "name": "Surrey, BC", "lon": -122.849, "lat": 49.1913, "weight": 2 },
+        { "name": "Oshawa, ON", "lon": -78.8658, "lat": 43.8971, "weight": 1 },
+        { "name": "Kamloops, BC", "lon": -120.327, "lat": 50.6745, "weight": 1 },
+        { "name": "Fredericton, NB", "lon": -66.6431, "lat": 45.9636, "weight": 1 },
+        { "name": "Fort Saskatchewan, AB", "lon": -113.213, "lat": 53.712, "weight": 1 },
+        { "name": "Steinbach, MB", "lon": -96.684, "lat": 49.5258, "weight": 1 },
+        { "name": "Wolfville, NS", "lon": -64.3672, "lat": 45.0919, "weight": 1 },
+        { "name": "Swift Current, SK", "lon": -107.797, "lat": 50.2881, "weight": 1 },
+        { "name": "Markham, ON", "lon": -79.337, "lat": 43.8561, "weight": 1 },
+        { "name": "Brandon, MB", "lon": -99.9501, "lat": 49.8485, "weight": 1 },
+        { "name": "London, ON", "lon": -81.2453, "lat": 42.9849, "weight": 1 },
+        { "name": "Terrace, BC", "lon": -128.603, "lat": 54.5182, "weight": 1 },
+        { "name": "Winkler, MB", "lon": -97.9415, "lat": 49.1817, "weight": 1 },
+        { "name": "Spruce Grove, AB", "lon": -113.919, "lat": 53.5444, "weight": 1 },
+        { "name": "Winnipeg, MB", "lon": -97.1384, "lat": 49.8951, "weight": 1 },
+        { "name": "Abbotsford, BC", "lon": -122.3045, "lat": 49.0504, "weight": 1 },
+        { "name": "Portage la Prairie, MB", "lon": -98.2906, "lat": 49.9728, "weight": 1 },
+        { "name": "Vernon, BC", "lon": -119.272, "lat": 50.267, "weight": 1 },
+        { "name": "Beaumont, AB", "lon": -113.418, "lat": 53.3519, "weight": 1 },
+
+        { "name": "Nando's - Greater Vancouver", "lon": -123.1207, "lat": 49.2827, "weight": 4 },
+        { "name": "Nando's - Fraser Valley", "lon": -122.85, "lat": 49.17, "weight": 2 },
+        { "name": "Nando's - Calgary Area", "lon": -114.0719, "lat": 51.0447, "weight": 3 },
+        { "name": "Nando's - Edmonton Area", "lon": -113.4909, "lat": 53.5461, "weight": 2 },
+        { "name": "Nando's - Winnipeg Area", "lon": -97.1384, "lat": 49.8951, "weight": 1 },
+        { "name": "Nando's - Greater Toronto", "lon": -79.3832, "lat": 43.6532, "weight": 6 },
+        { "name": "Nando's - Ottawa Area", "lon": -75.6972, "lat": 45.4215, "weight": 2 },
+        { "name": "Nando's - Ontario West", "lon": -81.2453, "lat": 42.9849, "weight": 1 },
+
+        { "name": "Firehouse - Greater Vancouver", "lon": -123.12, "lat": 49.28, "weight": 2 },
+        { "name": "Firehouse - Calgary Area", "lon": -114.0719, "lat": 51.0447, "weight": 2 },
+        { "name": "Firehouse - Edmonton Area", "lon": -113.4909, "lat": 53.5461, "weight": 2 },
+        { "name": "Firehouse - Winnipeg Area", "lon": -97.1384, "lat": 49.8951, "weight": 2 },
+        { "name": "Firehouse - Greater Toronto", "lon": -79.3832, "lat": 43.6532, "weight": 8 },
+        { "name": "Firehouse - Ottawa Area", "lon": -75.6972, "lat": 45.4215, "weight": 2 },
+        { "name": "Firehouse - Atlantic Hub", "lon": -63.5752, "lat": 44.6488, "weight": 2 },
+        { "name": "Firehouse - Atlantic East", "lon": -52.7126, "lat": 47.5615, "weight": 1 }
       ]
     }
   </script>
@@ -205,7 +241,7 @@
       var logoNode = widget.querySelector('[data-role="logo"]');
       var overlay = widget.querySelector('[data-role="overlay"]');
       var hint = widget.querySelector('[data-role="hint"]');
-      var frame = widget.querySelector(".pb-locations-map__frame");
+      var frame = widget.querySelector(".pb-locations-map_frame");
       var resizeObserver;
       var settings;
       var geoData = null;
@@ -405,7 +441,7 @@
         compiled.paths.forEach(function (d) {
           var pathNode = document.createElementNS(SVG_NS, "path");
           pathNode.setAttribute("d", d);
-          pathNode.setAttribute("class", "pb-locations-map__geo-path");
+          pathNode.setAttribute("class", "pb-locations-map_geo-path");
           geoSvg.appendChild(pathNode);
         });
 
@@ -487,14 +523,13 @@
 
       function makeMarker(cluster, markerSettings, iconUrl) {
         var marker = document.createElement("div");
-        var count = Math.round(cluster.weight);
         var size =
           markerSettings.base +
-          Math.sqrt(Math.max(0, count - 1)) * markerSettings.step;
+          Math.sqrt(Math.max(0, cluster.weight - 1)) * markerSettings.step;
         var safeSize = clamp(size, markerSettings.min, markerSettings.max);
         var iconNode;
 
-        marker.className = "pb-locations-map__marker";
+        marker.className = "pb-locations-map_marker";
         marker.style.left = cluster.cx.toFixed(2) + "px";
         marker.style.top = cluster.cy.toFixed(2) + "px";
         marker.style.width = safeSize.toFixed(2) + "px";
@@ -503,19 +538,12 @@
 
         if (iconUrl) {
           iconNode = document.createElement("img");
-          iconNode.className = "pb-locations-map__icon";
+          iconNode.className = "pb-locations-map_icon";
           iconNode.src = iconUrl;
           iconNode.alt = "";
           iconNode.loading = "lazy";
           iconNode.decoding = "async";
           marker.appendChild(iconNode);
-        }
-
-        if (count > 1) {
-          var countNode = document.createElement("span");
-          countNode.className = "pb-locations-map__count";
-          countNode.textContent = String(count);
-          marker.appendChild(countNode);
         }
 
         return marker;
