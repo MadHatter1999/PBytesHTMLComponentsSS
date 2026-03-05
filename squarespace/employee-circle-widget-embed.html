@@ -19,14 +19,14 @@
       box-sizing: border-box;
     }
 
-    .pb-employee-gaggle__stage {
+    .pb-employee-gaggle-stage {
       position: relative;
       min-height: clamp(340px, 50vw, 660px);
       overflow: visible;
       isolation: isolate;
     }
 
-    .pb-employee-gaggle__secret-icon {
+    .pb-employee-gaggle-secret-icon {
       position: absolute;
       top: var(--pb-anchor-y);
       left: var(--pb-anchor-x);
@@ -46,7 +46,7 @@
       z-index: 1200;
     }
 
-    .pb-employee-gaggle__person {
+    .pb-employee-gaggle-person {
       position: absolute;
       top: var(--pb-anchor-y);
       left: var(--pb-anchor-x);
@@ -60,39 +60,39 @@
         filter 900ms ease;
     }
 
-    .pb-employee-gaggle__person:hover,
-    .pb-employee-gaggle__person:focus-within {
+    .pb-employee-gaggle-person:hover,
+    .pb-employee-gaggle-person:focus-within {
       z-index: 999;
     }
 
-    .pb-employee-gaggle--party .pb-employee-gaggle__circle {
+    .pb-employee-gaggle--party .pb-employee-gaggle-circle {
       animation: pb-gaggle-dance 1180ms ease-in-out infinite;
       animation-delay: calc(var(--pb-delay, 0ms) * -1);
     }
 
-    .pb-employee-gaggle--party .pb-employee-gaggle__avatar {
+    .pb-employee-gaggle--party .pb-employee-gaggle-avatar {
       animation: pb-gaggle-hue 3600ms linear infinite;
       animation-delay: calc(var(--pb-delay, 0ms) * -1);
     }
 
-    .pb-employee-gaggle--party .pb-employee-gaggle__person:nth-child(3n) .pb-employee-gaggle__circle {
+    .pb-employee-gaggle--party .pb-employee-gaggle-person:nth-child(3n) .pb-employee-gaggle-circle {
       animation-duration: 980ms;
     }
 
-    .pb-employee-gaggle--party .pb-employee-gaggle__person:nth-child(4n) .pb-employee-gaggle__circle {
+    .pb-employee-gaggle--party .pb-employee-gaggle-person:nth-child(4n) .pb-employee-gaggle-circle {
       animation-duration: 1320ms;
     }
 
-    .pb-employee-gaggle--secret-whirl .pb-employee-gaggle__name {
+    .pb-employee-gaggle--secret-whirl .pb-employee-gaggle-name {
       opacity: 0 !important;
       transform: translateY(-8px) scale(0.88) !important;
     }
 
-    .pb-employee-gaggle--secret-whirl .pb-employee-gaggle__person {
+    .pb-employee-gaggle--secret-whirl .pb-employee-gaggle-person {
       pointer-events: none;
     }
 
-    .pb-employee-gaggle--secret-icon-in .pb-employee-gaggle__secret-icon {
+    .pb-employee-gaggle--secret-icon-in .pb-employee-gaggle-secret-icon {
       opacity: 1;
       transform: translate(-50%, -50%) scale(1) rotate(0deg);
       filter:
@@ -100,7 +100,7 @@
         drop-shadow(0 24px 34px rgba(25, 49, 60, 0.1));
     }
 
-    .pb-employee-gaggle__circle {
+    .pb-employee-gaggle-circle {
       position: relative;
       width: 100%;
       aspect-ratio: 1 / 1;
@@ -114,19 +114,19 @@
       overflow: visible;
     }
 
-    .pb-employee-gaggle--intro .pb-employee-gaggle__circle {
+    .pb-employee-gaggle--intro .pb-employee-gaggle-circle {
       opacity: 0;
       animation: pb-gaggle-spin-in 760ms cubic-bezier(0.2, 0.9, 0.2, 1) forwards;
       animation-delay: var(--pb-delay, 0ms);
     }
 
-    .pb-employee-gaggle__person:hover .pb-employee-gaggle__circle,
-    .pb-employee-gaggle__person:focus-within .pb-employee-gaggle__circle {
+    .pb-employee-gaggle-person:hover .pb-employee-gaggle-circle,
+    .pb-employee-gaggle-person:focus-within .pb-employee-gaggle-circle {
       transform: translateY(-8px) scale(1.05);
       box-shadow: 0 24px 38px rgba(25, 49, 60, 0.12);
     }
 
-    .pb-employee-gaggle__avatar {
+    .pb-employee-gaggle-avatar {
       position: relative;
       z-index: 1;
       width: 100%;
@@ -141,14 +141,14 @@
       transition: filter 180ms ease;
     }
 
-    .pb-employee-gaggle__person:hover .pb-employee-gaggle__avatar,
-    .pb-employee-gaggle__person:focus-within .pb-employee-gaggle__avatar {
+    .pb-employee-gaggle-person:hover .pb-employee-gaggle-avatar,
+    .pb-employee-gaggle-person:focus-within .pb-employee-gaggle-avatar {
       filter:
         drop-shadow(0 0 12px rgba(246, 198, 47, 0.34))
         drop-shadow(0 0 24px rgba(246, 198, 47, 0.22));
     }
 
-    .pb-employee-gaggle__name {
+    .pb-employee-gaggle-name {
       display: inline-block;
       margin-top: 10px;
       padding: 7px 12px;
@@ -166,13 +166,13 @@
       pointer-events: none;
     }
 
-    .pb-employee-gaggle__person:hover .pb-employee-gaggle__name,
-    .pb-employee-gaggle__person:focus-within .pb-employee-gaggle__name {
+    .pb-employee-gaggle-person:hover .pb-employee-gaggle-name,
+    .pb-employee-gaggle-person:focus-within .pb-employee-gaggle-name {
       opacity: 1;
       transform: translateY(0) scale(1);
     }
 
-    .pb-employee-gaggle__empty {
+    .pb-employee-gaggle-empty {
       display: grid;
       place-items: center;
       min-height: 260px;
@@ -188,27 +188,27 @@
         padding: 8px;
       }
 
-      .pb-employee-gaggle__stage {
+      .pb-employee-gaggle-stage {
         min-height: 400px;
       }
 
-      .pb-employee-gaggle__name {
+      .pb-employee-gaggle-name {
         font-size: 0.8rem;
       }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .pb-employee-gaggle--intro .pb-employee-gaggle__circle,
-      .pb-employee-gaggle__circle,
-      .pb-employee-gaggle__name,
-      .pb-employee-gaggle__avatar {
+      .pb-employee-gaggle--intro .pb-employee-gaggle-circle,
+      .pb-employee-gaggle-circle,
+      .pb-employee-gaggle-name,
+      .pb-employee-gaggle-avatar {
         transition: none;
         animation: none;
         opacity: 1;
       }
 
-      .pb-employee-gaggle__person,
-      .pb-employee-gaggle__secret-icon {
+      .pb-employee-gaggle-person,
+      .pb-employee-gaggle-secret-icon {
         transition: none;
       }
     }
@@ -296,9 +296,9 @@
 
   </style>
 
-  <div class="pb-employee-gaggle__stage"></div>
+  <div class="pb-employee-gaggle-stage"></div>
 
-  <script type="application/json" class="pb-employee-gaggle__data">
+  <script type="application/json" class="pb-employee-gaggle-data">
     [
       {
         "name": "Tony",
@@ -400,11 +400,11 @@
         var avatar = document.createElement("img");
         var employeeName = normalizeName(employee.name);
 
-        person.className = "pb-employee-gaggle__person";
+        person.className = "pb-employee-gaggle-person";
         person.dataset.index = String(index);
         person.dataset.personName = employeeName;
-        circle.className = "pb-employee-gaggle__circle";
-        avatar.className = "pb-employee-gaggle__avatar";
+        circle.className = "pb-employee-gaggle-circle";
+        avatar.className = "pb-employee-gaggle-avatar";
 
         avatar.src = employee.img || "";
         avatar.alt = employeeName ? employeeName + " portrait" : "Employee portrait";
@@ -416,7 +416,7 @@
 
         if (employeeName) {
           var name = document.createElement("div");
-          name.className = "pb-employee-gaggle__name";
+          name.className = "pb-employee-gaggle-name";
           name.textContent = employeeName;
           person.appendChild(name);
         }
@@ -426,7 +426,7 @@
 
       function buildEmpty() {
         var empty = document.createElement("div");
-        empty.className = "pb-employee-gaggle__empty";
+        empty.className = "pb-employee-gaggle-empty";
         empty.textContent = "Add a JSON array of { name, img } objects to populate the widget.";
         return empty;
       }
@@ -723,26 +723,26 @@
         return (
           '<style>' +
           '.pb-plinko{--pb-yellow:#f6c62f;--pb-ink:#19313c;--pb-muted:#62737c;width:min(100%,840px);margin:0 auto;padding:clamp(8px,1.4vw,16px);font-family:"Trebuchet MS","Segoe UI",sans-serif;color:var(--pb-ink)}' +
-          '.pb-plinko *{box-sizing:border-box}.pb-plinko__shell{display:grid;gap:12px}.pb-plinko__toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.pb-plinko__title{margin:0;font:800 clamp(1rem,1.4vw,1.24rem)/1 "Trebuchet MS","Segoe UI",sans-serif;letter-spacing:-.03em}.pb-plinko__actions{display:flex;gap:8px;flex-wrap:wrap}' +
-          '.pb-plinko__button{appearance:none;border:0;border-radius:999px;padding:8px 12px;background:var(--pb-yellow);color:#fff;font:800 .78rem/1 "Segoe UI",sans-serif;cursor:pointer;box-shadow:0 10px 20px rgba(246,198,47,.22);transition:transform .16s ease,box-shadow .16s ease,opacity .16s ease}.pb-plinko__button:hover,.pb-plinko__button:focus-visible{transform:translateY(-1px);box-shadow:0 14px 24px rgba(246,198,47,.28);outline:none}.pb-plinko__button[disabled]{opacity:.42;cursor:default;pointer-events:none}' +
-          '.pb-plinko__board{position:relative;min-height:clamp(420px,56vw,640px);border-radius:24px;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.84),rgba(255,255,255,.72)),linear-gradient(180deg,#f9f8f4 0%,#efede6 100%);box-shadow:inset 0 0 0 1px rgba(25,49,60,.06),0 24px 46px rgba(25,49,60,.08)}.pb-plinko__board::before{content:"";position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.1),rgba(255,255,255,.1)),repeating-linear-gradient(90deg,rgba(25,49,60,.028) 0 1px,transparent 1px 24px);opacity:.6;pointer-events:none}.pb-plinko__drop-zone,.pb-plinko__pegs,.pb-plinko__dividers,.pb-plinko__slots,.pb-plinko__disks{position:absolute;inset:0}.pb-plinko__drop-zone{top:14px;left:50%;inset:auto auto auto 50%;width:clamp(96px,16%,144px);height:34px;transform:translateX(-50%);border:2px dashed rgba(25,49,60,.12);border-radius:999px;background:rgba(255,255,255,.52);pointer-events:none}.pb-plinko__drop-zone::after{content:"Drop";position:absolute;inset:0;display:grid;place-items:center;font:800 .64rem/1 "Segoe UI",sans-serif;letter-spacing:.14em;text-transform:uppercase;color:rgba(25,49,60,.5)}' +
-          '.pb-plinko__peg{position:absolute;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:999px;background:rgba(25,49,60,.22);box-shadow:0 0 0 4px rgba(255,255,255,.88);pointer-events:none}.pb-plinko__divider{position:absolute;bottom:0;width:6px;border-radius:999px 999px 0 0;background:rgba(25,49,60,.14);box-shadow:0 0 0 1px rgba(255,255,255,.62);pointer-events:none}.pb-plinko__slot{position:absolute;bottom:0;display:grid;place-items:end center;padding-bottom:12px;font:800 .66rem/1 "Segoe UI",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:rgba(25,49,60,.42);pointer-events:none}.pb-plinko__queue{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center;min-height:58px}.pb-plinko__queue-empty{font:700 .84rem/1.3 "Segoe UI",sans-serif;color:var(--pb-muted)}' +
-          '.pb-plinko__disk-button{appearance:none;border:0;background:transparent;padding:0;cursor:pointer;transition:transform .16s ease,opacity .16s ease,filter .16s ease;touch-action:none}.pb-plinko__disk-button:hover,.pb-plinko__disk-button:focus-visible{transform:translateY(-2px);filter:brightness(1.03);outline:none}.pb-plinko__disk,.pb-plinko__token{position:relative;width:66px;aspect-ratio:1/1;border-radius:999px}.pb-plinko__token{position:absolute;top:0;left:0;width:var(--pb-size,84px);height:var(--pb-size,84px);will-change:transform;z-index:10;transform:translate(-50%,-50%)}.pb-plinko__drag-ghost{position:fixed;top:0;left:0;width:72px;height:72px;transform:translate(-50%,-50%);pointer-events:none;z-index:9999;opacity:.94}.pb-plinko__disk-image,.pb-plinko__token-image{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:contain;border-radius:999px;filter:drop-shadow(0 0 8px rgba(246,198,47,.24)) drop-shadow(0 0 18px rgba(246,198,47,.16));user-select:none;-webkit-user-drag:none}.pb-plinko__disk-name{position:absolute;left:50%;bottom:-22px;transform:translateX(-50%);padding:5px 9px;border-radius:999px;background:rgba(255,255,255,.94);box-shadow:0 10px 18px rgba(25,49,60,.08);font:800 .68rem/1 "Segoe UI",sans-serif;color:var(--pb-ink);white-space:nowrap;opacity:0;transition:opacity .16s ease,transform .16s ease;pointer-events:none}.pb-plinko__disk-button:hover .pb-plinko__disk-name,.pb-plinko__disk-button:focus-visible .pb-plinko__disk-name,.pb-plinko__token:hover .pb-plinko__disk-name{opacity:1;transform:translateX(-50%) translateY(-2px)}' +
-          '@media (max-width:767px){.pb-plinko{padding:8px}.pb-plinko__board{min-height:380px;border-radius:20px}.pb-plinko__disk,.pb-plinko__token{width:60px}}@media (prefers-reduced-motion:reduce){.pb-plinko__button,.pb-plinko__disk-button,.pb-plinko__disk-name{transition:none}}' +
+          '.pb-plinko *{box-sizing:border-box}.pb-plinko-shell{display:grid;gap:12px}.pb-plinko-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.pb-plinko-title{margin:0;font:800 clamp(1rem,1.4vw,1.24rem)/1 "Trebuchet MS","Segoe UI",sans-serif;letter-spacing:-.03em}.pb-plinko-actions{display:flex;gap:8px;flex-wrap:wrap}' +
+          '.pb-plinko-button{appearance:none;border:0;border-radius:999px;padding:8px 12px;background:var(--pb-yellow);color:#fff;font:800 .78rem/1 "Segoe UI",sans-serif;cursor:pointer;box-shadow:0 10px 20px rgba(246,198,47,.22);transition:transform .16s ease,box-shadow .16s ease,opacity .16s ease}.pb-plinko-button:hover,.pb-plinko-button:focus-visible{transform:translateY(-1px);box-shadow:0 14px 24px rgba(246,198,47,.28);outline:none}.pb-plinko-button[disabled]{opacity:.42;cursor:default;pointer-events:none}' +
+          '.pb-plinko-board{position:relative;min-height:clamp(420px,56vw,640px);border-radius:24px;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.84),rgba(255,255,255,.72)),linear-gradient(180deg,#f9f8f4 0%,#efede6 100%);box-shadow:inset 0 0 0 1px rgba(25,49,60,.06),0 24px 46px rgba(25,49,60,.08)}.pb-plinko-board::before{content:"";position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.1),rgba(255,255,255,.1)),repeating-linear-gradient(90deg,rgba(25,49,60,.028) 0 1px,transparent 1px 24px);opacity:.6;pointer-events:none}.pb-plinko-drop-zone,.pb-plinko-pegs,.pb-plinko-dividers,.pb-plinko-slots,.pb-plinko-disks{position:absolute;inset:0}.pb-plinko-drop-zone{top:14px;left:50%;inset:auto auto auto 50%;width:clamp(96px,16%,144px);height:34px;transform:translateX(-50%);border:2px dashed rgba(25,49,60,.12);border-radius:999px;background:rgba(255,255,255,.52);pointer-events:none}.pb-plinko-drop-zone::after{content:"Drop";position:absolute;inset:0;display:grid;place-items:center;font:800 .64rem/1 "Segoe UI",sans-serif;letter-spacing:.14em;text-transform:uppercase;color:rgba(25,49,60,.5)}' +
+          '.pb-plinko-peg{position:absolute;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:999px;background:rgba(25,49,60,.22);box-shadow:0 0 0 4px rgba(255,255,255,.88);pointer-events:none}.pb-plinko-divider{position:absolute;bottom:0;width:6px;border-radius:999px 999px 0 0;background:rgba(25,49,60,.14);box-shadow:0 0 0 1px rgba(255,255,255,.62);pointer-events:none}.pb-plinko-slot{position:absolute;bottom:0;display:grid;place-items:end center;padding-bottom:12px;font:800 .66rem/1 "Segoe UI",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:rgba(25,49,60,.42);pointer-events:none}.pb-plinko-queue{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center;min-height:58px}.pb-plinko-queue-empty{font:700 .84rem/1.3 "Segoe UI",sans-serif;color:var(--pb-muted)}' +
+          '.pb-plinko-disk-button{appearance:none;border:0;background:transparent;padding:0;cursor:pointer;transition:transform .16s ease,opacity .16s ease,filter .16s ease;touch-action:none}.pb-plinko-disk-button:hover,.pb-plinko-disk-button:focus-visible{transform:translateY(-2px);filter:brightness(1.03);outline:none}.pb-plinko-disk,.pb-plinko-token{position:relative;width:66px;aspect-ratio:1/1;border-radius:999px}.pb-plinko-token{position:absolute;top:0;left:0;width:var(--pb-size,84px);height:var(--pb-size,84px);will-change:transform;z-index:10;transform:translate(-50%,-50%)}.pb-plinko-drag-ghost{position:fixed;top:0;left:0;width:72px;height:72px;transform:translate(-50%,-50%);pointer-events:none;z-index:9999;opacity:.94}.pb-plinko-disk-image,.pb-plinko-token-image{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:contain;border-radius:999px;filter:drop-shadow(0 0 8px rgba(246,198,47,.24)) drop-shadow(0 0 18px rgba(246,198,47,.16));user-select:none;-webkit-user-drag:none}.pb-plinko-disk-name{position:absolute;left:50%;bottom:-22px;transform:translateX(-50%);padding:5px 9px;border-radius:999px;background:rgba(255,255,255,.94);box-shadow:0 10px 18px rgba(25,49,60,.08);font:800 .68rem/1 "Segoe UI",sans-serif;color:var(--pb-ink);white-space:nowrap;opacity:0;transition:opacity .16s ease,transform .16s ease;pointer-events:none}.pb-plinko-disk-button:hover .pb-plinko-disk-name,.pb-plinko-disk-button:focus-visible .pb-plinko-disk-name,.pb-plinko-token:hover .pb-plinko-disk-name{opacity:1;transform:translateX(-50%) translateY(-2px)}' +
+          '@media (max-width:767px){.pb-plinko{padding:8px}.pb-plinko-board{min-height:380px;border-radius:20px}.pb-plinko-disk,.pb-plinko-token{width:60px}}@media (prefers-reduced-motion:reduce){.pb-plinko-button,.pb-plinko-disk-button,.pb-plinko-disk-name{transition:none}}' +
           '</style>' +
-          '<div class="pb-plinko__shell"><div class="pb-plinko__toolbar"><h2 class="pb-plinko__title">Team Plinko</h2><div class="pb-plinko__actions"><button class="pb-plinko__button pb-plinko__drop" type="button">Drop</button><button class="pb-plinko__button pb-plinko__reset" type="button">Reset</button></div></div><div class="pb-plinko__board"><div class="pb-plinko__drop-zone"></div><div class="pb-plinko__pegs"></div><div class="pb-plinko__dividers"></div><div class="pb-plinko__slots"></div><div class="pb-plinko__disks"></div></div><div class="pb-plinko__queue"></div></div>'
+          '<div class="pb-plinko-shell"><div class="pb-plinko-toolbar"><h2 class="pb-plinko-title">Team Plinko</h2><div class="pb-plinko-actions"><button class="pb-plinko-button pb-plinko-drop" type="button">Drop</button><button class="pb-plinko-button pb-plinko-reset" type="button">Reset</button></div></div><div class="pb-plinko-board"><div class="pb-plinko-drop-zone"></div><div class="pb-plinko-pegs"></div><div class="pb-plinko-dividers"></div><div class="pb-plinko-slots"></div><div class="pb-plinko-disks"></div></div><div class="pb-plinko-queue"></div></div>'
         );
       }
 
       function initTonyPlinko(plinkoWidget, employees) {
-        var board = plinkoWidget.querySelector(".pb-plinko__board");
-        var pegsLayer = plinkoWidget.querySelector(".pb-plinko__pegs");
-        var dividersLayer = plinkoWidget.querySelector(".pb-plinko__dividers");
-        var slotsLayer = plinkoWidget.querySelector(".pb-plinko__slots");
-        var disksLayer = plinkoWidget.querySelector(".pb-plinko__disks");
-        var queue = plinkoWidget.querySelector(".pb-plinko__queue");
-        var dropButton = plinkoWidget.querySelector(".pb-plinko__drop");
-        var resetButton = plinkoWidget.querySelector(".pb-plinko__reset");
+        var board = plinkoWidget.querySelector(".pb-plinko-board");
+        var pegsLayer = plinkoWidget.querySelector(".pb-plinko-pegs");
+        var dividersLayer = plinkoWidget.querySelector(".pb-plinko-dividers");
+        var slotsLayer = plinkoWidget.querySelector(".pb-plinko-slots");
+        var disksLayer = plinkoWidget.querySelector(".pb-plinko-disks");
+        var queue = plinkoWidget.querySelector(".pb-plinko-queue");
+        var dropButton = plinkoWidget.querySelector(".pb-plinko-drop");
+        var resetButton = plinkoWidget.querySelector(".pb-plinko-reset");
         var autoDropTimer = 0;
         var dragState = null;
         var pegs = [];
@@ -758,12 +758,12 @@
           var image = document.createElement("img");
           var personName = normalizeName(person.name);
 
-          button.className = "pb-plinko__disk-button";
+          button.className = "pb-plinko-disk-button";
           button.type = "button";
           button.dataset.index = String(index);
           button.setAttribute("aria-label", personName ? "Drop " + personName : "Drop team member");
-          disk.className = "pb-plinko__disk";
-          image.className = "pb-plinko__disk-image";
+          disk.className = "pb-plinko-disk";
+          image.className = "pb-plinko-disk-image";
           image.src = person.img || "";
           image.alt = personName ? personName + " portrait" : "Team member portrait";
           image.loading = "lazy";
@@ -772,7 +772,7 @@
 
           if (personName) {
             var name = document.createElement("div");
-            name.className = "pb-plinko__disk-name";
+            name.className = "pb-plinko-disk-name";
             name.textContent = personName;
             disk.appendChild(name);
           }
@@ -796,9 +796,9 @@
           var image = document.createElement("img");
           var personName = normalizeName(person.name);
 
-          token.className = "pb-plinko__token";
+          token.className = "pb-plinko-token";
           token.style.setProperty("--pb-size", geometry.diskSize + "px");
-          image.className = "pb-plinko__token-image";
+          image.className = "pb-plinko-token-image";
           image.src = person.img || "";
           image.alt = personName ? personName + " portrait" : "Team member portrait";
           image.loading = "lazy";
@@ -807,7 +807,7 @@
 
           if (personName) {
             var name = document.createElement("div");
-            name.className = "pb-plinko__disk-name";
+            name.className = "pb-plinko-disk-name";
             name.textContent = personName;
             token.appendChild(name);
           }
@@ -820,8 +820,8 @@
           var ghost = document.createElement("div");
           var image = document.createElement("img");
 
-          ghost.className = "pb-plinko__drag-ghost";
-          image.className = "pb-plinko__token-image";
+          ghost.className = "pb-plinko-drag-ghost";
+          image.className = "pb-plinko-token-image";
           image.src = person.img || "";
           image.alt = "";
           ghost.appendChild(image);
@@ -917,7 +917,7 @@
 
             while (placed < rowColumns) {
               var pegNode = document.createElement("div");
-              pegNode.className = "pb-plinko__peg";
+              pegNode.className = "pb-plinko-peg";
               pegNode.style.left = x + "px";
               pegNode.style.top = y + "px";
               pegsLayer.appendChild(pegNode);
@@ -930,7 +930,7 @@
           geometry.bins.forEach(function (bin, index) {
             if (index > 0) {
               var divider = document.createElement("div");
-              divider.className = "pb-plinko__divider";
+              divider.className = "pb-plinko-divider";
               divider.style.left = bin.left - 3 + "px";
               divider.style.height = geometry.height - geometry.dividerTop + "px";
               divider.style.top = geometry.dividerTop + "px";
@@ -939,7 +939,7 @@
             }
 
             var slot = document.createElement("div");
-            slot.className = "pb-plinko__slot";
+            slot.className = "pb-plinko-slot";
             slot.style.left = bin.left + "px";
             slot.style.width = geometry.slotWidth + "px";
             slot.style.height = geometry.height - geometry.dividerTop + "px";
@@ -987,7 +987,7 @@
 
           if (!available.length) {
             var empty = document.createElement("div");
-            empty.className = "pb-plinko__queue-empty";
+            empty.className = "pb-plinko-queue-empty";
             empty.textContent = "All disks dropped. Hit reset to randomize and play again.";
             queue.appendChild(empty);
             dropButton.disabled = true;
@@ -1438,8 +1438,8 @@
       }
 
       function init() {
-        var stage = widget.querySelector(".pb-employee-gaggle__stage");
-        var dataNode = widget.querySelector(".pb-employee-gaggle__data");
+        var stage = widget.querySelector(".pb-employee-gaggle-stage");
+        var dataNode = widget.querySelector(".pb-employee-gaggle-data");
         var employees = safeParseEmployees(dataNode).filter(function (employee) {
           return employee && employee.img;
         });

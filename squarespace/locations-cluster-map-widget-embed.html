@@ -1,0 +1,344 @@
+<section class="pb-locations-map" data-pb-locations-map>
+  <style>
+    .pb-locations-map {
+      --pb-bg: #000;
+      --pb-yellow: #f6c62f;
+      --pb-magenta: #d7149a;
+      width: min(100%, 1100px);
+      margin: 0 auto;
+      padding: clamp(8px, 1.2vw, 16px);
+      box-sizing: border-box;
+      background: transparent;
+      font-family: "Myrad Pro", "Myriad Pro", "Segoe UI", sans-serif;
+    }
+
+    .pb-locations-map * {
+      box-sizing: border-box;
+    }
+
+    .pb-locations-map__frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1005 / 660;
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--pb-bg);
+      isolation: isolate;
+    }
+
+    .pb-locations-map__map {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      user-select: none;
+      -webkit-user-drag: none;
+      pointer-events: none;
+    }
+
+    .pb-locations-map__overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .pb-locations-map__marker {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      border: 0;
+      border-radius: 999px;
+      background: var(--pb-yellow);
+      pointer-events: none;
+      box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.22),
+        0 2px 10px rgba(0, 0, 0, 0.35);
+    }
+
+    .pb-locations-map__marker::after {
+      content: "";
+      position: absolute;
+      inset: 30%;
+      border-radius: 999px;
+      background: var(--pb-magenta);
+    }
+
+    .pb-locations-map__count {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font: 700 clamp(10px, 1vw, 13px) / 1 "Segoe UI", sans-serif;
+      color: #111;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .pb-locations-map__logo {
+      position: absolute;
+      top: clamp(10px, 2.2vw, 22px);
+      right: clamp(10px, 2.2vw, 24px);
+      width: clamp(180px, 36%, 380px);
+      height: auto;
+      object-fit: contain;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-drag: none;
+      z-index: 2;
+      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+    }
+
+    .pb-locations-map__hint {
+      position: absolute;
+      left: 50%;
+      bottom: 10px;
+      transform: translateX(-50%);
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.72);
+      color: #fff;
+      font: 600 12px/1.2 "Segoe UI", sans-serif;
+      letter-spacing: 0.02em;
+      z-index: 3;
+    }
+
+    @media (max-width: 900px) {
+      .pb-locations-map {
+        padding: 6px;
+      }
+
+      .pb-locations-map__logo {
+        width: clamp(130px, 40%, 260px);
+      }
+    }
+  </style>
+
+  <div class="pb-locations-map__frame">
+    <img class="pb-locations-map__map" alt="Locations map" data-role="map" />
+    <div class="pb-locations-map__overlay" data-role="overlay"></div>
+    <img class="pb-locations-map__logo" alt="Pineapple Bytes logo" data-role="logo" />
+    <div class="pb-locations-map__hint" data-role="hint">Set `mapImage` in JSON to your static map URL.</div>
+  </div>
+
+  <script type="application/json" class="pb-locations-map__data">
+    {
+      "mapImage": "REPLACE_WITH_YOUR_CANADA_MAP_IMAGE_URL",
+      "logoImage": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/1576776312533-007SE27KBNR5PFCNDUQH/pineapplebyteslogo+TRANSPARENT.png?content-type=image%2Fpng",
+      "clusterRadiusPx": 24,
+      "marker": {
+        "min": 12,
+        "base": 15,
+        "step": 4.5,
+        "max": 40
+      },
+      "points": [
+        { "name": "Vancouver", "x": 9.5, "y": 66.5 },
+        { "name": "Calgary", "x": 21.5, "y": 69.5 },
+        { "name": "Edmonton", "x": 23.8, "y": 64.5 },
+        { "name": "Winnipeg", "x": 39.5, "y": 70.8 },
+        { "name": "Toronto", "x": 68.5, "y": 75.3 },
+        { "name": "Ottawa", "x": 72.2, "y": 72.8 },
+        { "name": "Montreal", "x": 76.5, "y": 70.8 },
+        { "name": "Quebec City", "x": 81.6, "y": 68.6 },
+        { "name": "Halifax", "x": 92.5, "y": 60.0 },
+        { "name": "St John's", "x": 96.0, "y": 56.2 }
+      ]
+    }
+  </script>
+
+  <script>
+    (function () {
+      var widget = document.currentScript.closest("[data-pb-locations-map]");
+      if (!widget || widget.dataset.pbReady === "true") {
+        return;
+      }
+      widget.dataset.pbReady = "true";
+
+      var dataNode = widget.querySelector(".pb-locations-map__data");
+      var mapImageNode = widget.querySelector('[data-role="map"]');
+      var logoNode = widget.querySelector('[data-role="logo"]');
+      var overlay = widget.querySelector('[data-role="overlay"]');
+      var hint = widget.querySelector('[data-role="hint"]');
+      var frame = widget.querySelector(".pb-locations-map__frame");
+      var resizeObserver;
+      var settings;
+
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function normalize(value) {
+        if (typeof value === "string") {
+          return value.trim();
+        }
+        if (value === undefined || value === null) {
+          return "";
+        }
+        return String(value).trim();
+      }
+
+      function asNumber(value, fallback) {
+        var num = Number(value);
+        return Number.isFinite(num) ? num : fallback;
+      }
+
+      function parseConfig(node) {
+        if (!node) {
+          return null;
+        }
+        try {
+          var parsed = JSON.parse(node.textContent.trim());
+          return parsed && typeof parsed === "object" ? parsed : null;
+        } catch (error) {
+          return null;
+        }
+      }
+
+      function resolvePoints(config) {
+        var source = Array.isArray(config.points) ? config.points : [];
+        return source
+          .map(function (point) {
+            var x = asNumber(point.x, NaN);
+            var y = asNumber(point.y, NaN);
+            var weight = asNumber(point.weight, 1);
+            if (!Number.isFinite(x) || !Number.isFinite(y)) {
+              return null;
+            }
+            return {
+              name: normalize(point.name),
+              x: clamp(x, 0, 100),
+              y: clamp(y, 0, 100),
+              weight: Math.max(1, weight)
+            };
+          })
+          .filter(Boolean);
+      }
+
+      function clusterPoints(points, width, height, radiusPx) {
+        var clusters = [];
+
+        points.forEach(function (point) {
+          var px = (point.x / 100) * width;
+          var py = (point.y / 100) * height;
+          var match = null;
+          var bestDistance = Infinity;
+
+          clusters.forEach(function (cluster) {
+            var dx = px - cluster.cx;
+            var dy = py - cluster.cy;
+            var distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance <= radiusPx && distance < bestDistance) {
+              bestDistance = distance;
+              match = cluster;
+            }
+          });
+
+          if (!match) {
+            match = {
+              points: [],
+              weightedX: 0,
+              weightedY: 0,
+              weight: 0,
+              cx: px,
+              cy: py
+            };
+            clusters.push(match);
+          }
+
+          match.points.push(point);
+          match.weight += point.weight;
+          match.weightedX += px * point.weight;
+          match.weightedY += py * point.weight;
+          match.cx = match.weightedX / match.weight;
+          match.cy = match.weightedY / match.weight;
+        });
+
+        return clusters;
+      }
+
+      function makeMarker(cluster, markerSettings) {
+        var marker = document.createElement("div");
+        var count = Math.round(cluster.weight);
+        var size =
+          markerSettings.base +
+          Math.sqrt(Math.max(0, count - 1)) * markerSettings.step;
+        var safeSize = clamp(size, markerSettings.min, markerSettings.max);
+
+        marker.className = "pb-locations-map__marker";
+        marker.style.left = cluster.cx.toFixed(2) + "px";
+        marker.style.top = cluster.cy.toFixed(2) + "px";
+        marker.style.width = safeSize.toFixed(2) + "px";
+        marker.style.height = safeSize.toFixed(2) + "px";
+        marker.setAttribute("aria-hidden", "true");
+
+        if (count > 1) {
+          var countNode = document.createElement("span");
+          countNode.className = "pb-locations-map__count";
+          countNode.textContent = String(count);
+          marker.appendChild(countNode);
+        }
+
+        return marker;
+      }
+
+      function render() {
+        var width = frame.clientWidth;
+        var height = frame.clientHeight;
+        var radiusPx = asNumber(settings.clusterRadiusPx, 24);
+        var markerSettings = settings.marker || {};
+        var resolvedMarker = {
+          min: asNumber(markerSettings.min, 12),
+          base: asNumber(markerSettings.base, 15),
+          step: asNumber(markerSettings.step, 4.5),
+          max: asNumber(markerSettings.max, 40)
+        };
+        var points = resolvePoints(settings);
+        var clusters;
+
+        overlay.innerHTML = "";
+
+        if (!points.length || !width || !height) {
+          return;
+        }
+
+        clusters = clusterPoints(points, width, height, radiusPx);
+        clusters.forEach(function (cluster) {
+          overlay.appendChild(makeMarker(cluster, resolvedMarker));
+        });
+      }
+
+      settings = parseConfig(dataNode);
+      if (!settings) {
+        return;
+      }
+
+      var mapImageUrl = normalize(settings.mapImage);
+      var logoImageUrl = normalize(settings.logoImage);
+
+      if (mapImageUrl && !/REPLACE_WITH_/i.test(mapImageUrl)) {
+        mapImageNode.src = mapImageUrl;
+        hint.style.display = "none";
+      } else {
+        mapImageNode.removeAttribute("src");
+        hint.style.display = "";
+      }
+
+      if (logoImageUrl) {
+        logoNode.src = logoImageUrl;
+      } else {
+        logoNode.style.display = "none";
+      }
+
+      if ("ResizeObserver" in window) {
+        resizeObserver = new ResizeObserver(render);
+        resizeObserver.observe(frame);
+      } else {
+        window.addEventListener("resize", render);
+      }
+
+      mapImageNode.addEventListener("load", render);
+      render();
+    })();
+  </script>
+</section>
