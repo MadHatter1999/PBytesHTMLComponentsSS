@@ -1,0 +1,531 @@
+<section class="pb-logo-slider" data-pb-logo-slider>
+  <style>
+    .pb-logo-slider {
+      --pb-ink: #2d2922;
+      --pb-accent: #f6c62f;
+      --pb-card: rgba(255, 255, 255, 0.78);
+      --pb-border: rgba(45, 41, 34, 0.16);
+      --pb-shadow: 0 16px 40px rgba(45, 41, 34, 0.12);
+      --pb-glow: 0 0 0 1px rgba(246, 198, 47, 0.2), 0 0 26px rgba(246, 198, 47, 0.18);
+      width: min(100%, 1200px);
+      margin: 0 auto;
+      padding: clamp(16px, 2.4vw, 26px);
+      border-radius: 24px;
+      border: 1px solid rgba(246, 198, 47, 0.34);
+      background:
+        radial-gradient(circle at 8% 10%, rgba(246, 198, 47, 0.14) 0, transparent 42%),
+        radial-gradient(circle at 92% 90%, rgba(246, 198, 47, 0.16) 0, transparent 46%),
+        linear-gradient(140deg, rgba(255, 255, 255, 0.94), rgba(249, 246, 238, 0.92));
+      box-shadow: var(--pb-shadow), var(--pb-glow);
+      font-family: "Segoe UI", "Trebuchet MS", sans-serif;
+      box-sizing: border-box;
+      color: var(--pb-ink);
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+    }
+
+    .pb-logo-slider::before {
+      content: "";
+      position: absolute;
+      inset: -40% -20%;
+      background:
+        conic-gradient(
+          from 120deg,
+          rgba(246, 198, 47, 0) 0deg,
+          rgba(246, 198, 47, 0.1) 62deg,
+          rgba(255, 255, 255, 0.12) 108deg,
+          rgba(246, 198, 47, 0) 170deg
+        );
+      transform: rotate(0deg);
+      animation: pb-logo-slider-spin 16s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.24;
+    }
+
+    .pb-logo-slider::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          rgba(45, 41, 34, 0.018) 0 1px,
+          transparent 1px 22px
+        ),
+        repeating-linear-gradient(
+          0deg,
+          rgba(45, 41, 34, 0.013) 0 1px,
+          transparent 1px 22px
+        );
+      mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 0.7), transparent 88%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .pb-logo-slider * {
+      box-sizing: border-box;
+    }
+
+    .pb-logo-slider__frame {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .pb-logo-slider__window {
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(45, 41, 34, 0.1);
+      background: linear-gradient(160deg, rgba(255, 255, 255, 0.64), rgba(255, 255, 255, 0.42));
+      backdrop-filter: blur(6px);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .pb-logo-slider__grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      justify-items: center;
+      margin-bottom: 12px;
+    }
+
+    .pb-logo-slider__box {
+      display: grid;
+      place-items: center;
+      width: min(120px, 100%);
+      aspect-ratio: 1 / 1;
+      background: var(--pb-card);
+      border: 1px solid var(--pb-border);
+      border-radius: 14px;
+      box-shadow:
+        0 12px 24px rgba(45, 41, 34, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.78);
+      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+      overflow: hidden;
+      position: relative;
+      animation: pb-logo-card-in 520ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+    }
+
+    .pb-logo-slider__box::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      background: linear-gradient(
+        135deg,
+        rgba(246, 198, 47, 0.2),
+        rgba(246, 198, 47, 0.14),
+        rgba(255, 255, 255, 0.08)
+      );
+      opacity: 0;
+      transition: opacity 180ms ease;
+      pointer-events: none;
+    }
+
+    .pb-logo-slider__box:hover {
+      transform: translateY(-3px) scale(1.04);
+      border-color: rgba(246, 198, 47, 0.4);
+      box-shadow:
+        0 18px 30px rgba(45, 41, 34, 0.14),
+        0 0 22px rgba(246, 198, 47, 0.2);
+    }
+
+    .pb-logo-slider__box:hover::before {
+      opacity: 1;
+    }
+
+    .pb-logo-slider__img {
+      position: relative;
+      z-index: 1;
+      display: block;
+      max-width: 92%;
+      max-height: 92%;
+      object-fit: contain;
+      user-select: none;
+      -webkit-user-drag: none;
+      filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.8));
+      transition: transform 180ms ease, filter 180ms ease;
+    }
+
+    .pb-logo-slider__box:hover .pb-logo-slider__img {
+      transform: scale(1.07);
+      filter: drop-shadow(0 3px 6px rgba(45, 41, 34, 0.14));
+    }
+
+    .pb-logo-slider__arrow {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(45, 41, 34, 0.16);
+      border-radius: 999px;
+      background: linear-gradient(160deg, rgba(255, 255, 255, 0.9), rgba(249, 246, 238, 0.82));
+      backdrop-filter: blur(6px);
+      color: var(--pb-ink);
+      font-size: 24px;
+      line-height: 1;
+      cursor: pointer;
+      box-shadow: 0 8px 16px rgba(45, 41, 34, 0.12);
+      transition: transform 180ms ease, background-color 180ms ease, color 180ms ease, box-shadow 180ms ease;
+      z-index: 2;
+    }
+
+    .pb-logo-slider__arrow:hover,
+    .pb-logo-slider__arrow:focus-visible {
+      transform: translateY(-1px);
+      background: linear-gradient(160deg, var(--pb-accent), #f9da72);
+      color: #fff;
+      box-shadow: 0 12px 22px rgba(246, 198, 47, 0.32);
+      outline: none;
+    }
+
+    .pb-logo-slider__dots {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      gap: 9px;
+      margin-top: 12px;
+    }
+
+    .pb-logo-slider__dot {
+      width: 12px;
+      height: 12px;
+      border: 1px solid rgba(45, 41, 34, 0.16);
+      border-radius: 999px;
+      background: rgba(45, 41, 34, 0.15);
+      cursor: pointer;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+      transition: background-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .pb-logo-slider__dot:hover,
+    .pb-logo-slider__dot:focus-visible {
+      background: rgba(246, 198, 47, 0.58);
+      outline: none;
+    }
+
+    .pb-logo-slider__dot.is-active {
+      background: linear-gradient(160deg, var(--pb-accent), #f9dd83);
+      border-color: rgba(246, 198, 47, 0.8);
+      box-shadow: 0 0 10px rgba(246, 198, 47, 0.34);
+      transform: scale(1.08);
+    }
+
+    @keyframes pb-logo-slider-spin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes pb-logo-card-in {
+      from {
+        opacity: 0;
+        transform: translateY(6px) scale(0.96);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .pb-logo-slider__grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .pb-logo-slider__box {
+        width: min(106px, 100%);
+      }
+    }
+
+    @media (max-width: 700px) {
+      .pb-logo-slider {
+        padding: 12px;
+      }
+
+      .pb-logo-slider__frame {
+        gap: 8px;
+      }
+
+      .pb-logo-slider__window {
+        padding: 10px;
+      }
+
+      .pb-logo-slider__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .pb-logo-slider__box {
+        width: min(96px, 100%);
+      }
+
+      .pb-logo-slider__arrow {
+        width: 38px;
+        height: 38px;
+        font-size: 20px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .pb-logo-slider__box {
+        width: min(86px, 100%);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .pb-logo-slider::before,
+      .pb-logo-slider__box,
+      .pb-logo-slider__img,
+      .pb-logo-slider__arrow,
+      .pb-logo-slider__dot {
+        animation: none;
+        transition: none;
+      }
+    }
+  </style>
+
+  <div class="pb-logo-slider__frame">
+    <button class="pb-logo-slider__arrow" type="button" aria-label="Previous logos" data-action="prev">
+      &#10094;
+    </button>
+    <div class="pb-logo-slider__window" aria-live="polite">
+      <div class="pb-logo-slider__grid" data-role="grid"></div>
+    </div>
+    <button class="pb-logo-slider__arrow" type="button" aria-label="Next logos" data-action="next">
+      &#10095;
+    </button>
+  </div>
+  <div class="pb-logo-slider__dots" data-role="dots"></div>
+
+  <script>
+    (function () {
+      var root = document.currentScript.closest("[data-pb-logo-slider]");
+      if (!root || root.dataset.pbReady === "true") {
+        return;
+      }
+      root.dataset.pbReady = "true";
+
+      var logos = [
+        { src: "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/095e76a3-8eb6-49b9-9664-42cc05ddf934/z18s.png?content-type=image%2Fpng", alt: "Happy Harry's Logo" },
+        { src: "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/a3393efc-4085-4527-81b0-461c6cc18e13/red-robin-logo-png_seeklogo-491218.png?content-type=image%2Fpng", alt: "Red Robin's Logo" },
+        { src: "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/00ba932f-426d-4c3c-b2a7-e05017fee835/Liberty-EG_white-copy.png?content-type=image%2Fpng", alt: "Liberty Logo" },
+        { src: "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/bebb5611-80de-428e-819b-8222035caed8/LegHosp.png?content-type=image%2Fpng", alt: "Legendary Hospitality" },
+        { src: "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/7f93b0fc-d01d-4bc8-8c66-f0b300440914/AtFab.png?content-type=image%2Fpng", alt: "Atlantic Fabric" },
+        { src: "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/7c4f001b-f004-4ed2-8f56-cb5e110a6f24/Antica.png?content-type=image%2Fpng", alt: "Antica Osteria" },
+        { src: "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/5cc874f1-89ab-4510-90f8-34a92683974c/Firehouse-Subs-edit.png?content-type=image%2Fpng", alt: "Fire House Subs" },
+        { src: "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/a7f0cff0-3fe8-47ef-9a31-f3c48bafb448/demetres.png?content-type=image%2Fpng", alt: "Demetres" },
+        { src: "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/ceab4294-a54f-4069-9920-2ceb14a51608/CN+Tower+Logo+4P.png?content-type=image%2Fpng", alt: "CN Tower" },
+        { src: "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/41c4f0eb-d97d-4e35-a72f-3c54698c9280/pwd.png?content-type=image%2Fpng", alt: "Pizza Wine Disco" },
+        { src: "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/01c7d375-d73c-4ae4-a927-89bd569b9af1/Robins_Donuts.png?content-type=image%2Fpng", alt: "Robins Donuts" },
+        { src: "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/323e65ef-0022-4716-aee8-d88af3386f55/HospiceThriftStore.png?content-type=image%2Fpng", alt: "Hospice Thrift" },
+        { src: "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/c01e75f3-5e50-40d1-bb06-4075e091d39f/3-MemLogoSearch_Murphy.png?content-type=image%2Fpng", alt: "Murphy's Group" },
+        { src: "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/10cc7f1a-d458-479a-9d18-1fc341322ef4/Paddys-Pub.png?content-type=image%2Fpng", alt: "Paddy's Pub" },
+        { src: "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/d06c8eb2-1cdc-43e9-ba74-3c945a4f1105/Nakos-logo-stacked.png?content-type=image%2Fpng", alt: "Nakos Greek Grill" },
+        { src: "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/a214d04b-edfb-49fb-a846-c6a974b18537/blueblood.png?content-type=image%2Fpng", alt: "Blue Blood Steak House" },
+        { src: "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/4ae8b40f-2902-48f8-a40f-629bb97c21e5/z-Nandos.png?content-type=image%2Fpng", alt: "Nando's Chicken" },
+        { src: "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/7716587c-dfe8-457d-82d8-fa2a0efc26fb/z9Logo_CCNB_350x382.png?content-type=image%2Fpng", alt: "Community College of New Brunswick" },
+        { src: "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/9b1c68fe-54b7-4d44-aff1-2937fc0dc0df/danico.png?content-type=image%2Fpng", alt: "Da Nico" },
+        { src: "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/3ed5017a-433f-42c8-b066-cf2e2ccc25be/verace.jpg?content-type=image%2Fjpeg", alt: "Verace Italian Restaurant" },
+        { src: "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/bf875032-7249-4164-b1d1-32a8c88d7a55/AllStarLogo.png?content-type=image%2Fpng", alt: "All Stars Wings and Ribs" },
+        { src: "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/1b075a65-8a1f-44c2-800e-317bca2bf433/1-sk.png?content-type=image%2Fpng", alt: "Supplement King" },
+        { src: "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/dff6176b-f0a9-4c3c-b0f6-0e41cc7fdf50/MemLogo_Grafton+Connor+logo.png?content-type=image%2Fpng", alt: "Grafton Connor Group" },
+        { src: "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/4533462c-2610-44ea-bd22-1e49df0b6132/duchess.png?content-type=image%2Fpng", alt: "The Duchess Pub" },
+        { src: "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/01ddb402-dbe9-4ed0-b152-64afa0c700ef/corks.png?content-type=image%2Fpng", alt: "Corks Winebar and Eatery" },
+        { src: "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/4bdc2f4b-fd1c-42c7-872b-cfc96e3dca76/cibo.png?content-type=image%2Fpng", alt: "Cibo Wine Bar" },
+        { src: "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/fcba7a5b-dddb-4fc3-b959-07b942eae03c/bAtlantic-Gardens.png?content-type=image%2Fpng", alt: "Atlantic Gardens" },
+        { src: "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/626209c7-ae1d-48df-b41e-aa6f1e7d36bd/2Bishops.png?content-type=image%2Fpng", alt: "Bishops Cellar" },
+        { src: "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/8ae459d3-c1c5-466f-b2f4-53404d74dbd0/donalfonso.png?content-type=image%2Fpng", alt: "Don Alfonso" },
+        { src: "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/b0448329-11d1-4c37-a2f4-52b3082c5c09/thesmoke_logo_v2.jpg?content-type=image%2Fjpeg", alt: "The Smoke BBQ" }
+      ];
+
+      var perPage = 8;
+      var totalPages = Math.ceil(logos.length / perPage);
+      var currentPage = 0;
+      var isTransitioning = false;
+      var transitionMs = 220;
+      var autoplayMs = 5000;
+      var autoplayId = 0;
+
+      var grid = root.querySelector('[data-role="grid"]');
+      var dots = root.querySelector('[data-role="dots"]');
+      var prevButton = root.querySelector('[data-action="prev"]');
+      var nextButton = root.querySelector('[data-action="next"]');
+
+      var startX = 0;
+      var endX = 0;
+      var threshold = 50;
+      var dragging = false;
+
+      function getPageLogos(page) {
+        var safePage = (page + totalPages) % totalPages;
+        var start = safePage * perPage;
+        var slice = logos.slice(start, start + perPage);
+        if (slice.length < perPage) {
+          slice = slice.concat(logos.slice(0, perPage - slice.length));
+        }
+        return slice;
+      }
+
+      function renderDots() {
+        var i;
+        dots.innerHTML = "";
+        for (i = 0; i < totalPages; i += 1) {
+          (function (index) {
+            var button = document.createElement("button");
+            button.type = "button";
+            button.className = "pb-logo-slider__dot" + (index === currentPage ? " is-active" : "");
+            button.setAttribute("aria-label", "Go to logo page " + (index + 1));
+            button.addEventListener("click", function () {
+              renderPage(index);
+            });
+            dots.appendChild(button);
+          })(i);
+        }
+      }
+
+      function warmNextPageImages() {
+        getPageLogos(currentPage + 1).forEach(function (logo) {
+          var image = new Image();
+          image.src = logo.src;
+        });
+      }
+
+      function renderPage(page) {
+        currentPage = (page + totalPages) % totalPages;
+        grid.innerHTML = "";
+
+        getPageLogos(currentPage).forEach(function (logo, index) {
+          var box = document.createElement("div");
+          var image = document.createElement("img");
+
+          box.className = "pb-logo-slider__box";
+          image.className = "pb-logo-slider__img";
+          image.src = logo.src;
+          image.alt = logo.alt || "";
+          image.loading = currentPage === 0 && index < 4 ? "eager" : "lazy";
+          image.decoding = "async";
+          image.draggable = false;
+
+          box.appendChild(image);
+          grid.appendChild(box);
+        });
+
+        renderDots();
+        warmNextPageImages();
+      }
+
+      function stepTo(page) {
+        if (isTransitioning) {
+          return;
+        }
+        isTransitioning = true;
+        renderPage(page);
+        window.setTimeout(function () {
+          isTransitioning = false;
+        }, transitionMs);
+      }
+
+      function nextPage() {
+        stepTo(currentPage + 1);
+      }
+
+      function prevPage() {
+        stepTo(currentPage - 1);
+      }
+
+      function stopAutoplay() {
+        if (autoplayId) {
+          window.clearInterval(autoplayId);
+          autoplayId = 0;
+        }
+      }
+
+      function startAutoplay() {
+        stopAutoplay();
+        autoplayId = window.setInterval(nextPage, autoplayMs);
+      }
+
+      function handleSwipe() {
+        var deltaX = endX - startX;
+        if (Math.abs(deltaX) <= threshold) {
+          return;
+        }
+        if (deltaX < 0) {
+          nextPage();
+          return;
+        }
+        prevPage();
+      }
+
+      prevButton.addEventListener("click", prevPage);
+      nextButton.addEventListener("click", nextPage);
+
+      root.addEventListener("touchstart", function (event) {
+        if (!event.changedTouches || !event.changedTouches[0]) {
+          return;
+        }
+        startX = event.changedTouches[0].screenX;
+      });
+
+      root.addEventListener("touchend", function (event) {
+        if (!event.changedTouches || !event.changedTouches[0]) {
+          return;
+        }
+        endX = event.changedTouches[0].screenX;
+        handleSwipe();
+      });
+
+      root.addEventListener("mousedown", function (event) {
+        dragging = true;
+        startX = event.screenX;
+      });
+
+      root.addEventListener("mouseup", function (event) {
+        if (!dragging) {
+          return;
+        }
+        dragging = false;
+        endX = event.screenX;
+        handleSwipe();
+      });
+
+      root.addEventListener("mouseleave", function () {
+        dragging = false;
+      });
+
+      root.addEventListener("mouseenter", stopAutoplay);
+      root.addEventListener("mouseleave", startAutoplay);
+      root.addEventListener("focusin", stopAutoplay);
+      root.addEventListener("focusout", function () {
+        if (!root.contains(document.activeElement)) {
+          startAutoplay();
+        }
+      });
+
+      document.addEventListener("visibilitychange", function () {
+        if (document.hidden) {
+          stopAutoplay();
+          return;
+        }
+        startAutoplay();
+      });
+
+      renderPage(0);
+      startAutoplay();
+    })();
+  </script>
+</section>

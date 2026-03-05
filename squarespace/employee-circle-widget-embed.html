@@ -183,6 +183,8 @@
 
     @media (max-width: 767px) {
       .pb-employee-gaggle {
+        --pb-anchor-x: 50%;
+        --pb-anchor-y: 50%;
         padding: 8px;
       }
 
@@ -476,8 +478,8 @@
         var stepX = clamp(width * 0.16, 92, 132);
         var stepY = clamp(height * 0.16, 92, 132);
         var normalizedSize = clamp(minSide * 0.17, 96, 154) + 36;
-        var clusterOffsetX = width < 768 ? clamp(width * 0.055, 14, 30) : clamp(width * 0.11, 44, 110);
-        var clusterOffsetY = width < 768 ? clamp(height * 0.075, 18, 36) : clamp(height * 0.16, 64, 150);
+        var clusterOffsetX = width < 768 ? 0 : clamp(width * 0.11, 44, 110);
+        var clusterOffsetY = width < 768 ? 0 : clamp(height * 0.16, 64, 150);
         var slots = getClusterSlots(count, stepX, stepY);
 
         return people.map(function (person, index) {

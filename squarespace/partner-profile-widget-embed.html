@@ -1,0 +1,152 @@
+<section class="pb-partner-profile">
+  <style>
+    .pb-partner-profile {
+      --pb-ink: #080f16;
+      --pb-muted: #2d2d2d;
+      --pb-accent: #f6c62f;
+      --pb-font-heading: "Myrad Pro", "Myriad Pro", "Segoe UI", sans-serif;
+      --pb-font-body: "Myrad Pro", "Myriad Pro", "Segoe UI", sans-serif;
+      width: min(100%, 1400px);
+      margin: 0 auto;
+      padding: clamp(14px, 2.2vw, 30px);
+      background: transparent;
+      font-family: var(--pb-font-body);
+      color: var(--pb-ink);
+      font-weight: 400;
+      box-sizing: border-box;
+    }
+
+    .pb-partner-profile * {
+      box-sizing: border-box;
+    }
+
+    .pb-partner-profile__layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.78fr);
+      gap: clamp(18px, 4vw, 64px);
+      align-items: start;
+    }
+
+    .pb-partner-profile__content {
+      min-width: 0;
+    }
+
+    .pb-partner-profile__name {
+      margin: 0 0 14px;
+      font: 300 clamp(2rem, 4vw, 3.2rem) / 1.05 var(--pb-font-heading);
+      letter-spacing: 0.01em;
+      color: var(--pb-muted);
+    }
+
+    .pb-partner-profile__name strong {
+      font-weight: 600;
+      color: var(--pb-ink);
+    }
+
+    .pb-partner-profile__title {
+      margin: 0 0 22px;
+      font: 600 clamp(1.2rem, 2.2vw, 2.1rem) / 1.25 var(--pb-font-heading);
+      letter-spacing: 0.16em;
+      color: var(--pb-ink);
+    }
+
+    .pb-partner-profile__paragraph {
+      margin: 0 0 16px;
+      font: 400 clamp(1.03rem, 1.46vw, 2rem) / 1.52 var(--pb-font-body);
+      color: var(--pb-ink);
+      max-width: 68ch;
+    }
+
+    .pb-partner-profile__media {
+      justify-self: end;
+      width: min(100%, 690px);
+      margin-top: clamp(8px, 1.4vw, 20px);
+    }
+
+    .pb-partner-profile__image {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      filter:
+        drop-shadow(0 10px 18px rgba(0, 0, 0, 0.08))
+        drop-shadow(0 26px 32px rgba(0, 0, 0, 0.08));
+    }
+
+    @media (max-width: 1024px) {
+      .pb-partner-profile__layout {
+        grid-template-columns: 1fr;
+      }
+
+      .pb-partner-profile__media {
+        order: -1;
+        justify-self: center;
+        width: min(100%, 520px);
+        margin-top: 0;
+        margin-bottom: 8px;
+      }
+
+      .pb-partner-profile__paragraph {
+        max-width: 100%;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .pb-partner-profile {
+        padding: 12px;
+      }
+
+      .pb-partner-profile__title {
+        letter-spacing: 0.1em;
+      }
+    }
+  </style>
+
+  <div class="pb-partner-profile__layout">
+    <article class="pb-partner-profile__content">
+      <h2 class="pb-partner-profile__name">Frank <strong>Naccarato</strong></h2>
+      <h3 class="pb-partner-profile__title">Frank Naccarato - Partner</h3>
+
+      <p class="pb-partner-profile__paragraph">
+        Frank Naccarato is a seasoned technology executive and partner at Pineapple Bytes, bringing over 40 years of
+        experience in driving innovation and growth across the restaurant, retail, and financial technology sectors.
+        His expertise lies in developing and delivering exceptional technology solutions tailored to client needs.
+      </p>
+
+      <p class="pb-partner-profile__paragraph">
+        Before joining Pineapple Bytes, Frank founded Radeon Technologies Ltd., a leading provider of reliable POS
+        systems and support services for restaurant and retail businesses. Under his leadership, Radeon Technologies
+        earned a strong reputation for exceptional service, resulting in long-term client relationships and sustained
+        business growth. The company recently merged with Pineapple Bytes, where Frank now serves as a partner.
+      </p>
+
+      <p class="pb-partner-profile__paragraph">
+        Throughout his career, Frank has built strategic partnerships with industry leaders, enhancing product
+        offerings and expanding market reach. As a System Partner with NCR Aloha, he has delivered valuable warranty
+        and support options to hospitality POS clients.
+      </p>
+
+      <p class="pb-partner-profile__paragraph">
+        Frank's previous experience includes holding technology and territory management roles at a multinational
+        corporation. He also owned and operated a technology dealership, transforming it into a national player through
+        strategic sales initiatives and business development.
+      </p>
+
+      <p class="pb-partner-profile__paragraph">
+        With his extensive experience and proven track record, Frank is a valuable asset to Pineapple Bytes, where he
+        remains committed to driving innovation and delivering outstanding technology solutions.
+      </p>
+    </article>
+
+    <aside class="pb-partner-profile__media">
+      <!-- Replace src with your Frank headshot URL from Squarespace CDN -->
+      <img
+        class="pb-partner-profile__image"
+        src="https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/1744043851067-VS3ON5YR9TW94DCTNVCG/Frank.png"
+        alt="Frank Naccarato portrait"
+        loading="lazy"
+        decoding="async"
+      />
+    </aside>
+  </div>
+</section>

@@ -1,0 +1,413 @@
+<section class="pb-team-profiles" data-pb-team-profiles>
+  <style>
+    .pb-team-profiles {
+      --pb-ink: #080f16;
+      --pb-muted: #2d2d2d;
+      --pb-font-heading: "Myrad Pro", "Myriad Pro", "Segoe UI", sans-serif;
+      --pb-font-body: "Myrad Pro", "Myriad Pro", "Segoe UI", sans-serif;
+      width: min(100%, 1400px);
+      margin: 0 auto;
+      padding: 0;
+      background: transparent;
+      color: var(--pb-ink);
+      font-family: var(--pb-font-body);
+      box-sizing: border-box;
+    }
+
+    .pb-team-profiles * {
+      box-sizing: border-box;
+    }
+
+    .pb-team-profiles-profile {
+      width: min(100%, 1400px);
+      margin: 0 auto;
+      padding: clamp(14px, 2.2vw, 30px);
+    }
+
+    .pb-team-profiles-profile + .pb-team-profiles-profile {
+      margin-top: clamp(8px, 1.6vw, 20px);
+    }
+
+    .pb-team-profiles-profile.is-secondary {
+      width: min(100%, 1240px);
+      padding: clamp(10px, 1.7vw, 22px);
+    }
+
+    .pb-team-profiles-inner {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.78fr);
+      gap: clamp(18px, 4vw, 64px);
+      align-items: start;
+    }
+
+    .pb-team-profiles-profile.side-left .pb-team-profiles-content {
+      order: 2;
+    }
+
+    .pb-team-profiles-profile.side-left .pb-team-profiles-media {
+      order: 1;
+      justify-self: start;
+    }
+
+    .pb-team-profiles-profile.side-right .pb-team-profiles-media {
+      justify-self: end;
+    }
+
+    .pb-team-profiles-content {
+      min-width: 0;
+    }
+
+    .pb-team-profiles-name {
+      margin: 0 0 14px;
+      font: 300 clamp(2rem, 4vw, 3.2rem) / 1.05 var(--pb-font-heading);
+      letter-spacing: 0.01em;
+      color: var(--pb-muted);
+    }
+
+    .pb-team-profiles-name strong {
+      font-weight: 600;
+      color: var(--pb-ink);
+    }
+
+    .pb-team-profiles-title {
+      margin: 0 0 22px;
+      font: 600 clamp(1.2rem, 2.2vw, 2.1rem) / 1.25 var(--pb-font-heading);
+      letter-spacing: 0.16em;
+      color: var(--pb-ink);
+    }
+
+    .pb-team-profiles-paragraph {
+      margin: 0 0 16px;
+      font: 400 clamp(1.03rem, 1.46vw, 2rem) / 1.52 var(--pb-font-body);
+      color: var(--pb-ink);
+      max-width: 68ch;
+    }
+
+    .pb-team-profiles-media {
+      width: min(100%, 690px);
+      margin-top: clamp(8px, 1.4vw, 20px);
+    }
+
+    .pb-team-profiles-profile.is-secondary .pb-team-profiles-inner {
+      gap: clamp(14px, 2.8vw, 44px);
+    }
+
+    .pb-team-profiles-profile.is-secondary .pb-team-profiles-name {
+      font: 300 clamp(1.86rem, 3.1vw, 2.7rem) / 1.06 var(--pb-font-heading);
+    }
+
+    .pb-team-profiles-profile.is-secondary .pb-team-profiles-title {
+      font: 600 clamp(1.04rem, 1.62vw, 1.56rem) / 1.25 var(--pb-font-heading);
+      letter-spacing: 0.14em;
+    }
+
+    .pb-team-profiles-profile.is-secondary .pb-team-profiles-paragraph {
+      font: 400 clamp(0.99rem, 1.08vw, 1.32rem) / 1.52 var(--pb-font-body);
+    }
+
+    .pb-team-profiles-profile.is-secondary .pb-team-profiles-media {
+      width: min(100%, 540px);
+      margin-top: clamp(4px, 0.9vw, 12px);
+    }
+
+    .pb-team-profiles-image {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      filter:
+        drop-shadow(0 10px 18px rgba(0, 0, 0, 0.08))
+        drop-shadow(0 26px 32px rgba(0, 0, 0, 0.08));
+    }
+
+    @media (max-width: 1024px) {
+      .pb-team-profiles-inner {
+        grid-template-columns: 1fr;
+      }
+
+      .pb-team-profiles-profile .pb-team-profiles-content {
+        order: 2 !important;
+      }
+
+      .pb-team-profiles-profile .pb-team-profiles-media {
+        order: 1 !important;
+        justify-self: center !important;
+        width: min(100%, 520px);
+        margin-top: 0;
+        margin-bottom: 8px;
+      }
+
+      .pb-team-profiles-profile.is-secondary .pb-team-profiles-media {
+        width: min(100%, 470px);
+      }
+
+      .pb-team-profiles-paragraph {
+        max-width: 100%;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .pb-team-profiles-profile {
+        padding: 12px;
+      }
+
+      .pb-team-profiles-title {
+        letter-spacing: 0.1em;
+      }
+    }
+  </style>
+
+  <script type="application/json" class="pb-team-profiles-data">
+    [
+      {
+        "name": "Frank Naccarato",
+        "title": "Frank Naccarato - Partner",
+        "img_url": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/1744043851067-VS3ON5YR9TW94DCTNVCG/Frank.png",
+        "blurb": "Frank Naccarato is a seasoned technology executive and partner at Pineapple Bytes, bringing over 40 years of experience in driving innovation and growth across the restaurant, retail, and financial technology sectors. His expertise lies in developing and delivering exceptional technology solutions tailored to client needs.\n\nBefore joining Pineapple Bytes, Frank founded Radeon Technologies Ltd., a leading provider of reliable POS systems and support services for restaurant and retail businesses. Under his leadership, Radeon Technologies earned a strong reputation for exceptional service, resulting in long-term client relationships and sustained business growth. The company recently merged with Pineapple Bytes, where Frank now serves as a partner.\n\nThroughout his career, Frank has built strategic partnerships with industry leaders, enhancing product offerings and expanding market reach. As a System Partner with NCR Aloha, he has delivered valuable warranty and support options to hospitality POS clients.\n\nFrank's previous experience includes holding technology and territory management roles at a multinational corporation. He also owned and operated a technology dealership, transforming it into a national player through strategic sales initiatives and business development.\n\nWith his extensive experience and proven track record, Frank is a valuable asset to Pineapple Bytes, where he remains committed to driving innovation and delivering outstanding technology solutions.",
+        "priority": "primary",
+        "imageSide": "right",
+        "bold": "last"
+      },
+      {
+        "name": "Ryan Parnell",
+        "title": "General Manager, Dartmouth Office",
+        "img_url": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/3abb1728-b8c5-4075-9f68-af8754ca85f9/RyanP.png",
+        "blurb": "As General Manager of our Dartmouth, Nova Scotia office, Ryan leads the branch with a focus on operational excellence, team development, and customer satisfaction. He plays a key role in aligning local execution with company-wide strategy, ensuring our clients in the retail and hospitality sectors continue to receive exceptional service and support.\n\nRyan began his career in the hospitality industry in 2003 as the first member of a technical team supporting point-of-sale systems. Over the past 20 years, he has held several key positions including Inside Sales, Service Manager, Onsite Installer, Procurement Officer, and Senior Operations Manager. This diverse experience has equipped him with a deep understanding of both client needs and technical operations.\n\nKnown for his attention to detail and commitment to delivering value, Ryan has built lasting relationships with clients and team members alike. His leadership and expertise continue to be a driving force behind the success of Pineapple Bytes.",
+        "priority": "secondary",
+        "imageSide": "left",
+        "bold": "first"
+      },
+      {
+        "name": "John McArthur",
+        "title": "General Manager, Markham Office",
+        "img_url": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/d9a52a92-9f5a-401e-be42-4753e4b56fe4/John.png",
+        "blurb": "With over 30 years of experience in leveraging technology to meet client needs, John McArthur brings a strong background in Electronics Engineering Technology and a career rooted in innovation and client success.\n\nHe began his professional journey at a Canadian startup, introducing RF technology solutions to the grocery industry. His early roles encompassed RF design, operational engineering, project management, and sales engineering.\n\nThroughout his career, he has worked directly with industry giants such as Kroger, Loblaws, Stop & Shop, A&P, and Safeway UK, helping to deliver impactful solutions.\n\nHe later joined a Canadian market-making company focused on developing cutting-edge technology solutions, where he held key roles including Product Manager and Director of North American Sales.\n\nHis experience expanded globally through collaborations with major international clients such as MGM Resorts International, Sands Corporation, and The Wynn Group.\n\nFor the past 13 years, he has been a vital part of Pineapple Bytes, focusing on selecting the right products and services to serve client needs.",
+        "priority": "secondary",
+        "imageSide": "right",
+        "bold": "last"
+      },
+      {
+        "name": "Dana Wiebe",
+        "img_url": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/70decd17-900e-4d4b-a5f9-c4cf7b5f4af7/Dana2.png",
+        "blurb": "Dana Wiebe is the Director of Finance at Pineapple Bytes, bringing nearly a decade of experience in finance and accounting to her role. A Chartered Professional Accountant (CPA), Dana joined the company in early 2021 and has since played a key role in driving financial strategy, planning, and operational excellence.\n\nWith a sharp eye for detail and a commitment to continuous improvement, Dana oversees the financial health of Pineapple Bytes, ensuring strong fiscal management and supporting the company's long-term growth. Her expertise spans financial reporting, budgeting, forecasting, and internal controls, making her an invaluable asset to the leadership team."
+      },
+      {
+        "name": "Jason Foote",
+        "img_url": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/1592399708214-H2YUHP1LI3IT4BYMT8EV/Pineapple+Bytes+Round+Headshots-NOCOLOUR-01.png",
+        "blurb": "Jason Foote brings over 20 years of hospitality industry experience to his role in Customer Success at Pineapple Bytes. With more than 15 years of hands-on expertise working with NCR Aloha and a range of other leading hospitality systems, Jason offers a deep understanding of the unique challenges and operational needs of the industry.\n\nKnown for his problem-solving skills and customer-first mindset, Jason works closely with clients to ensure they get the most out of their technology. His experience in both front-of-house operations and back-end system support makes him a trusted advisor to hospitality businesses looking to streamline workflows and enhance guest experiences."
+      },
+      {
+        "name": "Melanie Coryat",
+        "img_url": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/1741958215876-X3A7RM1BOUS4UGU78OD9/Melanie.png",
+        "blurb": "With over 20 years of experience in the hospitality point-of-sale (POS) industry, Melanie has built a career at the intersection of technology, service, and operational excellence. She has worked with a diverse range of hospitality businesses - from independent restaurants and boutique hotels to large-scale chains - delivering POS solutions that drive efficiency, enhance guest experiences, and support sustainable growth.\n\nMelanie is a recognized subject matter expert in hospitality POS solutions. Her ability to assess business needs and implement tailored strategies has earned her the trust of clients across the industry. She excels in optimizing workflows, integrating technology, and troubleshooting complex system challenges - always with a focus on results and long-term value.\n\nThroughout her career, Melanie has led successful system rollouts, trained frontline and management teams, and helped businesses adapt to evolving industry demands. Her hands-on approach, combined with deep industry knowledge, positions her as a reliable partner committed to helping hospitality businesses thrive through smart, scalable POS solutions."
+      },
+      {
+        "name": "Matthew Babin",
+        "img_url": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/a8a86b9b-7c26-44db-aefe-85875b809f5d/mattB2.png",
+        "blurb": "Matthew Babin serves as Project Manager: Retail at Pineapple Bytes, where he leads retail technology implementation projects with a focus on efficiency, precision, and client success.\n\nHe began his tech journey with a diploma in Database Administration from NSCC, where he developed a strong foundation in SQL and data management. Since joining Pineapple Bytes in 2022 as a Counterpoint Technician, Matthew has consistently demonstrated both technical expertise and a deep understanding of retail systems.\n\nPromoted to his current role in 2025, Matthew now oversees end-to-end project execution, helping clients unlock the full potential of their retail technology solutions."
+      },
+      {
+        "name": "Chris Carmichael",
+        "img_url": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/1744116592738-XGSNL3X78N2PU8FB4BIL/ChrisC.png",
+        "blurb": "Chris Carmichael is the Service Manager at Pineapple Bytes, bringing nearly a decade of experience and a deep understanding of the company's operations to his leadership role. Since joining the team in October 2015 as a technician, Chris's hands-on approach and commitment to excellence quickly made him a trusted and valued team member.\n\nAffectionately known as \"the voice of Pineapple Bytes,\" Chris pairs his approachable demeanor with strong technical expertise to build lasting client relationships. Over the years, he has taken on a variety of roles within the company-including procurement, installations, field service, and project coordination-giving him a well-rounded perspective of both customer needs and internal operations.\n\nNow as Service Manager, Chris leads the service team with a focus on efficiency, innovation, and exceptional customer support."
+      },
+      {
+        "name": "Alex MacInnis",
+        "img_url": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/1741203878915-N9VRXIKYSOXGC0H113ZE/AlexM.png",
+        "blurb": "As National Key Accounts Manager at Pineapple Bytes, Alex MacInnis brings a unique blend of hands-on hospitality experience and proven success in sales and account management. Having worked in nearly every role within a restaurant, Alex offers a well-rounded perspective that allows him to connect deeply with clients and understand their operational needs from the ground up.\n\nHis strategic insight and service-driven mindset enable him to deliver tailored solutions that help customers achieve their goals. Known for his commitment to transparency and his passion for fostering a strong, positive culture, Alex is focused on building lasting relationships and consistently delivering exceptional service."
+      },
+      {
+        "name": "Alex Ulloa",
+        "img_url": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/1741797378044-GB2FP49Z3AIYK1X03PJL/Pineapple%2BBytes%2BRound%2BHeadshots-AlexU.png",
+        "blurb": "Alex Ulloa is the IT Manager at Pineapple Bytes, bringing over two decades of experience in networking, point-of-sale (POS) systems, cybersecurity, and enterprise IT support. Originally from Costa Rica, Alex holds a diploma in LAN and Novell Maintenance from the Costa Rica Institute of Technology and is certified in CompTIA A+, Network+, Security+, Cisco CCNA, and Microsoft MCSA.\n\nAlex began his career supporting U.S.-based nonprofits before relocating to Georgia, USA, where he spent 18 years at Fortune 500 company Essendant as a Database Analyst and IT Support Specialist. At Pineapple Bytes, Alex leads the IT operations with a focus on infrastructure reliability, data security, and scalable solutions that support both internal teams and client-facing technologies.\n\nKnown for his analytical mindset and calm, solutions-driven approach, Alex ensures the company's technology stack remains secure, efficient, and aligned with evolving business needs."
+      }
+    ]
+  </script>
+
+  <script>
+    (function () {
+      var widget = document.currentScript.closest("[data-pb-team-profiles]");
+      if (!widget || widget.dataset.pbReady === "true") {
+        return;
+      }
+      widget.dataset.pbReady = "true";
+
+      var dataNode = widget.querySelector(".pb-team-profiles-data");
+
+      function safeParseProfiles(node) {
+        if (!node) {
+          return [];
+        }
+
+        try {
+          var parsed = JSON.parse(node.textContent.trim());
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (error) {
+          return [];
+        }
+      }
+
+      function normalize(value) {
+        if (typeof value === "string") {
+          return value.trim();
+        }
+        if (value === undefined || value === null) {
+          return "";
+        }
+        return String(value).trim();
+      }
+
+      function paragraphsFrom(value) {
+        if (Array.isArray(value)) {
+          return value.map(normalize).filter(Boolean);
+        }
+        var text = normalize(value);
+        if (!text) {
+          return [];
+        }
+        return text.split(/\n{2,}/).map(normalize).filter(Boolean);
+      }
+
+      function createNameNode(fullName, boldMode) {
+        var heading = document.createElement("h2");
+        var strong = document.createElement("strong");
+        var cleanName = normalize(fullName);
+        var parts = cleanName.split(/\s+/).filter(Boolean);
+        var first;
+        var last;
+        var middle;
+
+        heading.className = "pb-team-profiles-name";
+
+        if (!parts.length) {
+          heading.textContent = "";
+          return heading;
+        }
+
+        if (parts.length === 1) {
+          strong.textContent = parts[0];
+          heading.appendChild(strong);
+          return heading;
+        }
+
+        first = parts[0];
+        last = parts[parts.length - 1];
+        middle = parts.slice(1, parts.length - 1).join(" ");
+
+        if (boldMode === "first") {
+          strong.textContent = first;
+          heading.appendChild(strong);
+          heading.appendChild(document.createTextNode(" " + [middle, last].filter(Boolean).join(" ")));
+          return heading;
+        }
+
+        heading.appendChild(document.createTextNode([first, middle].filter(Boolean).join(" ") + " "));
+        strong.textContent = last;
+        heading.appendChild(strong);
+        return heading;
+      }
+
+      function resolveBoldMode(profile, isSecondary, secondaryIndex) {
+        var explicit = normalize(profile.bold).toLowerCase();
+        if (explicit === "first" || explicit === "last") {
+          return explicit;
+        }
+        if (!isSecondary) {
+          return "last";
+        }
+        return secondaryIndex % 2 === 0 ? "first" : "last";
+      }
+
+      function resolveImageSide(profile, isSecondary, secondaryIndex) {
+        var explicit = normalize(profile.imageSide || profile.image_side).toLowerCase();
+        if (explicit === "left" || explicit === "right") {
+          return explicit;
+        }
+        if (!isSecondary) {
+          return "right";
+        }
+        return secondaryIndex % 2 === 0 ? "left" : "right";
+      }
+
+      function buildProfile(profile, secondaryIndex) {
+        var name = normalize(profile.name);
+        var title = normalize(profile.title);
+        var image = normalize(profile.img_url || profile.img || profile.image);
+        var blurb = paragraphsFrom(profile.blurb);
+        var priority = normalize(profile.priority).toLowerCase() === "primary" ? "primary" : "secondary";
+        var isSecondary = priority === "secondary";
+        var boldMode = resolveBoldMode(profile, isSecondary, secondaryIndex);
+        var side = resolveImageSide(profile, isSecondary, secondaryIndex);
+        var section;
+        var inner;
+        var content;
+        var media;
+        var imageNode;
+        var titleNode;
+
+        section = document.createElement("section");
+        section.className =
+          "pb-team-profiles-profile " +
+          (isSecondary ? "is-secondary " : "is-primary ") +
+          (side === "left" ? "side-left" : "side-right");
+
+        inner = document.createElement("div");
+        inner.className = "pb-team-profiles-inner";
+
+        content = document.createElement("article");
+        content.className = "pb-team-profiles-content";
+        content.appendChild(createNameNode(name, boldMode));
+
+        if (title) {
+          titleNode = document.createElement("h3");
+          titleNode.className = "pb-team-profiles-title";
+          titleNode.textContent = title;
+          content.appendChild(titleNode);
+        }
+
+        blurb.forEach(function (paragraph) {
+          var node = document.createElement("p");
+          node.className = "pb-team-profiles-paragraph";
+          node.textContent = paragraph;
+          content.appendChild(node);
+        });
+
+        media = document.createElement("aside");
+        media.className = "pb-team-profiles-media";
+
+        if (image) {
+          imageNode = document.createElement("img");
+          imageNode.className = "pb-team-profiles-image";
+          imageNode.src = image;
+          imageNode.alt = name ? name + " portrait" : "Team portrait";
+          imageNode.loading = "lazy";
+          imageNode.decoding = "async";
+          media.appendChild(imageNode);
+        }
+
+        inner.appendChild(content);
+        inner.appendChild(media);
+        section.appendChild(inner);
+        return section;
+      }
+
+      var profiles = safeParseProfiles(dataNode).filter(function (profile) {
+        return profile && (profile.name || profile.img_url || profile.img || profile.image || profile.blurb);
+      });
+
+      if (!profiles.length) {
+        return;
+      }
+
+      var secondaryIndex = 0;
+      profiles.forEach(function (profile) {
+        var isSecondary = normalize(profile.priority).toLowerCase() !== "primary";
+        widget.appendChild(buildProfile(profile, secondaryIndex));
+        if (isSecondary) {
+          secondaryIndex += 1;
+        }
+      });
+    })();
+  </script>
+</section>
+
