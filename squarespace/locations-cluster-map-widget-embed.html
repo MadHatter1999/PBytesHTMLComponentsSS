@@ -1,7 +1,7 @@
 <section class="pb-locations-map" data-pb-locations-map>
   <style>
     .pb-locations-map {
-      --pb-bg: #000;
+      --pb-bg: transparent;
       --pb-yellow: #f6c62f;
       --pb-magenta: #d7149a;
       width: min(100%, 1100px);
@@ -26,6 +26,24 @@
       isolation: isolate;
     }
 
+    .pb-locations-map__geo {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .pb-locations-map__geo-path {
+      fill: var(--pb-magenta);
+      stroke: rgba(0, 0, 0, 0.62);
+      stroke-width: 1.2;
+      stroke-dasharray: 3 3;
+      vector-effect: non-scaling-stroke;
+      fill-rule: evenodd;
+    }
+
     .pb-locations-map__map {
       position: absolute;
       inset: 0;
@@ -36,12 +54,16 @@
       user-select: none;
       -webkit-user-drag: none;
       pointer-events: none;
+      z-index: 0;
+      opacity: 0;
+      transition: opacity 140ms ease;
     }
 
     .pb-locations-map__overlay {
       position: absolute;
       inset: 0;
       pointer-events: none;
+      z-index: 1;
     }
 
     .pb-locations-map__marker {
@@ -49,28 +71,36 @@
       transform: translate(-50%, -50%);
       border: 0;
       border-radius: 999px;
-      background: var(--pb-yellow);
+      background: transparent;
       pointer-events: none;
-      box-shadow:
-        0 0 0 1px rgba(0, 0, 0, 0.22),
-        0 2px 10px rgba(0, 0, 0, 0.35);
+      filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.35));
     }
 
-    .pb-locations-map__marker::after {
-      content: "";
+    .pb-locations-map__icon {
       position: absolute;
-      inset: 30%;
-      border-radius: 999px;
-      background: var(--pb-magenta);
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      user-select: none;
+      -webkit-user-drag: none;
+      pointer-events: none;
     }
 
     .pb-locations-map__count {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font: 700 clamp(10px, 1vw, 13px) / 1 "Segoe UI", sans-serif;
-      color: #111;
+      top: -4px;
+      right: -4px;
+      min-width: 16px;
+      height: 16px;
+      padding: 0 4px;
+      border-radius: 999px;
+      background: #111;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      display: grid;
+      place-items: center;
+      font: 700 10px/1 "Segoe UI", sans-serif;
+      color: #fff;
       z-index: 1;
       pointer-events: none;
     }
@@ -101,6 +131,7 @@
       font: 600 12px/1.2 "Segoe UI", sans-serif;
       letter-spacing: 0.02em;
       z-index: 3;
+      white-space: nowrap;
     }
 
     @media (max-width: 900px) {
@@ -111,38 +142,50 @@
       .pb-locations-map__logo {
         width: clamp(130px, 40%, 260px);
       }
+
+      .pb-locations-map__hint {
+        max-width: calc(100% - 20px);
+        white-space: normal;
+        text-align: center;
+      }
     }
   </style>
 
   <div class="pb-locations-map__frame">
+    <svg class="pb-locations-map__geo" data-role="geo" aria-hidden="true"></svg>
     <img class="pb-locations-map__map" alt="Locations map" data-role="map" />
     <div class="pb-locations-map__overlay" data-role="overlay"></div>
     <img class="pb-locations-map__logo" alt="Pineapple Bytes logo" data-role="logo" />
-    <div class="pb-locations-map__hint" data-role="hint">Set `mapImage` in JSON to your static map URL.</div>
+    <div class="pb-locations-map__hint" data-role="hint"></div>
   </div>
 
   <script type="application/json" class="pb-locations-map__data">
     {
-      "mapImage": "REPLACE_WITH_YOUR_CANADA_MAP_IMAGE_URL",
+      "geojsonUrl": "https://raw.githubusercontent.com/MadHatter1999/GEOJSON-Canada/refs/heads/main/canada.geojson",
+      "mapImage": "",
       "logoImage": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/1576776312533-007SE27KBNR5PFCNDUQH/pineapplebyteslogo+TRANSPARENT.png?content-type=image%2Fpng",
+      "iconImage": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/1593530549579-RCB47Q7O2EA2LAL7N92M/Pineapple+Slice.png?content-type=image%2Fpng",
       "clusterRadiusPx": 24,
+      "mapPaddingPx": 12,
       "marker": {
-        "min": 12,
-        "base": 15,
-        "step": 4.5,
-        "max": 40
+        "min": 14,
+        "base": 16,
+        "step": 5.2,
+        "max": 48
       },
       "points": [
-        { "name": "Vancouver", "x": 9.5, "y": 66.5 },
-        { "name": "Calgary", "x": 21.5, "y": 69.5 },
-        { "name": "Edmonton", "x": 23.8, "y": 64.5 },
-        { "name": "Winnipeg", "x": 39.5, "y": 70.8 },
-        { "name": "Toronto", "x": 68.5, "y": 75.3 },
-        { "name": "Ottawa", "x": 72.2, "y": 72.8 },
-        { "name": "Montreal", "x": 76.5, "y": 70.8 },
-        { "name": "Quebec City", "x": 81.6, "y": 68.6 },
-        { "name": "Halifax", "x": 92.5, "y": 60.0 },
-        { "name": "St John's", "x": 96.0, "y": 56.2 }
+        { "name": "Vancouver", "lon": -123.1207, "lat": 49.2827 },
+        { "name": "Calgary", "lon": -114.0719, "lat": 51.0447 },
+        { "name": "Edmonton", "lon": -113.4909, "lat": 53.5461 },
+        { "name": "Winnipeg", "lon": -97.1384, "lat": 49.8951 },
+        { "name": "Toronto", "lon": -79.3832, "lat": 43.6532 },
+        { "name": "Mississauga", "lon": -79.6441, "lat": 43.5890 },
+        { "name": "Hamilton", "lon": -79.8711, "lat": 43.2557 },
+        { "name": "Ottawa", "lon": -75.6972, "lat": 45.4215 },
+        { "name": "Montreal", "lon": -73.5673, "lat": 45.5017 },
+        { "name": "Quebec City", "lon": -71.2080, "lat": 46.8139 },
+        { "name": "Halifax", "lon": -63.5752, "lat": 44.6488 },
+        { "name": "St John's", "lon": -52.7126, "lat": 47.5615 }
       ]
     }
   </script>
@@ -155,7 +198,9 @@
       }
       widget.dataset.pbReady = "true";
 
+      var SVG_NS = "http://www.w3.org/2000/svg";
       var dataNode = widget.querySelector(".pb-locations-map__data");
+      var geoSvg = widget.querySelector('[data-role="geo"]');
       var mapImageNode = widget.querySelector('[data-role="map"]');
       var logoNode = widget.querySelector('[data-role="logo"]');
       var overlay = widget.querySelector('[data-role="overlay"]');
@@ -163,6 +208,9 @@
       var frame = widget.querySelector(".pb-locations-map__frame");
       var resizeObserver;
       var settings;
+      var geoData = null;
+      var geoLoadFailed = false;
+      var projectLonLatToPixels = null;
 
       function clamp(value, min, max) {
         return Math.max(min, Math.min(max, value));
@@ -195,38 +243,218 @@
         }
       }
 
+      function albersCanadaRaw(lon, lat) {
+        var lambda = (lon * Math.PI) / 180;
+        var phi = (clamp(lat, -89.5, 89.5) * Math.PI) / 180;
+        var phi1 = (50 * Math.PI) / 180;
+        var phi2 = (70 * Math.PI) / 180;
+        var phi0 = (40 * Math.PI) / 180;
+        var lambda0 = (-96 * Math.PI) / 180;
+        var n = (Math.sin(phi1) + Math.sin(phi2)) / 2;
+        var c = Math.cos(phi1) * Math.cos(phi1) + 2 * n * Math.sin(phi1);
+        var rho = Math.sqrt(Math.max(0, c - 2 * n * Math.sin(phi))) / n;
+        var rho0 = Math.sqrt(Math.max(0, c - 2 * n * Math.sin(phi0))) / n;
+        var theta = n * (lambda - lambda0);
+
+        return {
+          x: rho * Math.sin(theta),
+          y: -(rho0 - rho * Math.cos(theta))
+        };
+      }
+
+      function extractPolygons(geojson) {
+        var polygons = [];
+
+        function addGeometry(geometry) {
+          if (!geometry || !geometry.type) {
+            return;
+          }
+
+          if (geometry.type === "Polygon") {
+            polygons.push(geometry.coordinates || []);
+            return;
+          }
+
+          if (geometry.type === "MultiPolygon") {
+            (geometry.coordinates || []).forEach(function (polygonRings) {
+              polygons.push(polygonRings || []);
+            });
+            return;
+          }
+
+          if (geometry.type === "GeometryCollection") {
+            (geometry.geometries || []).forEach(addGeometry);
+          }
+        }
+
+        if (!geojson || typeof geojson !== "object") {
+          return polygons;
+        }
+
+        if (geojson.type === "FeatureCollection") {
+          (geojson.features || []).forEach(function (feature) {
+            addGeometry(feature && feature.geometry);
+          });
+          return polygons;
+        }
+
+        if (geojson.type === "Feature") {
+          addGeometry(geojson.geometry);
+          return polygons;
+        }
+
+        addGeometry(geojson);
+        return polygons;
+      }
+
+      function buildProjectionAndPaths(width, height, paddingPx) {
+        var polygons = extractPolygons(geoData);
+        var minX = Infinity;
+        var minY = Infinity;
+        var maxX = -Infinity;
+        var maxY = -Infinity;
+        var projectedPolygons = [];
+
+        polygons.forEach(function (polygonRings) {
+          var projectedRings = [];
+          (polygonRings || []).forEach(function (ring) {
+            var projectedRing = [];
+            (ring || []).forEach(function (coordinate) {
+              var lon;
+              var lat;
+              var point;
+              if (!Array.isArray(coordinate) || coordinate.length < 2) {
+                return;
+              }
+              lon = asNumber(coordinate[0], NaN);
+              lat = asNumber(coordinate[1], NaN);
+              if (!Number.isFinite(lon) || !Number.isFinite(lat)) {
+                return;
+              }
+              point = albersCanadaRaw(lon, lat);
+              minX = Math.min(minX, point.x);
+              minY = Math.min(minY, point.y);
+              maxX = Math.max(maxX, point.x);
+              maxY = Math.max(maxY, point.y);
+              projectedRing.push(point);
+            });
+            if (projectedRing.length >= 3) {
+              projectedRings.push(projectedRing);
+            }
+          });
+          if (projectedRings.length) {
+            projectedPolygons.push(projectedRings);
+          }
+        });
+
+        if (!projectedPolygons.length || !Number.isFinite(minX) || !Number.isFinite(minY)) {
+          return null;
+        }
+
+        var dx = Math.max(0.0001, maxX - minX);
+        var dy = Math.max(0.0001, maxY - minY);
+        var innerWidth = Math.max(1, width - paddingPx * 2);
+        var innerHeight = Math.max(1, height - paddingPx * 2);
+        var scale = Math.min(innerWidth / dx, innerHeight / dy);
+        var offsetX = (width - dx * scale) / 2 - minX * scale;
+        var offsetY = (height - dy * scale) / 2 - minY * scale;
+
+        function project(lon, lat) {
+          var raw = albersCanadaRaw(lon, lat);
+          return {
+            x: raw.x * scale + offsetX,
+            y: raw.y * scale + offsetY
+          };
+        }
+
+        var paths = projectedPolygons.map(function (rings) {
+          return rings
+            .map(function (ring) {
+              var command = "";
+              ring.forEach(function (point, index) {
+                var x = point.x * scale + offsetX;
+                var y = point.y * scale + offsetY;
+                command += (index ? "L" : "M") + x.toFixed(2) + " " + y.toFixed(2) + " ";
+              });
+              return command + "Z";
+            })
+            .join(" ");
+        });
+
+        return { paths: paths, project: project };
+      }
+
+      function renderGeo() {
+        var width = frame.clientWidth;
+        var height = frame.clientHeight;
+        var paddingPx = asNumber(settings.mapPaddingPx, 12);
+        var compiled;
+
+        geoSvg.innerHTML = "";
+        projectLonLatToPixels = null;
+
+        if (!geoData || !width || !height) {
+          return;
+        }
+
+        compiled = buildProjectionAndPaths(width, height, paddingPx);
+        if (!compiled) {
+          return;
+        }
+
+        compiled.paths.forEach(function (d) {
+          var pathNode = document.createElementNS(SVG_NS, "path");
+          pathNode.setAttribute("d", d);
+          pathNode.setAttribute("class", "pb-locations-map__geo-path");
+          geoSvg.appendChild(pathNode);
+        });
+
+        projectLonLatToPixels = compiled.project;
+      }
+
       function resolvePoints(config) {
         var source = Array.isArray(config.points) ? config.points : [];
         return source
           .map(function (point) {
+            var lon = asNumber(point.lon || point.lng || point.longitude, NaN);
+            var lat = asNumber(point.lat || point.latitude, NaN);
             var x = asNumber(point.x, NaN);
             var y = asNumber(point.y, NaN);
             var weight = asNumber(point.weight, 1);
-            if (!Number.isFinite(x) || !Number.isFinite(y)) {
-              return null;
-            }
-            return {
+            var resolved = {
               name: normalize(point.name),
-              x: clamp(x, 0, 100),
-              y: clamp(y, 0, 100),
               weight: Math.max(1, weight)
             };
+
+            if (Number.isFinite(lon) && Number.isFinite(lat)) {
+              resolved.mode = "geo";
+              resolved.lon = clamp(lon, -180, 180);
+              resolved.lat = clamp(lat, -90, 90);
+              return resolved;
+            }
+
+            if (Number.isFinite(x) && Number.isFinite(y)) {
+              resolved.mode = "relative";
+              resolved.x = clamp(x, 0, 100);
+              resolved.y = clamp(y, 0, 100);
+              return resolved;
+            }
+
+            return null;
           })
           .filter(Boolean);
       }
 
-      function clusterPoints(points, width, height, radiusPx) {
+      function clusterPoints(points, radiusPx) {
         var clusters = [];
 
         points.forEach(function (point) {
-          var px = (point.x / 100) * width;
-          var py = (point.y / 100) * height;
           var match = null;
           var bestDistance = Infinity;
 
           clusters.forEach(function (cluster) {
-            var dx = px - cluster.cx;
-            var dy = py - cluster.cy;
+            var dx = point.px - cluster.cx;
+            var dy = point.py - cluster.cy;
             var distance = Math.sqrt(dx * dx + dy * dy);
             if (distance <= radiusPx && distance < bestDistance) {
               bestDistance = distance;
@@ -240,16 +468,16 @@
               weightedX: 0,
               weightedY: 0,
               weight: 0,
-              cx: px,
-              cy: py
+              cx: point.px,
+              cy: point.py
             };
             clusters.push(match);
           }
 
           match.points.push(point);
           match.weight += point.weight;
-          match.weightedX += px * point.weight;
-          match.weightedY += py * point.weight;
+          match.weightedX += point.px * point.weight;
+          match.weightedY += point.py * point.weight;
           match.cx = match.weightedX / match.weight;
           match.cy = match.weightedY / match.weight;
         });
@@ -257,13 +485,14 @@
         return clusters;
       }
 
-      function makeMarker(cluster, markerSettings) {
+      function makeMarker(cluster, markerSettings, iconUrl) {
         var marker = document.createElement("div");
         var count = Math.round(cluster.weight);
         var size =
           markerSettings.base +
           Math.sqrt(Math.max(0, count - 1)) * markerSettings.step;
         var safeSize = clamp(size, markerSettings.min, markerSettings.max);
+        var iconNode;
 
         marker.className = "pb-locations-map__marker";
         marker.style.left = cluster.cx.toFixed(2) + "px";
@@ -271,6 +500,16 @@
         marker.style.width = safeSize.toFixed(2) + "px";
         marker.style.height = safeSize.toFixed(2) + "px";
         marker.setAttribute("aria-hidden", "true");
+
+        if (iconUrl) {
+          iconNode = document.createElement("img");
+          iconNode.className = "pb-locations-map__icon";
+          iconNode.src = iconUrl;
+          iconNode.alt = "";
+          iconNode.loading = "lazy";
+          iconNode.decoding = "async";
+          marker.appendChild(iconNode);
+        }
 
         if (count > 1) {
           var countNode = document.createElement("span");
@@ -282,18 +521,29 @@
         return marker;
       }
 
-      function render() {
+      function applyHint(message) {
+        if (message) {
+          hint.textContent = message;
+          hint.style.display = "";
+        } else {
+          hint.style.display = "none";
+        }
+      }
+
+      function renderMarkers() {
         var width = frame.clientWidth;
         var height = frame.clientHeight;
         var radiusPx = asNumber(settings.clusterRadiusPx, 24);
+        var iconUrl = normalize(settings.iconImage);
         var markerSettings = settings.marker || {};
         var resolvedMarker = {
-          min: asNumber(markerSettings.min, 12),
-          base: asNumber(markerSettings.base, 15),
-          step: asNumber(markerSettings.step, 4.5),
-          max: asNumber(markerSettings.max, 40)
+          min: asNumber(markerSettings.min, 14),
+          base: asNumber(markerSettings.base, 16),
+          step: asNumber(markerSettings.step, 5.2),
+          max: asNumber(markerSettings.max, 48)
         };
         var points = resolvePoints(settings);
+        var positioned = [];
         var clusters;
 
         overlay.innerHTML = "";
@@ -302,10 +552,91 @@
           return;
         }
 
-        clusters = clusterPoints(points, width, height, radiusPx);
-        clusters.forEach(function (cluster) {
-          overlay.appendChild(makeMarker(cluster, resolvedMarker));
+        points.forEach(function (point) {
+          var px;
+          var py;
+          if (point.mode === "geo" && typeof projectLonLatToPixels === "function") {
+            var projected = projectLonLatToPixels(point.lon, point.lat);
+            px = projected.x;
+            py = projected.y;
+          } else if (point.mode === "relative") {
+            px = (point.x / 100) * width;
+            py = (point.y / 100) * height;
+          } else {
+            return;
+          }
+
+          if (!Number.isFinite(px) || !Number.isFinite(py)) {
+            return;
+          }
+
+          positioned.push({
+            px: px,
+            py: py,
+            weight: point.weight
+          });
         });
+
+        if (!positioned.length) {
+          return;
+        }
+
+        clusters = clusterPoints(positioned, radiusPx);
+        clusters.forEach(function (cluster) {
+          overlay.appendChild(makeMarker(cluster, resolvedMarker, iconUrl));
+        });
+      }
+
+      function renderAll() {
+        var mapImageUrl = normalize(settings.mapImage);
+        var geojsonUrl = normalize(settings.geojsonUrl);
+
+        renderGeo();
+        renderMarkers();
+
+        if (geoData) {
+          mapImageNode.style.opacity = "0";
+          applyHint("");
+          return;
+        }
+
+        if (mapImageUrl && !/REPLACE_WITH_/i.test(mapImageUrl)) {
+          mapImageNode.style.opacity = "1";
+          if (geojsonUrl && geoLoadFailed) {
+            applyHint("GeoJSON failed to load. Showing fallback map image.");
+          } else {
+            applyHint("");
+          }
+          return;
+        }
+
+        if (geojsonUrl) {
+          applyHint("Loading map data...");
+        } else {
+          applyHint("Set `geojsonUrl` (preferred) or `mapImage` in JSON.");
+        }
+      }
+
+      function loadGeojson(url) {
+        if (!url || /REPLACE_WITH_/i.test(url)) {
+          return Promise.resolve(null);
+        }
+
+        return fetch(url)
+          .then(function (response) {
+            if (!response.ok) {
+              throw new Error("GeoJSON fetch failed");
+            }
+            return response.json();
+          })
+          .then(function (json) {
+            geoData = json;
+            geoLoadFailed = false;
+          })
+          .catch(function () {
+            geoData = null;
+            geoLoadFailed = true;
+          });
       }
 
       settings = parseConfig(dataNode);
@@ -313,32 +644,28 @@
         return;
       }
 
-      var mapImageUrl = normalize(settings.mapImage);
       var logoImageUrl = normalize(settings.logoImage);
-
-      if (mapImageUrl && !/REPLACE_WITH_/i.test(mapImageUrl)) {
-        mapImageNode.src = mapImageUrl;
-        hint.style.display = "none";
-      } else {
-        mapImageNode.removeAttribute("src");
-        hint.style.display = "";
-      }
-
       if (logoImageUrl) {
         logoNode.src = logoImageUrl;
       } else {
         logoNode.style.display = "none";
       }
 
-      if ("ResizeObserver" in window) {
-        resizeObserver = new ResizeObserver(render);
-        resizeObserver.observe(frame);
-      } else {
-        window.addEventListener("resize", render);
+      var mapImageUrl = normalize(settings.mapImage);
+      if (mapImageUrl && !/REPLACE_WITH_/i.test(mapImageUrl)) {
+        mapImageNode.src = mapImageUrl;
       }
 
-      mapImageNode.addEventListener("load", render);
-      render();
+      if ("ResizeObserver" in window) {
+        resizeObserver = new ResizeObserver(renderAll);
+        resizeObserver.observe(frame);
+      } else {
+        window.addEventListener("resize", renderAll);
+      }
+
+      mapImageNode.addEventListener("load", renderAll);
+      loadGeojson(normalize(settings.geojsonUrl)).then(renderAll);
+      renderAll();
     })();
   </script>
 </section>
