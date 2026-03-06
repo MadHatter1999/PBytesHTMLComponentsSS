@@ -1,0 +1,1528 @@
+<section class="pb-track-race" data-pb-track-race>
+  <style>
+    .pb-track-race {
+      --pb-race-bg: transparent;
+      --pb-race-ink: #111111;
+      --pb-race-yellow: #f6c62f;
+      --pb-race-lane: rgba(246, 198, 47, 0.52);
+      --pb-race-lane-soft: rgba(246, 198, 47, 0.26);
+      width: min(100%, 1100px);
+      margin: 0 auto;
+      padding: clamp(12px, 2vw, 20px);
+      box-sizing: border-box;
+      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+      color: var(--pb-race-ink);
+      background: var(--pb-race-bg);
+    }
+
+    .pb-track-race * {
+      box-sizing: border-box;
+    }
+
+    .pb-track-race-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .pb-track-race-title {
+      margin: 0;
+      font-size: clamp(1rem, 1.8vw, 1.5rem);
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .pb-track-race-status {
+      margin: 0;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.78;
+      white-space: nowrap;
+    }
+
+    .pb-track-race-controls {
+      margin-bottom: 12px;
+      padding: 10px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.72);
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+    }
+
+    .pb-track-race-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .pb-track-race-button {
+      border: 0;
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: rgba(0, 0, 0, 0.08);
+      color: #111;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform 140ms ease, background-color 140ms ease;
+    }
+
+    .pb-track-race-button:hover,
+    .pb-track-race-button:focus-visible {
+      transform: translateY(-1px);
+      outline: none;
+      background: rgba(0, 0, 0, 0.14);
+    }
+
+    .pb-track-race-button--go {
+      background: var(--pb-race-yellow);
+      color: #111;
+    }
+
+    .pb-track-race-laps {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px 4px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .pb-track-race-laps select {
+      border: 0;
+      background: transparent;
+      color: #111;
+      font-size: 0.82rem;
+      font-weight: 800;
+      cursor: pointer;
+      padding: 2px 4px;
+      outline: none;
+    }
+
+    .pb-track-race-picks {
+      max-height: 200px;
+      overflow: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+      gap: 6px;
+      padding-right: 2px;
+    }
+
+    .pb-track-race-pick {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 8px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+      min-width: 0;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .pb-track-race-pick input {
+      margin: 0;
+      accent-color: #111;
+      flex: 0 0 auto;
+    }
+
+    .pb-track-race-pick-logo {
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      display: block;
+      object-fit: contain;
+      background: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      padding: 2px;
+      flex: 0 0 auto;
+    }
+
+    .pb-track-race-pick-name {
+      font-size: 0.7rem;
+      font-weight: 700;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+    }
+
+    .pb-track-race-track {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 2.2 / 1;
+      min-height: 260px;
+      overflow: hidden;
+      border-radius: 26px;
+      background:
+        radial-gradient(circle at 48% 52%, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 44%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.04));
+      box-shadow:
+        inset 0 0 0 1px rgba(0, 0, 0, 0.06),
+        0 12px 28px rgba(0, 0, 0, 0.08);
+    }
+
+    .pb-track-race-confetti {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 900;
+    }
+
+    .pb-track-race-confetti-piece {
+      position: absolute;
+      top: -10%;
+      left: 50%;
+      width: var(--pb-cw, 8px);
+      height: var(--pb-ch, 14px);
+      border-radius: 2px;
+      background: var(--pb-cc, #f6c62f);
+      opacity: 0;
+      transform: translate3d(0, 0, 0) rotate(0deg);
+      animation:
+        pb-track-race-confetti-fall var(--pb-cd, 2600ms) ease-in var(--pb-delay, 0ms) forwards,
+        pb-track-race-confetti-spin var(--pb-cs, 1200ms) linear var(--pb-delay, 0ms) infinite;
+      will-change: transform, opacity;
+    }
+
+    .pb-track-race-lane {
+      position: absolute;
+      border-radius: 999px;
+      pointer-events: none;
+    }
+
+    .pb-track-race-lane--1 {
+      inset: 7% 4.5%;
+      border: 2px solid var(--pb-race-lane);
+    }
+
+    .pb-track-race-lane--2 {
+      inset: 13% 9.5%;
+      border: 2px solid var(--pb-race-lane);
+    }
+
+    .pb-track-race-lane--3 {
+      inset: 19% 14.5%;
+      border: 2px solid var(--pb-race-lane-soft);
+    }
+
+    .pb-track-race-lane--4 {
+      inset: 25% 19.5%;
+      border: 2px solid var(--pb-race-lane-soft);
+    }
+
+    .pb-track-race-center {
+      position: absolute;
+      inset: 31% 24.5%;
+      border-radius: 999px;
+      background:
+        radial-gradient(circle at 40% 45%, rgba(246, 198, 47, 0.18), rgba(246, 198, 47, 0.04) 42%, rgba(246, 198, 47, 0.02)),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
+      box-shadow: inset 0 0 0 1px rgba(246, 198, 47, 0.2);
+      pointer-events: none;
+    }
+
+    .pb-track-race-start {
+      position: absolute;
+      top: 7%;
+      bottom: 7%;
+      left: 50%;
+      width: 3px;
+      border-radius: 2px;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0.9) 0 12px,
+          rgba(17, 17, 17, 0.9) 12px 24px
+        );
+      transform: translateX(-50%);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .pb-track-race-racer {
+      position: absolute;
+      width: var(--pb-racer-size, 42px);
+      height: var(--pb-racer-size, 42px);
+      margin-left: calc(var(--pb-racer-size, 42px) * -0.5);
+      margin-top: calc(var(--pb-racer-size, 42px) * -0.5);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.96);
+      border: 2px solid rgba(246, 198, 47, 0.9);
+      box-shadow:
+        0 8px 18px rgba(0, 0, 0, 0.18),
+        0 0 0 2px rgba(255, 255, 255, 0.52);
+      overflow: hidden;
+      transform-origin: center;
+      will-change: left, top, transform;
+    }
+
+    .pb-track-race-racer img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      padding: 4px;
+      user-select: none;
+      -webkit-user-drag: none;
+      pointer-events: none;
+    }
+
+    .pb-track-race-racer-fallback {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 0.72rem;
+      color: #fff;
+      background: linear-gradient(135deg, #333, #111);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      user-select: none;
+    }
+
+    .pb-track-race-name {
+      position: absolute;
+      left: 50%;
+      top: calc(100% + 5px);
+      transform: translateX(-50%);
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 0.64rem;
+      font-weight: 700;
+      white-space: nowrap;
+      background: rgba(255, 255, 255, 0.94);
+      color: #111;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.14);
+      opacity: 0;
+      transition: opacity 180ms ease, transform 180ms ease;
+      pointer-events: none;
+    }
+
+    .pb-track-race-racer:hover .pb-track-race-name,
+    .pb-track-race-racer:focus-within .pb-track-race-name {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    .pb-track-race-empty {
+      min-height: 240px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      font-size: 0.95rem;
+      font-weight: 700;
+      opacity: 0.72;
+      padding: 16px;
+    }
+
+    .pb-track-race-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 3000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.52);
+      backdrop-filter: blur(2px);
+      padding: 14px;
+    }
+
+    .pb-track-race-modal.is-open {
+      display: flex;
+    }
+
+    .pb-track-race-modal-card {
+      width: min(100%, 560px);
+      max-height: min(86vh, 760px);
+      overflow: auto;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow:
+        0 28px 60px rgba(0, 0, 0, 0.28),
+        inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+      padding: 14px 14px 12px;
+    }
+
+    .pb-track-race-modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .pb-track-race-modal-title {
+      margin: 0;
+      font-size: 1.04rem;
+      font-weight: 900;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .pb-track-race-modal-close {
+      border: 0;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.08);
+      color: #111;
+      width: 34px;
+      height: 34px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .pb-track-race-modal-summary {
+      margin: 0 0 10px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      opacity: 0.82;
+      text-transform: uppercase;
+    }
+
+    .pb-track-race-results {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 7px;
+    }
+
+    .pb-track-race-result {
+      display: grid;
+      grid-template-columns: 42px 1fr auto auto;
+      align-items: center;
+      gap: 8px;
+      background: rgba(246, 198, 47, 0.12);
+      border-radius: 10px;
+      padding: 8px 9px;
+    }
+
+    .pb-track-race-result.is-dnf {
+      background: rgba(0, 0, 0, 0.06);
+    }
+
+    .pb-track-race-result-rank {
+      font-weight: 900;
+      font-size: 0.86rem;
+      text-align: center;
+    }
+
+    .pb-track-race-result-name {
+      font-weight: 800;
+      font-size: 0.84rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .pb-track-race-result-laps {
+      font-size: 0.72rem;
+      font-weight: 800;
+      opacity: 0.85;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .pb-track-race-result-time {
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      min-width: 70px;
+      text-align: right;
+    }
+
+    @media (max-width: 900px) {
+      .pb-track-race-track {
+        aspect-ratio: 1.95 / 1;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .pb-track-race {
+        padding: 8px;
+      }
+
+      .pb-track-race-track {
+        aspect-ratio: 1.65 / 1;
+        border-radius: 18px;
+      }
+
+      .pb-track-race-status {
+        font-size: 0.7rem;
+      }
+
+      .pb-track-race-start {
+        width: 2px;
+      }
+
+      .pb-track-race-picks {
+        grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .pb-track-race-racer {
+        transition: none;
+      }
+
+      .pb-track-race-confetti-piece {
+        animation: none;
+      }
+    }
+
+    @keyframes pb-track-race-confetti-fall {
+      0% {
+        opacity: 0;
+        transform: translate3d(0, -4%, 0) rotate(0deg);
+      }
+
+      10% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0.95;
+        transform: translate3d(var(--pb-dx, 0px), 118%, 0) rotate(var(--pb-rot, 620deg));
+      }
+    }
+
+    @keyframes pb-track-race-confetti-spin {
+      0% {
+        filter: brightness(1);
+      }
+
+      50% {
+        filter: brightness(1.2);
+      }
+
+      100% {
+        filter: brightness(1);
+      }
+    }
+  </style>
+
+  <div class="pb-track-race-header">
+    <h2 class="pb-track-race-title">PineBytes Clients Track Race</h2>
+    <p class="pb-track-race-status" data-role="status">Select racers and press Go</p>
+  </div>
+
+  <div class="pb-track-race-controls">
+    <div class="pb-track-race-actions">
+      <button class="pb-track-race-button" type="button" data-action="select-all">All</button>
+      <button class="pb-track-race-button" type="button" data-action="clear-all">Clear</button>
+      <label class="pb-track-race-laps">Laps
+        <select data-role="laps-select" aria-label="Laps to win">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3" selected>3</option>
+          <option value="5">5</option>
+          <option value="10">10</option>
+        </select>
+      </label>
+      <button class="pb-track-race-button pb-track-race-button--go" type="button" data-action="go-race">Go</button>
+    </div>
+    <div class="pb-track-race-picks" data-role="picks"></div>
+  </div>
+
+  <div class="pb-track-race-track" data-role="track">
+    <div class="pb-track-race-lane pb-track-race-lane--1"></div>
+    <div class="pb-track-race-lane pb-track-race-lane--2"></div>
+    <div class="pb-track-race-lane pb-track-race-lane--3"></div>
+    <div class="pb-track-race-lane pb-track-race-lane--4"></div>
+    <div class="pb-track-race-center"></div>
+    <div class="pb-track-race-start"></div>
+    <div class="pb-track-race-confetti" data-role="confetti"></div>
+  </div>
+
+  <div class="pb-track-race-modal" data-role="results-modal" aria-hidden="true">
+    <div class="pb-track-race-modal-card" role="dialog" aria-modal="true" aria-label="Race leaderboard">
+      <div class="pb-track-race-modal-head">
+        <h3 class="pb-track-race-modal-title">Race Results</h3>
+        <button class="pb-track-race-modal-close" type="button" aria-label="Close results" data-action="close-results">&#10005;</button>
+      </div>
+      <p class="pb-track-race-modal-summary" data-role="results-summary">Leaderboard</p>
+      <ol class="pb-track-race-results" data-role="results-list"></ol>
+    </div>
+  </div>
+
+  <script type="application/json" class="pb-track-race-data">
+    [
+      { "name": "Happy Harry's Logo", "img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/095e76a3-8eb6-49b9-9664-42cc05ddf934/z18s.png?content-type=image%2Fpng" },
+      { "name": "Red Robin's Logo", "img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/a3393efc-4085-4527-81b0-461c6cc18e13/red-robin-logo-png_seeklogo-491218.png?content-type=image%2Fpng" },
+      { "name": "Liberty Logo", "img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/00ba932f-426d-4c3c-b2a7-e05017fee835/Liberty-EG_white-copy.png?content-type=image%2Fpng" },
+      { "name": "Legendary Hospitality", "img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/bebb5611-80de-428e-819b-8222035caed8/LegHosp.png?content-type=image%2Fpng" },
+      { "name": "Atlantic Fabric", "img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/7f93b0fc-d01d-4bc8-8c66-f0b300440914/AtFab.png?content-type=image%2Fpng" },
+      { "name": "Antica Osteria", "img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/7c4f001b-f004-4ed2-8f56-cb5e110a6f24/Antica.png?content-type=image%2Fpng" },
+      { "name": "Fire House Subs", "img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/5cc874f1-89ab-4510-90f8-34a92683974c/Firehouse-Subs-edit.png?content-type=image%2Fpng" },
+      { "name": "Demetres", "img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/a7f0cff0-3fe8-47ef-9a31-f3c48bafb448/demetres.png?content-type=image%2Fpng" },
+      { "name": "CN Tower", "img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/ceab4294-a54f-4069-9920-2ceb14a51608/CN+Tower+Logo+4P.png?content-type=image%2Fpng" },
+      { "name": "Pizza Wine Disco", "img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/41c4f0eb-d97d-4e35-a72f-3c54698c9280/pwd.png?content-type=image%2Fpng" },
+      { "name": "Robins Donuts", "img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/01c7d375-d73c-4ae4-a927-89bd569b9af1/Robins_Donuts.png?content-type=image%2Fpng" },
+      { "name": "Hospice Thrift", "img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/323e65ef-0022-4716-aee8-d88af3386f55/HospiceThriftStore.png?content-type=image%2Fpng" },
+      { "name": "Murphy's Group", "img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/c01e75f3-5e50-40d1-bb06-4075e091d39f/3-MemLogoSearch_Murphy.png?content-type=image%2Fpng" },
+      { "name": "Paddy's Pub", "img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/10cc7f1a-d458-479a-9d18-1fc341322ef4/Paddys-Pub.png?content-type=image%2Fpng" },
+      { "name": "Nakos Greek Grill", "img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/d06c8eb2-1cdc-43e9-ba74-3c945a4f1105/Nakos-logo-stacked.png?content-type=image%2Fpng" },
+      { "name": "Blue Blood Steak House", "img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/a214d04b-edfb-49fb-a846-c6a974b18537/blueblood.png?content-type=image%2Fpng" },
+      { "name": "Nando's Chicken", "img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/4ae8b40f-2902-48f8-a40f-629bb97c21e5/z-Nandos.png?content-type=image%2Fpng" },
+      { "name": "Community College of New Brunswick", "img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/7716587c-dfe8-457d-82d8-fa2a0efc26fb/z9Logo_CCNB_350x382.png?content-type=image%2Fpng" },
+      { "name": "Da Nico", "img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/9b1c68fe-54b7-4d44-aff1-2937fc0dc0df/danico.png?content-type=image%2Fpng" },
+      { "name": "Verace Italian Restaurant", "img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/3ed5017a-433f-42c8-b066-cf2e2ccc25be/verace.jpg?content-type=image%2Fjpeg" },
+      { "name": "All Stars Wings and Ribs", "img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/bf875032-7249-4164-b1d1-32a8c88d7a55/AllStarLogo.png?content-type=image%2Fpng" },
+      { "name": "Supplement King", "img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/1b075a65-8a1f-44c2-800e-317bca2bf433/1-sk.png?content-type=image%2Fpng" },
+      { "name": "Grafton Connor Group", "img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/dff6176b-f0a9-4c3c-b0f6-0e41cc7fdf50/MemLogo_Grafton+Connor+logo.png?content-type=image%2Fpng" },
+      { "name": "The Duchess Pub", "img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/4533462c-2610-44ea-bd22-1e49df0b6132/duchess.png?content-type=image%2Fpng" },
+      { "name": "Corks Winebar and Eatery", "img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/01ddb402-dbe9-4ed0-b152-64afa0c700ef/corks.png?content-type=image%2Fpng" },
+      { "name": "Cibo Wine Bar", "img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/4bdc2f4b-fd1c-42c7-872b-cfc96e3dca76/cibo.png?content-type=image%2Fpng" },
+      { "name": "Atlantic Gardens", "img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/fcba7a5b-dddb-4fc3-b959-07b942eae03c/bAtlantic-Gardens.png?content-type=image%2Fpng" },
+      { "name": "Bishops Cellar", "img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/626209c7-ae1d-48df-b41e-aa6f1e7d36bd/2Bishops.png?content-type=image%2Fpng" },
+      { "name": "Don Alfonso", "img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/8ae459d3-c1c5-466f-b2f4-53404d74dbd0/donalfonso.png?content-type=image%2Fpng" },
+      { "name": "The Smoke BBQ", "img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/b0448329-11d1-4c37-a2f4-52b3082c5c09/thesmoke_logo_v2.jpg?content-type=image%2Fjpeg" }
+    ]
+  </script>
+
+  <script>
+    (function () {
+      var root = document.currentScript.closest("[data-pb-track-race]");
+      if (!root || root.dataset.pbTrackRaceReady === "true") {
+        return;
+      }
+      root.dataset.pbTrackRaceReady = "true";
+
+      var track = root.querySelector("[data-role='track']");
+      var confettiLayer = root.querySelector("[data-role='confetti']");
+      var statusNode = root.querySelector("[data-role='status']");
+      var picksNode = root.querySelector("[data-role='picks']");
+      var lapsSelect = root.querySelector("[data-role='laps-select']");
+      var resultsModal = root.querySelector("[data-role='results-modal']");
+      var resultsSummary = root.querySelector("[data-role='results-summary']");
+      var resultsList = root.querySelector("[data-role='results-list']");
+      var closeResultsButton = root.querySelector("[data-action='close-results']");
+      var goButton = root.querySelector("[data-action='go-race']");
+      var selectAllButton = root.querySelector("[data-action='select-all']");
+      var clearAllButton = root.querySelector("[data-action='clear-all']");
+      var dataNode = root.querySelector(".pb-track-race-data");
+      var tau = Math.PI * 2;
+      var rafId = 0;
+      var lastTime = 0;
+      var geometry = null;
+      var racers = [];
+      var lanes = 4;
+      var pickerInputs = [];
+      var raceEventText = "";
+      var raceEventUntil = 0;
+      var raceTickCount = 0;
+      var lapsToWin = 3;
+      var raceFinished = false;
+      var raceWinner = "";
+      var confettiTimer = 0;
+      var finishTriggered = false;
+      var finishDeadline = 0;
+      var raceStartTime = 0;
+      var raceResults = [];
+
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function randomRange(min, max) {
+        return min + Math.random() * (max - min);
+      }
+
+      function signedAngleDelta(fromAngle, toAngle) {
+        var diff = toAngle - fromAngle;
+        while (diff > Math.PI) {
+          diff -= tau;
+        }
+        while (diff < -Math.PI) {
+          diff += tau;
+        }
+        return diff;
+      }
+
+      function forwardAngleDelta(fromAngle, toAngle) {
+        var diff = toAngle - fromAngle;
+        while (diff < 0) {
+          diff += tau;
+        }
+        while (diff >= tau) {
+          diff -= tau;
+        }
+        return diff;
+      }
+
+      function formatSeconds(ms) {
+        return (ms / 1000).toFixed(2) + "s";
+      }
+
+      function parseData(node) {
+        if (!node) {
+          return [];
+        }
+        try {
+          var parsed = JSON.parse(node.textContent.trim());
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (error) {
+          return [];
+        }
+      }
+
+      function shortName(name) {
+        if (!name) {
+          return "IC";
+        }
+        var clean = String(name).trim();
+        if (!clean) {
+          return "IC";
+        }
+        var parts = clean.split(/\s+/).filter(Boolean);
+        if (!parts.length) {
+          return "IC";
+        }
+        if (parts.length === 1) {
+          return parts[0].slice(0, 2).toUpperCase();
+        }
+        return (parts[0][0] + parts[1][0]).toUpperCase();
+      }
+
+      function createRacerNode(item, index) {
+        var racer = document.createElement("article");
+        var name = typeof item.name === "string" ? item.name.trim() : "";
+        var imgUrl = typeof item.img === "string" ? item.img.trim() : "";
+        racer.className = "pb-track-race-racer";
+        racer.setAttribute("aria-label", name ? name : "Racer " + (index + 1));
+        racer.style.setProperty("--pb-racer-size", "42px");
+
+        if (imgUrl) {
+          var img = document.createElement("img");
+          img.src = imgUrl;
+          img.alt = name ? name + " icon" : "Race icon";
+          img.loading = "lazy";
+          img.decoding = "async";
+          racer.appendChild(img);
+        } else {
+          var fallback = document.createElement("div");
+          fallback.className = "pb-track-race-racer-fallback";
+          fallback.textContent = shortName(name);
+          racer.appendChild(fallback);
+        }
+
+        if (name) {
+          var label = document.createElement("div");
+          label.className = "pb-track-race-name";
+          label.textContent = name;
+          racer.appendChild(label);
+        }
+
+        track.appendChild(racer);
+        return racer;
+      }
+
+      function computeGeometry() {
+        var w = track.clientWidth;
+        var h = track.clientHeight;
+        var laneGap = clamp(Math.min(w, h) * 0.065, 14, 24);
+        var baseSize = clamp(Math.min(w, h) * 0.1, 30, 52);
+        var cx = w / 2;
+        var cy = h / 2;
+        var outerRx = w * 0.455;
+        var outerRy = h * 0.425;
+        return {
+          width: w,
+          height: h,
+          cx: cx,
+          cy: cy,
+          laneGap: laneGap,
+          baseSize: baseSize,
+          outerRx: outerRx,
+          outerRy: outerRy
+        };
+      }
+
+      function laneToRadius(laneNumber) {
+        var laneIndex = clamp(Number(laneNumber) - 1, 0, lanes - 1);
+        var rx = geometry.outerRx - laneIndex * geometry.laneGap;
+        var ry = geometry.outerRy - laneIndex * geometry.laneGap * 0.86;
+        return {
+          rx: Math.max(rx, geometry.baseSize),
+          ry: Math.max(ry, geometry.baseSize)
+        };
+      }
+
+      function setRacerPosition(racerState, now) {
+        var laneRadius = laneToRadius(racerState.lane);
+        var wobble = Math.sin(now * 0.005 + racerState.seed) * 0.004;
+        var angle = racerState.angle + wobble;
+        var x = geometry.cx + laneRadius.rx * Math.cos(angle);
+        var y = geometry.cy + laneRadius.ry * Math.sin(angle);
+        var dx = -laneRadius.rx * Math.sin(angle);
+        var dy = laneRadius.ry * Math.cos(angle);
+        var heading = Math.atan2(dy, dx) * (180 / Math.PI);
+        var tilt = Math.sin(now * 0.008 + racerState.seed) * 6;
+        var depth = Math.round(y);
+
+        racerState.node.style.left = x.toFixed(2) + "px";
+        racerState.node.style.top = y.toFixed(2) + "px";
+        racerState.node.style.transform = "rotate(" + (heading + tilt).toFixed(2) + "deg)";
+        racerState.node.style.zIndex = String(200 + depth);
+      }
+
+      function clearConfetti() {
+        if (confettiTimer) {
+          window.clearTimeout(confettiTimer);
+          confettiTimer = 0;
+        }
+        if (confettiLayer) {
+          confettiLayer.innerHTML = "";
+        }
+      }
+
+      function launchConfetti() {
+        if (!confettiLayer) {
+          return;
+        }
+
+        clearConfetti();
+
+        var colors = ["#f6c62f", "#ffdf6f", "#ffffff", "#111111", "#ffd24b"];
+        var count = clamp(120 + racers.length * 2, 120, 220);
+        var i;
+
+        for (i = 0; i < count; i += 1) {
+          var piece = document.createElement("span");
+          var width = randomRange(5, 10);
+          var height = randomRange(9, 18);
+          var left = randomRange(2, 98);
+          var drift = randomRange(-220, 220);
+          var delay = randomRange(0, 900);
+          var duration = randomRange(2200, 4200);
+          var rotation = randomRange(320, 1080);
+          var spin = randomRange(600, 1400);
+          var color = colors[Math.floor(Math.random() * colors.length)];
+
+          piece.className = "pb-track-race-confetti-piece";
+          piece.style.left = left.toFixed(2) + "%";
+          piece.style.setProperty("--pb-cw", width.toFixed(1) + "px");
+          piece.style.setProperty("--pb-ch", height.toFixed(1) + "px");
+          piece.style.setProperty("--pb-dx", drift.toFixed(1) + "px");
+          piece.style.setProperty("--pb-delay", delay.toFixed(0) + "ms");
+          piece.style.setProperty("--pb-cd", duration.toFixed(0) + "ms");
+          piece.style.setProperty("--pb-rot", rotation.toFixed(0) + "deg");
+          piece.style.setProperty("--pb-cs", spin.toFixed(0) + "ms");
+          piece.style.setProperty("--pb-cc", color);
+          confettiLayer.appendChild(piece);
+        }
+
+        confettiTimer = window.setTimeout(function () {
+          clearConfetti();
+        }, 5200);
+      }
+
+      function hideResultsModal() {
+        if (!resultsModal) {
+          return;
+        }
+        resultsModal.classList.remove("is-open");
+        resultsModal.setAttribute("aria-hidden", "true");
+      }
+
+      function showResultsModal() {
+        if (!resultsModal) {
+          return;
+        }
+        resultsModal.classList.add("is-open");
+        resultsModal.setAttribute("aria-hidden", "false");
+      }
+
+      function buildRaceResults(now) {
+        var finishers = racers
+          .filter(function (racer) {
+            return racer.finished;
+          })
+          .sort(function (a, b) {
+            return a.finishTimeMs - b.finishTimeMs;
+          });
+
+        var dnfs = racers
+          .filter(function (racer) {
+            return !racer.finished;
+          })
+          .sort(function (a, b) {
+            return b.progress - a.progress;
+          })
+          .map(function (racer) {
+            racer.dnf = true;
+            return racer;
+          });
+
+        raceResults = finishers.concat(dnfs).map(function (racer, index) {
+          var isDnf = !!racer.dnf;
+          return {
+            rank: index + 1,
+            name: racer.name || "Racer",
+            laps: racer.laps,
+            dnf: isDnf,
+            timeMs: isDnf ? null : racer.finishTimeMs
+          };
+        });
+
+        if (resultsSummary) {
+          var finCount = finishers.length;
+          var dnfCount = dnfs.length;
+          resultsSummary.textContent =
+            "Winner: " + (raceWinner || "Leader") +
+            " | Finishers: " + finCount +
+            " | DNF: " + dnfCount +
+            " | Laps: " + lapsToWin;
+        }
+
+        if (resultsList) {
+          resultsList.innerHTML = "";
+          raceResults.forEach(function (row) {
+            var li = document.createElement("li");
+            var rank = document.createElement("span");
+            var name = document.createElement("span");
+            var laps = document.createElement("span");
+            var time = document.createElement("span");
+
+            li.className = "pb-track-race-result" + (row.dnf ? " is-dnf" : "");
+            rank.className = "pb-track-race-result-rank";
+            name.className = "pb-track-race-result-name";
+            laps.className = "pb-track-race-result-laps";
+            time.className = "pb-track-race-result-time";
+
+            rank.textContent = "#" + row.rank;
+            name.textContent = row.name;
+            laps.textContent = row.dnf ? "DNF" : "LAP " + lapsToWin;
+            time.textContent = row.dnf ? "DNF" : formatSeconds(row.timeMs || 0);
+
+            li.appendChild(rank);
+            li.appendChild(name);
+            li.appendChild(laps);
+            li.appendChild(time);
+            resultsList.appendChild(li);
+          });
+        }
+
+        showResultsModal();
+      }
+
+      function finalizeRace(now) {
+        raceFinished = true;
+        racers.forEach(function (racer) {
+          if (!racer.finished) {
+            racer.dnf = true;
+          }
+        });
+        launchConfetti();
+        buildRaceResults(now);
+        updateStatus(now);
+      }
+
+      function announceEvent(text, now) {
+        if (!text) {
+          return;
+        }
+        if (now < raceEventUntil - 700) {
+          return;
+        }
+        raceEventText = text;
+        raceEventUntil = now + 2200;
+      }
+
+      function findNearby(racer) {
+        var nearestAhead = null;
+        var nearestBehind = null;
+        var nearestAheadDelta = 999;
+        var nearestBehindDelta = 999;
+
+        if (racer.finished || racer.dnf) {
+          return {
+            ahead: null,
+            behind: null
+          };
+        }
+
+        racers.forEach(function (other) {
+          if (other === racer) {
+            return;
+          }
+          if (other.finished || other.dnf) {
+            return;
+          }
+          var laneGap = Math.abs(other.lane - racer.lane);
+          if (laneGap > 1.2) {
+            return;
+          }
+
+          var signed = signedAngleDelta(racer.angle, other.angle);
+          var forward = forwardAngleDelta(racer.angle, other.angle);
+
+          if (forward > 0 && forward < nearestAheadDelta) {
+            nearestAheadDelta = forward;
+            nearestAhead = {
+              target: other,
+              signed: signed,
+              forward: forward
+            };
+          }
+
+          if (signed < 0 && Math.abs(signed) < nearestBehindDelta) {
+            nearestBehindDelta = Math.abs(signed);
+            nearestBehind = {
+              target: other,
+              signed: signed,
+              forward: forward
+            };
+          }
+        });
+
+        return {
+          ahead: nearestAhead,
+          behind: nearestBehind
+        };
+      }
+
+      function performAggressiveActions(now, delta) {
+        racers.forEach(function (racer) {
+          if (racer.finished || racer.dnf) {
+            return;
+          }
+
+          racer.cooldown = Math.max(0, racer.cooldown - delta);
+          racer.laneHold = Math.max(0, racer.laneHold - delta);
+          racer.boostTimer = Math.max(0, racer.boostTimer - delta);
+          racer.hitTimer = Math.max(0, racer.hitTimer - delta);
+
+          if (racer.laneHold <= 0 && Math.abs(racer.targetLane - racer.preferredLane) > 0.04) {
+            racer.targetLane = racer.preferredLane;
+          }
+
+          if (racer.cooldown > 0) {
+            return;
+          }
+
+          var roll = Math.random();
+          var attemptChance = (0.05 + racer.aggression * 0.15) * delta * 2.3;
+          if (roll > attemptChance) {
+            return;
+          }
+
+          var near = findNearby(racer);
+          var ahead = near.ahead;
+          var behind = near.behind;
+          var name = racer.name || "Racer";
+
+          if (ahead && ahead.forward < 0.085 && racer.aggression > 0.56) {
+            racer.boostTimer = Math.max(racer.boostTimer, randomRange(0.25, 0.48));
+            ahead.target.hitTimer = Math.max(ahead.target.hitTimer, randomRange(0.2, 0.4));
+            ahead.target.angle += (Math.random() < 0.5 ? -1 : 1) * randomRange(0.002, 0.006);
+            racer.targetLane = clamp(racer.lane + (Math.random() < 0.5 ? -0.35 : 0.35), 1, lanes);
+            racer.laneHold = randomRange(0.38, 0.7);
+            announceEvent(name + " bumps " + (ahead.target.name || "a rival"), now);
+          } else if (ahead && ahead.forward < 0.19) {
+            racer.targetLane = clamp(racer.lane + (Math.random() < 0.5 ? -1 : 1) * randomRange(0.7, 1.35), 1, lanes);
+            racer.laneHold = randomRange(0.8, 1.55);
+            racer.boostTimer = Math.max(racer.boostTimer, randomRange(0.32, 0.65));
+            announceEvent(name + " dives for the pass", now);
+          } else if (behind && Math.abs(behind.signed) < 0.17 && racer.aggression > 0.66) {
+            racer.targetLane = clamp(behind.target.lane + (Math.random() < 0.5 ? -0.2 : 0.2), 1, lanes);
+            racer.laneHold = randomRange(0.55, 1.05);
+            behind.target.hitTimer = Math.max(behind.target.hitTimer, randomRange(0.12, 0.26));
+            announceEvent(name + " blocks " + (behind.target.name || "a chaser"), now);
+          } else if (ahead && ahead.forward < 0.29) {
+            racer.boostTimer = Math.max(racer.boostTimer, randomRange(0.38, 0.74));
+            announceEvent(name + " slingshots", now);
+          }
+
+          racer.cooldown = randomRange(0.72, 1.9) + (1 - racer.aggression) * 0.8;
+        });
+      }
+
+      function resolveCloseContacts() {
+        var i;
+        var j;
+        for (i = 0; i < racers.length; i += 1) {
+          for (j = i + 1; j < racers.length; j += 1) {
+            var a = racers[i];
+            var b = racers[j];
+            if (a.finished || a.dnf || b.finished || b.dnf) {
+              continue;
+            }
+            var laneGap = Math.abs(a.lane - b.lane);
+            if (laneGap > 0.52) {
+              continue;
+            }
+
+            var signed = signedAngleDelta(a.angle, b.angle);
+            var close = Math.abs(signed);
+            if (close > 0.035) {
+              continue;
+            }
+
+            var push = (0.035 - close) * 0.52;
+            if (signed > 0) {
+              a.angle -= push;
+              b.angle += push;
+            } else {
+              a.angle += push;
+              b.angle -= push;
+            }
+
+            a.currentSpeed *= 0.992;
+            b.currentSpeed *= 0.992;
+          }
+        }
+      }
+
+      function updateRacerDynamics(racer, now, delta) {
+        if (racer.finished || racer.dnf) {
+          return;
+        }
+
+        var staminaLoad = racer.boostTimer > 0 ? 1.55 : 0.9;
+        racer.energy = clamp(racer.energy - racer.energyDrain * delta * staminaLoad, 0.34, 1.22);
+        if (racer.boostTimer <= 0 && racer.hitTimer <= 0) {
+          racer.energy = clamp(racer.energy + racer.energyRegen * delta, 0.34, 1.22);
+        }
+
+        var randomPulse = 1 + Math.sin(now * 0.001 + racer.seed * 3) * 0.045;
+        var desired = racer.baseSpeed * (0.84 + racer.energy * 0.34) * randomPulse;
+        desired *= 0.9 + racer.handling * 0.22;
+
+        if (racer.boostTimer > 0) {
+          desired *= 1.16;
+        }
+        if (racer.hitTimer > 0) {
+          desired *= 0.82;
+        }
+
+        racer.currentSpeed += (desired - racer.currentSpeed) * delta * (1.6 + racer.acceleration * 1.4);
+        racer.currentSpeed = clamp(racer.currentSpeed, 0.2, racer.maxSpeed);
+
+        racer.lane += (racer.targetLane - racer.lane) * delta * (1.8 + racer.handling * 2.2);
+        racer.lane = clamp(racer.lane, 1, lanes);
+
+        var step = Math.max(0, racer.currentSpeed * delta);
+        racer.angle = (racer.angle + step) % tau;
+      }
+
+      function tick(now) {
+        if (raceFinished) {
+          updateStatus(now);
+          return;
+        }
+
+        if (!raceStartTime) {
+          raceStartTime = now;
+        }
+
+        if (!lastTime) {
+          lastTime = now;
+        }
+        var delta = Math.min((now - lastTime) / 1000, 0.05);
+        lastTime = now;
+        raceTickCount += 1;
+
+        performAggressiveActions(now, delta);
+
+        racers.forEach(function (racer) {
+          updateRacerDynamics(racer, now, delta);
+        });
+
+        resolveCloseContacts();
+
+        racers.forEach(function (racer) {
+          if (racer.angle < 0) {
+            racer.angle += tau;
+          } else if (racer.angle >= tau) {
+            racer.angle -= tau;
+          }
+        });
+
+        racers.forEach(function (racer) {
+          if (racer.finished || racer.dnf) {
+            return;
+          }
+          var angleStep = signedAngleDelta(racer.lastAngle, racer.angle);
+          if (angleStep < 0) {
+            angleStep = 0;
+          } else if (angleStep > 0.4) {
+            angleStep = 0.4;
+          }
+          racer.progress += angleStep;
+          racer.laps = Math.floor(racer.progress / tau);
+          racer.lastAngle = racer.angle;
+        });
+
+        racers.forEach(function (racer) {
+          setRacerPosition(racer, now);
+        });
+
+        racers.forEach(function (racer) {
+          if (!racer.finished && !racer.dnf && racer.laps >= lapsToWin) {
+            racer.finished = true;
+            racer.finishTimeMs = now - raceStartTime;
+            racer.currentSpeed = Math.max(racer.currentSpeed * 0.92, 0.18);
+          }
+        });
+
+        if (!finishTriggered) {
+          var firstFinisher = racers
+            .filter(function (racer) {
+              return racer.finished;
+            })
+            .sort(function (a, b) {
+              return a.finishTimeMs - b.finishTimeMs;
+            })[0];
+
+          if (firstFinisher) {
+            finishTriggered = true;
+            finishDeadline = now + 10000;
+            raceWinner = firstFinisher.name || "Leader";
+            raceEventText = raceWinner + " takes the flag! 10s for final placements";
+            raceEventUntil = finishDeadline;
+          }
+        }
+
+        if (finishTriggered) {
+          var unfinished = racers.filter(function (racer) {
+            return !racer.finished;
+          }).length;
+
+          if (unfinished === 0 || now >= finishDeadline) {
+            raceEventText = "";
+            raceEventUntil = 0;
+            finalizeRace(now);
+            return;
+          }
+        }
+
+        updateStatus(now);
+        rafId = window.requestAnimationFrame(tick);
+      }
+
+      function updateStatus(now) {
+        if (!statusNode) {
+          return;
+        }
+        if (!racers.length) {
+          statusNode.textContent = "Select racers and press Go";
+          return;
+        }
+
+        if (raceFinished) {
+          var finCount = racers.filter(function (racer) { return racer.finished; }).length;
+          var dnfCount = Math.max(0, racers.length - finCount);
+          statusNode.textContent = "Winner: " + (raceWinner || "Leader") + " | Finishers: " + finCount + " | DNF: " + dnfCount;
+          return;
+        }
+
+        if (finishTriggered) {
+          var secondsLeft = Math.max(0, Math.ceil((finishDeadline - now) / 1000));
+          var finishedCount = racers.filter(function (racer) { return racer.finished; }).length;
+          statusNode.textContent =
+            "Winner: " + (raceWinner || "Leader") +
+            " | Final window: " + secondsLeft + "s" +
+            " | Finished: " + finishedCount + "/" + racers.length;
+          return;
+        }
+
+        if (raceEventText && now < raceEventUntil) {
+          statusNode.textContent = raceEventText;
+          return;
+        }
+
+        var leader = racers
+          .slice()
+          .sort(function (a, b) {
+            if (b.laps !== a.laps) {
+              return b.laps - a.laps;
+            }
+            return b.angle - a.angle;
+          })[0];
+
+        if (!leader) {
+          statusNode.textContent = "Race Active";
+          return;
+        }
+
+        var leaderName = leader.name || "Leader";
+        var leaderSpeed = leader.currentSpeed || leader.baseSpeed || 0;
+        statusNode.textContent =
+          "Leader: " + leaderName +
+          " | Lap: " + Math.min(leader.laps + 1, lapsToWin) + "/" + lapsToWin +
+          " | Pace: " + leaderSpeed.toFixed(2);
+      }
+
+      function relayout() {
+        geometry = computeGeometry();
+        var crowdScale = clamp(1 - Math.max(racers.length - 12, 0) * 0.018, 0.56, 1);
+        var size = geometry.baseSize * crowdScale;
+        racers.forEach(function (racer) {
+          racer.node.style.setProperty("--pb-racer-size", size.toFixed(0) + "px");
+        });
+      }
+
+      function clearRace() {
+        if (rafId) {
+          window.cancelAnimationFrame(rafId);
+          rafId = 0;
+        }
+        racers.forEach(function (racer) {
+          racer.node.remove();
+        });
+        racers = [];
+        raceEventText = "";
+        raceEventUntil = 0;
+        raceFinished = false;
+        raceWinner = "";
+        finishTriggered = false;
+        finishDeadline = 0;
+        raceStartTime = 0;
+        raceResults = [];
+        lastTime = 0;
+        clearConfetti();
+        hideResultsModal();
+      }
+
+      function getSelectedCompanies(allCompanies) {
+        var selected = [];
+        pickerInputs.forEach(function (input) {
+          if (!input.checked) {
+            return;
+          }
+          var idx = Number(input.value);
+          if (Number.isFinite(idx) && allCompanies[idx]) {
+            selected.push(allCompanies[idx]);
+          }
+        });
+        return selected;
+      }
+
+      function runRace(selected) {
+        clearRace();
+
+        if (!selected.length) {
+          statusNode.textContent = "Pick at least one icon, then press Go";
+          return;
+        }
+
+        geometry = computeGeometry();
+        racers = selected.map(function (item, index) {
+          var lane = Number(item.lane);
+          var speed = Number(item.speed);
+          var node = createRacerNode(item, index);
+          var baseLane = Number.isFinite(lane) ? lane : (index % lanes) + 1;
+          var startLaneNudge = ((Math.floor(index / 2) % 3) - 1) * 0.18;
+          var startAngle = -Math.PI / 2 + (Math.floor(index / lanes) * 0.016) + (((index % lanes) - 1.5) * 0.003);
+          var baseSpeed = Number.isFinite(speed) ? clamp(speed, 0.36, 0.9) : randomRange(0.44, 0.78);
+          var aggression = randomRange(0.28, 0.98);
+          var acceleration = randomRange(0.52, 1.28);
+          var handling = randomRange(0.5, 0.98);
+          var energy = randomRange(0.72, 1.18);
+          var labelName = typeof item.name === "string" ? item.name.trim() : "";
+          node.title =
+            (labelName || "Racer") +
+            "\nSPD " + baseSpeed.toFixed(2) +
+            "  ACC " + acceleration.toFixed(2) +
+            "  HND " + handling.toFixed(2) +
+            "  AGG " + aggression.toFixed(2);
+
+          return {
+            node: node,
+            name: labelName,
+            lane: clamp(baseLane + startLaneNudge, 1, lanes),
+            preferredLane: baseLane,
+            targetLane: baseLane,
+            baseSpeed: baseSpeed,
+            currentSpeed: baseSpeed * randomRange(0.86, 1.04),
+            maxSpeed: baseSpeed * randomRange(1.18, 1.42),
+            acceleration: acceleration,
+            handling: handling,
+            aggression: aggression,
+            energy: energy,
+            energyDrain: randomRange(0.016, 0.034) * (0.9 + aggression * 0.6),
+            energyRegen: randomRange(0.015, 0.028) * (0.84 + handling * 0.3),
+            cooldown: randomRange(0.1, 1.6),
+            laneHold: 0,
+            boostTimer: 0,
+            hitTimer: 0,
+            angle: startAngle,
+            lastAngle: 0,
+            progress: 0,
+            laps: 0,
+            finished: false,
+            dnf: false,
+            finishTimeMs: 0,
+            seed: index * 1.73 + Math.random()
+          };
+        });
+
+        relayout();
+        racers.forEach(function (racer) {
+          racer.lastAngle = racer.angle;
+          setRacerPosition(racer, 0);
+        });
+
+        lastTime = 0;
+        raceTickCount = 0;
+        raceFinished = false;
+        raceWinner = "";
+        finishTriggered = false;
+        finishDeadline = 0;
+        raceStartTime = 0;
+        raceResults = [];
+        hideResultsModal();
+        statusNode.textContent = "Race Live | First to " + lapsToWin + " laps";
+        rafId = window.requestAnimationFrame(tick);
+      }
+
+      function buildPicker(allCompanies) {
+        picksNode.innerHTML = "";
+        pickerInputs = [];
+
+        allCompanies.forEach(function (item, index) {
+          var label = document.createElement("label");
+          var check = document.createElement("input");
+          var logo = document.createElement("img");
+          var name = document.createElement("span");
+
+          label.className = "pb-track-race-pick";
+          check.type = "checkbox";
+          check.value = String(index);
+          check.checked = true;
+          check.setAttribute("aria-label", item.name || "Company " + (index + 1));
+          pickerInputs.push(check);
+
+          logo.className = "pb-track-race-pick-logo";
+          logo.src = item.img || "";
+          logo.alt = "";
+          logo.loading = "lazy";
+          logo.decoding = "async";
+
+          name.className = "pb-track-race-pick-name";
+          name.textContent = item.name || "Company " + (index + 1);
+
+          label.appendChild(check);
+          label.appendChild(logo);
+          label.appendChild(name);
+          picksNode.appendChild(label);
+        });
+      }
+
+      function init() {
+        var parsed = parseData(dataNode);
+        var allCompanies = parsed.filter(function (item) {
+          return item && (item.img || item.name);
+        });
+
+        if (!allCompanies.length) {
+          var empty = document.createElement("div");
+          empty.className = "pb-track-race-empty";
+          empty.textContent = "Add a JSON array of { name, img, speed, lane } to run the race.";
+          track.appendChild(empty);
+          return;
+        }
+
+        buildPicker(allCompanies);
+        lapsToWin = lapsSelect ? clamp(Number(lapsSelect.value) || 3, 1, 99) : 3;
+        statusNode.textContent = "Selected: " + allCompanies.length + " | First to " + lapsToWin + " laps";
+
+        if (closeResultsButton) {
+          closeResultsButton.addEventListener("click", hideResultsModal);
+        }
+        if (resultsModal) {
+          resultsModal.addEventListener("click", function (event) {
+            if (event.target === resultsModal) {
+              hideResultsModal();
+            }
+          });
+        }
+        document.addEventListener("keydown", function (event) {
+          if (event.key === "Escape") {
+            hideResultsModal();
+          }
+        });
+
+        selectAllButton.addEventListener("click", function () {
+          pickerInputs.forEach(function (input) {
+            input.checked = true;
+          });
+          statusNode.textContent = "Selected: " + pickerInputs.length + " | First to " + lapsToWin + " laps";
+        });
+
+        clearAllButton.addEventListener("click", function () {
+          pickerInputs.forEach(function (input) {
+            input.checked = false;
+          });
+          clearRace();
+          statusNode.textContent = "Selected: 0 | First to " + lapsToWin + " laps";
+        });
+
+        goButton.addEventListener("click", function () {
+          var selected = getSelectedCompanies(allCompanies);
+          lapsToWin = lapsSelect ? clamp(Number(lapsSelect.value) || 3, 1, 99) : 3;
+          statusNode.textContent = "Starting race...";
+          runRace(selected);
+        });
+
+        if (lapsSelect) {
+          lapsSelect.addEventListener("change", function () {
+            lapsToWin = clamp(Number(lapsSelect.value) || 3, 1, 99);
+            if (!racers.length || raceFinished) {
+              statusNode.textContent = "Selected: " + getSelectedCompanies(allCompanies).length + " | First to " + lapsToWin + " laps";
+            }
+          });
+        }
+
+        picksNode.addEventListener("change", function () {
+          var selected = getSelectedCompanies(allCompanies).length;
+          if (!racers.length) {
+            statusNode.textContent = "Selected: " + selected + " | First to " + lapsToWin + " laps";
+          }
+        });
+
+        if ("ResizeObserver" in window) {
+          var observer = new ResizeObserver(function () {
+            if (!racers.length) {
+              return;
+            }
+            relayout();
+          });
+          observer.observe(track);
+        } else {
+          window.addEventListener("resize", function () {
+            if (!racers.length) {
+              return;
+            }
+            relayout();
+          });
+        }
+      }
+
+      init();
+
+      root.pbTrackRaceStop = function () {
+        clearRace();
+      };
+    })();
+  </script>
+</section>
