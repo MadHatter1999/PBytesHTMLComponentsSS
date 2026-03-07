@@ -45,6 +45,8 @@
     .pb-f{position:absolute;width:var(--s,42px);height:var(--s,42px);margin-left:calc(var(--s,42px)*-.5);margin-top:calc(var(--s,42px)*-.5);z-index:3;will-change:transform;pointer-events:none}
     .pb-f.hit{filter:brightness(1.35)}
     .pb-f.dead{opacity:.42;filter:grayscale(1) contrast(.8);z-index:1}
+    .pb-f.drag-handle{pointer-events:auto;cursor:grab}
+    .pb-f.drag-handle.dragging-token{cursor:grabbing;z-index:22}
     .pb-f.guard .pb-token{box-shadow:0 0 0 2px rgba(255,255,255,.52),0 5px 10px rgba(0,0,0,.22)}
     .pb-f.atk .pb-token{animation:pbatk .16s ease-out}
     .pb-f.cast .pb-token{animation:pbcast .28s ease-out}
@@ -106,6 +108,23 @@
     .pb-close{border:0;border-radius:999px;padding:7px 10px;background:rgba(0,0,0,.1);font-size:.74rem;font-weight:800;text-transform:uppercase;cursor:pointer}
     .pb-board{width:100%;border-collapse:collapse;font-size:.82rem}
     .pb-board th,.pb-board td{padding:7px 8px;text-align:left;border-bottom:1px solid rgba(0,0,0,.1);white-space:nowrap}
+    .pb-watcher{margin-top:8px;padding:8px;border-radius:12px;background:rgba(255,255,255,.76);box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+    .pb-watch-head{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:6px}
+    .pb-watch-head strong{font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.05em;opacity:.84}
+    .pb-watch-tools{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+    .pb-watch-tools select{border:0;border-radius:999px;padding:5px 9px;background:rgba(0,0,0,.08);font-size:.68rem;font-weight:800;outline:none}
+    .pb-watch-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:6px;max-height:190px;overflow:auto}
+    .pb-mon{display:grid;grid-template-columns:26px minmax(0,1fr);gap:7px;align-items:center;padding:5px 6px;border-radius:9px;background:rgba(0,0,0,.06);box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);cursor:grab}
+    .pb-mon:active{cursor:grabbing}
+    .pb-mon img{width:26px;height:26px;border-radius:999px;object-fit:contain;background:#fff;border:1px solid rgba(0,0,0,.14);padding:3px}
+    .pb-mon b{font-size:.68rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .pb-mon small{display:block;font-size:.6rem;opacity:.7;line-height:1.2}
+    .pb-mon.empty{grid-template-columns:1fr;cursor:default;opacity:.75}
+    .pb-mon.empty b{white-space:normal}
+    .pb-arena.mon-drop{box-shadow:inset 0 0 0 2px rgba(83,219,112,.8),0 12px 28px rgba(0,0,0,.08)}
+    .pb-trash{position:absolute;left:10px;top:10px;width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.62);color:#fff;font-size:18px;font-weight:900;box-shadow:0 6px 14px rgba(0,0,0,.35);opacity:0;transform:scale(.82);transition:opacity .14s ease,transform .14s ease,background .14s ease;pointer-events:none;z-index:72}
+    .pb-arena.drag-trash .pb-trash{opacity:1;transform:scale(1)}
+    .pb-trash.hot{background:rgba(186,28,28,.92)}
     @media(max-width:980px){.pb-stage{grid-template-columns:1fr}.pb-feed{min-height:160px;height:260px;max-height:260px}}
     @media(max-width:860px){.pb-head{flex-direction:column;align-items:flex-start}.pb-hud{grid-template-columns:1fr}}
     @media(max-width:640px){.pb-picks{grid-template-columns:1fr}.pb-pick{grid-template-areas:"cb av name" "cb team team" "cb class class"}.pb-arena{min-height:260px}}
@@ -157,6 +176,35 @@
       <label class="pb-chip"><input type="checkbox" data-events checked> Arena Events</label>
     </div>
     <div class="pb-picks" data-picks></div>
+    <div class="pb-watcher">
+      <div class="pb-watch-head">
+        <strong>Watcher PVE Monsters</strong>
+        <div class="pb-watch-tools">
+          <select data-mon-cr>
+            <option value="" selected>Any CR</option>
+            <option value="1/8">CR 1/8</option>
+            <option value="1/4">CR 1/4</option>
+            <option value="1/2">CR 1/2</option>
+            <option value="1">CR 1</option>
+            <option value="2">CR 2</option>
+            <option value="3">CR 3</option>
+            <option value="4">CR 4</option>
+            <option value="5">CR 5</option>
+            <option value="8">CR 8</option>
+            <option value="10">CR 10</option>
+            <option value="12">CR 12</option>
+            <option value="14">CR 14</option>
+            <option value="16">CR 16</option>
+            <option value="18">CR 18</option>
+            <option value="20">CR 20</option>
+          </select>
+          <button class="pb-btn" type="button" data-mon-load>Load Monsters</button>
+        </div>
+      </div>
+      <div class="pb-watch-list" data-monsters>
+        <div class="pb-mon empty"><b>Load monsters, then drag one into the arena during battle.</b></div>
+      </div>
+    </div>
   </div>
 
   <div class="pb-hud">
@@ -170,6 +218,7 @@
       <div class="pb-ring"></div>
       <div class="pb-ring r2"></div>
       <div class="pb-divider"></div>
+      <div class="pb-trash" data-trash>🗑</div>
       <div class="pb-vfx" data-vfx></div>
       <div class="pb-conf" data-conf></div>
     </div>
@@ -224,15 +273,26 @@
   <script>
     (function(){
       var root=document.currentScript.closest("[data-pb-glad]"); if(!root||root.dataset.ready==="1")return; root.dataset.ready="1";
-      var arena=root.querySelector("[data-arena]"), picks=root.querySelector("[data-picks]"), status=root.querySelector("[data-status]"), conf=root.querySelector("[data-conf]"), log=root.querySelector("[data-log]"), vfx=root.querySelector("[data-vfx]");
+      var arena=root.querySelector("[data-arena]"), picks=root.querySelector("[data-picks]"), status=root.querySelector("[data-status]"), conf=root.querySelector("[data-conf]"), log=root.querySelector("[data-log]"), vfx=root.querySelector("[data-vfx]"), trash=root.querySelector("[data-trash]");
       var modal=root.querySelector("[data-modal]"), modalTitle=root.querySelector("[data-modal-title]"), modalBody=root.querySelector("[data-modal-body]");
       var hudTime=root.querySelector("[data-hud-time]"), hudPhase=root.querySelector("[data-hud-phase]"), hudAlive=root.querySelector("[data-hud-alive]");
       var btnClose=root.querySelector("[data-modal-close]"), btnAll=root.querySelector("[data-select-all]"), btnNone=root.querySelector("[data-clear-all]");
       var btnRand=root.querySelector("[data-random-teams]"), btnRandClass=root.querySelector("[data-random-classes]"), btnGo=root.querySelector("[data-go]"), btnReset=root.querySelector("[data-reset]");
       var chaosSel=root.querySelector("[data-chaos]"), eventsChk=root.querySelector("[data-events]"), dataNode=root.querySelector("[data-glad-data]");
-      var rows=[], fighters=[], raf=0,last=0,running=false,deathCount=0,battleSeconds=0,sudden=false,nextEvent=0;
-      var buff={A:{t:0,p:0,s:0},B:{t:0,p:0,s:0}}, classPool=["Fighter","Rogue","Barbarian","Paladin","Ranger","Monk","Wizard","Cleric","Druid","Warlock","Bard"], swordClass="Swordsman";
+      var monLoadBtn=root.querySelector("[data-mon-load]"), monCrSel=root.querySelector("[data-mon-cr]"), monTray=root.querySelector("[data-monsters]");
+      var rows=[], fighters=[], stagedMonsters=[], stagedPlayers=[], raf=0,last=0,running=false,deathCount=0,battleSeconds=0,sudden=false,nextEvent=0,stageSeq=1,tokenDrag=null;
+      var battleMode={pve:false,pveTeam:""};
+      var buff={A:{t:0,p:0,s:0},B:{t:0,p:0,s:0},M:{t:0,p:0,s:0}}, classPool=["Fighter","Rogue","Barbarian","Paladin","Ranger","Monk","Wizard","Cleric","Druid","Warlock","Bard"], swordClass="Swordsman";
       var statCaps={maxHp:176,power:26,defense:15,speed:124,range:116}, classBench={}, arenaBench=null;
+      var monsterPool=[],dragMonsterId="",monsterIconPool=[
+        "https://game-icons.net/icons/ffffff/000000/1x1/faithtoken/dragon-head.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/giant-squid.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/manta-ray.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/wolf-head.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/spider-face.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/snake.svg"
+      ];
+      var monsterFallbackSvg="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='30' fill='%23f6c62f'/><circle cx='24' cy='27' r='5' fill='%23111'/><circle cx='40' cy='27' r='5' fill='%23111'/><path d='M18 43c4 5 9 7 14 7s10-2 14-7' stroke='%23111' stroke-width='4' fill='none' stroke-linecap='round'/></svg>";
 
       function clamp(v,min,max){return Math.max(min,Math.min(max,v));}
       function rr(min,max){return min+Math.random()*(max-min);}
@@ -243,12 +303,22 @@
       function normalizeClass(v){return classPool.indexOf(v)>=0||v===swordClass?v:"";}
       function swordAllowed(d){var n=((d&&d.name)||"").trim().toLowerCase(); return n==="tony healy"||n==="christian";}
       function sanitizeClass(v,d){v=normalizeClass(v); if(v===swordClass&&!swordAllowed(d))return ""; return v;}
-      function aliveCounts(){var c={A:0,B:0};fighters.forEach(function(f){if(f.alive)c[f.team]+=1;});return c;}
+      function aliveCounts(){var c={A:0,B:0,M:0};fighters.forEach(function(f){if(!f.alive)return; if(c[f.team]==null)c[f.team]=0; c[f.team]+=1;});return c;}
       function aliveTeams(){var t={};fighters.forEach(function(f){if(f.alive)t[f.team]=1;});return Object.keys(t);}
       function addLog(msg,cls){var li=document.createElement("li"); li.textContent=msg; if(cls)li.classList.add(cls); log.insertBefore(li,log.firstChild); while(log.children.length>80)log.removeChild(log.lastChild);}
       function hideModal(){modal.classList.remove("open");}
       function clearConf(){conf.innerHTML="";}
       function clearVfx(){if(vfx)vfx.innerHTML="";}
+      function setTrashUi(show,hot){if(!arena||!trash)return; if(show)arena.classList.add("drag-trash"); else arena.classList.remove("drag-trash"); if(hot)trash.classList.add("hot"); else trash.classList.remove("hot");}
+      function pointOnTrash(cx,cy){if(!trash)return false; var r=trash.getBoundingClientRect(); return cx>=r.left&&cx<=r.right&&cy>=r.top&&cy<=r.bottom;}
+      function playerStageId(rid){return "ply"+String(rid);}
+      function setStagedPos(stageId,x,y){for(var i=0;i<stagedMonsters.length;i+=1){if(stagedMonsters[i].stageId===stageId){stagedMonsters[i].x=x; stagedMonsters[i].y=y; return;}}}
+      function setStagedPlayerPos(stageId,x,y){var i=0; for(i=0;i<stagedPlayers.length;i+=1){if(stagedPlayers[i].stageId===stageId){stagedPlayers[i].x=x; stagedPlayers[i].y=y; return;}} stagedPlayers.push({stageId:stageId,x:x,y:y});}
+      function getStagedPlayerPos(stageId){var i=0; for(i=0;i<stagedPlayers.length;i+=1){if(stagedPlayers[i].stageId===stageId)return stagedPlayers[i];} return null;}
+      function pruneStagedPlayers(list){var keep={}; list.forEach(function(x){keep[playerStageId(x.rid)]=1;}); stagedPlayers=stagedPlayers.filter(function(s){return !!keep[s.stageId];});}
+      function removeStaged(stageId){stagedMonsters=stagedMonsters.filter(function(s){return s.stageId!==stageId;});}
+      function findFighterFromNode(node){var i=0; for(i=0;i<fighters.length;i+=1){if(fighters[i].node===node)return fighters[i];} return null;}
+      function canDragFighter(f){if(!f||!f.alive)return false; if(f.team==="M")return !!(f.prePlaced&&f.stageId)&&!running; return true;}
       function pulse(node,cls,d){if(!node)return; node.classList.add(cls); setTimeout(function(){node.classList.remove(cls);},d||180);}
       function vfxLine(x1,y1,x2,y2,kind){if(!vfx)return; var n=document.createElement("i"),dx=x2-x1,dy=y2-y1,dist=Math.sqrt(dx*dx+dy*dy)||1,ang=Math.atan2(dy,dx)*180/Math.PI; n.className="pb-trail "+(kind||"slash"); n.style.left=x1.toFixed(1)+"px"; n.style.top=y1.toFixed(1)+"px"; n.style.width=dist.toFixed(1)+"px"; n.style.setProperty("--ang",ang.toFixed(2)+"deg"); vfx.appendChild(n); setTimeout(function(){n.remove();},420);}
       function vfxBurst(x,y,kind){if(!vfx)return; var n=document.createElement("i"),ttl=(kind==="heal"?620:430); n.className="pb-burst "+(kind||"hit"); n.style.left=x.toFixed(1)+"px"; n.style.top=y.toFixed(1)+"px"; vfx.appendChild(n); setTimeout(function(){n.remove();},ttl);}
@@ -270,10 +340,10 @@
       }
       function nearestToTarget(target,pred,maxDist){var n=null,d0=maxDist||1e9; fighters.forEach(function(x){if(!x.alive||x===target||!pred(x))return; var dx=x.x-target.x,dy=x.y-target.y,d=Math.sqrt(dx*dx+dy*dy)||.001; if(d<d0){d0=d;n=x;}}); return n;}
       function confetti(){clearConf(); var colors=["#f6c62f","#111","#fff","#ffe183"]; for(var i=0;i<78;i+=1){var p=document.createElement("i"); p.style.setProperty("--w",Math.round(rr(5,10))+"px"); p.style.setProperty("--h",Math.round(rr(8,15))+"px"); p.style.setProperty("--c",colors[Math.floor(Math.random()*colors.length)]); p.style.setProperty("--d",Math.round(rr(1800,3200))+"ms"); p.style.setProperty("--dl",Math.round(rr(0,500))+"ms"); p.style.setProperty("--tx",Math.round(rr(-620,620))+"px"); p.style.setProperty("--rt",Math.round(rr(320,960))+"deg"); p.style.left=Math.round(rr(8,92))+"%"; conf.appendChild(p);} }
-      function updateHud(){var c=aliveCounts(); hudTime.textContent=fmt(battleSeconds); hudAlive.textContent="A:"+c.A+" | B:"+c.B; if(!running)hudPhase.textContent="Idle"; else if(sudden)hudPhase.textContent="Sudden Death"; else if(battleSeconds<18)hudPhase.textContent="Opening"; else if(battleSeconds<40)hudPhase.textContent="Clash"; else hudPhase.textContent="Chaos";}
-      function clearArena(){if(raf){cancelAnimationFrame(raf);raf=0;} running=false;last=0;deathCount=0;battleSeconds=0;sudden=false;nextEvent=0; buff.A={t:0,p:0,s:0}; buff.B={t:0,p:0,s:0}; fighters.forEach(function(f){f.node.remove();}); fighters=[]; clearConf(); clearVfx(); hideModal(); arena.classList.remove("sudden"); updateHud();}
-      function showModal(team){modalTitle.textContent="Team "+team+" Wins"; var sorted=fighters.slice().sort(function(a,b){if(a.alive&&!b.alive)return-1;if(!a.alive&&b.alive)return 1;if(a.kills!==b.kills)return b.kills-a.kills;if(a.damage!==b.damage)return b.damage-a.damage;if(a.alive&&b.alive)return b.hp-a.hp;return a.deathOrder-b.deathOrder;}); modalBody.innerHTML=""; sorted.forEach(function(f,i){var tr=document.createElement("tr"); tr.innerHTML="<td>"+(i+1)+"</td><td>"+(f.name||"Fighter")+"</td><td>Team "+f.team+"</td><td>"+f.className+"</td><td>"+(f.alive?"Alive":"Out")+"</td><td>"+f.kills+"</td><td>"+Math.round(f.damage)+"</td><td>"+f.power+"</td><td>"+f.defense+"</td><td>"+f.speed.toFixed(1)+"</td>"; modalBody.appendChild(tr);}); modal.classList.add("open");}
-      function mkNode(item,team,size){var node=document.createElement("div"); node.className="pb-f"; node.style.setProperty("--s",size+"px"); var token=document.createElement("div"); token.className="pb-token"; token.style.setProperty("--t",team==="A"?"#f6c62f":"#222"); var img=document.createElement("img"); img.src=item.img||""; img.alt=(item.name||"Fighter")+" avatar"; img.loading="lazy"; img.decoding="async"; var hp=document.createElement("div"); hp.className="pb-hp"; var bar=document.createElement("span"); hp.appendChild(bar); token.appendChild(img); node.appendChild(token); node.appendChild(hp); arena.appendChild(node); return {node:node,bar:bar};}
+      function updateHud(){var c=aliveCounts(),m=c.M||0; hudTime.textContent=fmt(battleSeconds); hudAlive.textContent="A:"+c.A+" | B:"+c.B+(m>0?" | M:"+m:""); if(!running)hudPhase.textContent="Idle"; else if(sudden)hudPhase.textContent="Sudden Death"; else if(battleSeconds<18)hudPhase.textContent="Opening"; else if(battleSeconds<40)hudPhase.textContent="Clash"; else hudPhase.textContent="Chaos";}
+      function clearArena(keepStaged){if(raf){cancelAnimationFrame(raf);raf=0;} running=false;last=0;deathCount=0;battleSeconds=0;sudden=false;nextEvent=0; tokenDrag=null; battleMode.pve=false; battleMode.pveTeam=""; buff.A={t:0,p:0,s:0}; buff.B={t:0,p:0,s:0}; buff.M={t:0,p:0,s:0}; fighters.forEach(function(f){f.node.remove();}); fighters=[]; if(!keepStaged){stagedMonsters=[]; stagedPlayers=[];} clearConf(); clearVfx(); hideModal(); setTrashUi(false,false); arena.classList.remove("sudden"); updateHud();}
+      function showModal(team){modalTitle.textContent=team==="M"?"Watcher Monsters Win":"Team "+team+" Wins"; var sorted=fighters.slice().sort(function(a,b){if(a.alive&&!b.alive)return-1;if(!a.alive&&b.alive)return 1;if(a.kills!==b.kills)return b.kills-a.kills;if(a.damage!==b.damage)return b.damage-a.damage;if(a.alive&&b.alive)return b.hp-a.hp;return a.deathOrder-b.deathOrder;}); modalBody.innerHTML=""; sorted.forEach(function(f,i){var tr=document.createElement("tr"),teamLabel=f.team==="M"?"Watcher":"Team "+f.team; tr.innerHTML="<td>"+(i+1)+"</td><td>"+(f.name||"Fighter")+"</td><td>"+teamLabel+"</td><td>"+f.className+"</td><td>"+(f.alive?"Alive":"Out")+"</td><td>"+f.kills+"</td><td>"+Math.round(f.damage)+"</td><td>"+f.power+"</td><td>"+f.defense+"</td><td>"+f.speed.toFixed(1)+"</td>"; modalBody.appendChild(tr);}); modal.classList.add("open");}
+      function mkNode(item,team,size){var node=document.createElement("div"); node.className="pb-f"; node.style.setProperty("--s",size+"px"); var token=document.createElement("div"); token.className="pb-token"; token.style.setProperty("--t",team==="A"?"#f6c62f":(team==="B"?"#222":"#53db70")); var img=document.createElement("img"); img.src=item.img||""; img.alt=(item.name||"Fighter")+" avatar"; img.loading="lazy"; img.decoding="async"; if(team==="M"){img.referrerPolicy="no-referrer"; img.addEventListener("error",function(){if(this.dataset.pbFix==="2")return; if(this.dataset.pbFix==="1"){this.dataset.pbFix="2"; this.src=monsterFallbackSvg; return;} this.dataset.pbFix="1"; this.src=monsterIconPool[0];});} var hp=document.createElement("div"); hp.className="pb-hp"; var bar=document.createElement("span"); hp.appendChild(bar); token.appendChild(img); node.appendChild(token); node.appendChild(hp); arena.appendChild(node); return {node:node,bar:bar,img:img};}
       function pickClassStats(forcedClass){var c=normalizeClass(forcedClass)||classPool[Math.floor(Math.random()*classPool.length)],s={className:c,maxHp:Math.round(rr(92,142)),power:Math.round(rr(8,18)),defense:Math.round(rr(2,9)),speed:rr(50,96),aggro:rr(.45,1.15),crit:rr(.06,.2),evade:rr(.02,.12),cd:rr(.48,1.04),range:rr(40,54)};
         if(c==="Fighter"){s.maxHp+=10; s.power+=2; s.defense+=1;}
         else if(c===swordClass){s.maxHp+=12; s.power+=4; s.defense+=1; s.speed*=1.04; s.crit+=.08; s.range+=8;}
@@ -303,6 +373,196 @@
         row.benchBody.innerHTML=defs.map(function(d){var name=d[0],key=d[1],v=bench[key],base=arenaBench[key],w=benchPct(v,key),mark=benchPct(base,key),delta=v-base,txt=(delta>=0?"+":"")+(key==="speed"?delta.toFixed(1):Math.round(delta)); return "<div class='pb-br'><span>"+name+"</span><div class='pb-bar' style='--bm:"+mark.toFixed(1)+"%'><i style='width:"+w.toFixed(1)+"%'></i><b></b></div><em>"+statText(key,v)+"</em><small>"+txt+"</small></div>";}).join("");
       }
       function bindRowBench(rowEl,clsEl,rowRef){rowEl.addEventListener("mouseenter",function(){updateRowBench(rowRef);}); rowEl.addEventListener("focusin",function(){updateRowBench(rowRef);}); clsEl.addEventListener("change",function(){updateRowBench(rowRef);});}
+      function parseNum(v,f){if(typeof v==="number")return v; var m=String(v==null?"":v).match(/-?\d+(\.\d+)?/); return m?parseFloat(m[0]):(f==null?0:f);}
+      function parseCr(v){if(typeof v==="number")return v; var s=String(v||"").trim(); if(!s)return 1; if(s.indexOf("/")>0){var p=s.split("/"),a=parseFloat(p[0]),b=parseFloat(p[1]); return b?clamp(a/b,.05,30):1;} return clamp(parseFloat(s)||1,.05,30);}
+      function parseSpeed(v){if(v&&typeof v==="object"){var vals=Object.keys(v).map(function(k){return parseNum(v[k],0);}).filter(function(n){return n>0;}); return vals.length?vals[0]:30;} return parseNum(v,30);}
+      function slugify(v){return String(v||"monster").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");}
+      function pickMonsterIcon(mon){if(mon&&mon.img)return mon.img; var t=String(mon&&mon.type||"").toLowerCase(),i=0; if(t.indexOf("dragon")>=0)i=0; else if(t.indexOf("aberration")>=0||t.indexOf("ooze")>=0)i=1; else if(t.indexOf("beast")>=0||t.indexOf("monstrosity")>=0)i=3; else if(t.indexOf("fiend")>=0||t.indexOf("undead")>=0)i=2; return monsterIconPool[i%monsterIconPool.length];}
+      var creatureIconUrls=[
+        "https://game-icons.net/icons/ffffff/000000/1x1/cathelineau/bad-gnome.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/cathelineau/fomorian.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/cathelineau/medusa-head.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/cathelineau/transparent-slime.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/cathelineau/tree-face.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/cathelineau/witch-face.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/caro-asercion/cloaked-figure-on-horseback.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/caro-asercion/goblin.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/faithtoken/dragon-head.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/skoll/sea-creature.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/skoll/troll.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/alien-bug.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/alien-egg.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/anubis.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/bottled-shadow.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/brain-tentacle.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/brute.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/bullet-bill.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/bully-minion.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/carnivorous-plant.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/ceiling-barnacle.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/centaur.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/daemon-pull.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/devil-mask.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/djinn.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/drakkar-dragon.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/egyptian-sphinx.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/elysium-shade.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/fairy.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/female-vampire.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/fish-monster.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/floating-ghost.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/floating-tentacles.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/gargoyle.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/giant.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/goblin-head.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/golem-head.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/grasping-slug.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/greek-sphinx.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/griffin-symbol.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/half-body-crawling.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/horned-reptile.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/horus.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/ice-golem.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/jawless-cyclop.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/kenku-head.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/kraken-tentacle.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/mermaid.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/metroid.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/mimic-chest.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/mummy-head.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/ogre.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/oni.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/orc-head.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/pick-of-destiny.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/purple-tentacle.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/resting-vampire.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/rock-golem.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/sasquatch.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/shambling-mound.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/shambling-zombie.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/slime.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/spider-eye.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/spiked-dragon-head.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/swallower.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/swamp-bat.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/thwomp.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/troglodyte.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/unicorn.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/delapouite/vampire-dracula.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/beast-eye.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/behold.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/bestial-fangs.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/cracked-alien-skull.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/cyclops.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/daemon-skull.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/diablo-skull.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/dinosaur-bones.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/dinosaur-egg.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/dinosaur-rex.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/double-dragon.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/dragon-head.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/dragon-spiral.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/ent-mouth.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/evil-bat.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/evil-book.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/evil-comet.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/evil-fork.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/evil-minion.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/evil-moon.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/evil-tree.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/eyestalk.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/fairy.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/fleshy-mass.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/frankenstein-creature.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/ghost.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/gluttonous-smile.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/gooey-daemon.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/grim-reaper.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/harpy.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/haunting.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/horned-skull.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/hydra-shot.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/hydra.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/ifrit.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/imp-laugh.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/imp.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/infested-mass.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/lizardman.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/minotaur.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/pretty-fangs.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/sea-dragon.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/sharp-smile.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/spark-spirit.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/spectre.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/toad-teeth.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/triton-head.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/unfriendly-fire.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/vile-fluid.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/werewolf.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/witch-flight.svg",
+        "https://game-icons.net/icons/ffffff/000000/1x1/lorc/wyvern.svg"
+      ];
+      function hashStr(s){var h=0,i=0; s=String(s||""); for(i=0;i<s.length;i+=1){h=((h<<5)-h+s.charCodeAt(i))|0;} return Math.abs(h);}
+      function toTitle(slug){return String(slug||"creature").split("-").filter(Boolean).map(function(p){return p.charAt(0).toUpperCase()+p.slice(1);}).join(" ");}
+      function nearestCr(v){var ladder=[.125,.25,.5,1,2,3,4,5,8,10,12],best=ladder[0],d0=1e9; ladder.forEach(function(n){var d=Math.abs(v-n); if(d<d0){d0=d;best=n;}}); return best;}
+      function crLabel(v){if(v===.125)return "1/8"; if(v===.25)return "1/4"; if(v===.5)return "1/2"; return String(v);}
+      function inferAnalog(slug){var s=String(slug||"");
+        if(/dragon|wyvern|drakkar/.test(s))return{analog:"Young Dragon",type:"dragon",cr:5,style:"dragon",fx:["fire","lightning","shadow"],anim:["shoot","cast","lunge"]};
+        if(/hydra|kraken|tentacle|behold|eyestalk|sea-dragon|sea-creature/.test(s))return{analog:"Hydra",type:"aberration",cr:4,style:"aberration",fx:["poison","shadow","frost"],anim:["shoot","slam","chant"]};
+        if(/slime|goo|fluid|jelly|mimic|fleshy-mass|transparent-slime/.test(s))return{analog:"Ochre Jelly",type:"ooze",cr:2,style:"ooze",fx:["poison","nature","shadow"],anim:["shoot","slam","atk"]};
+        if(/vampire|zombie|mummy|ghost|spectre|reaper|haunting|grim|witch/.test(s))return{analog:"Wraith",type:"undead",cr:3,style:"undead",fx:["shadow","frost","sonic"],anim:["chant","cast","lunge"]};
+        if(/daemon|devil|ifrit|imp|oni|evil|diablo/.test(s))return{analog:"Barbed Devil",type:"fiend",cr:4,style:"fiend",fx:["fire","shadow","lightning"],anim:["cast","slam","shoot"]};
+        if(/golem|construct|rock|ice|thwomp/.test(s))return{analog:"Stone Golem",type:"construct",cr:4,style:"construct",fx:["shock","steel","frost"],anim:["slam","atk","lunge"]};
+        if(/giant|ogre|troll|fomorian|cyclops|minotaur|sasquatch|brute/.test(s))return{analog:"Hill Giant",type:"giant",cr:3,style:"giant",fx:["shock","steel","nature"],anim:["slam","lunge","spin"]};
+        if(/unicorn|fairy|djinn|sphinx|horus|anubis|mermaid|harpy|triton|spark-spirit/.test(s))return{analog:"Fey Guardian",type:"fey",cr:2,style:"fey",fx:["holy","arcane","nature"],anim:["chant","cast","shoot"]};
+        if(/goblin|orc|troglodyte|lizardman|kenku|gnome|centaur/.test(s))return{analog:"Goblin Boss",type:"humanoid",cr:1,style:"humanoid",fx:["steel","sonic","poison"],anim:["lunge","atk","spin"]};
+        if(/spider|slug|bat|beast|dinosaur|wolf|toad|reptile|fang|plant|tree|alien-bug/.test(s))return{analog:"Dire Beast",type:"beast",cr:1,style:"beast",fx:["nature","poison","steel"],anim:["lunge","spin","atk"]};
+        return{analog:"Chimera Spawn",type:"aberration",cr:2,style:"aberration",fx:["shadow","arcane","poison"],anim:["shoot","cast","slam"]};
+      }
+      function buildMonsterFromIcon(url){var m=/1x1\/([^\/]+)\/([^\/]+)\.svg$/.exec(url)||[],author=m[1]||"icon",slug=m[2]||"creature",spec=inferAnalog(slug),seed=hashStr(author+"-"+slug),crN=nearestCr(clamp(spec.cr+((seed%7===0)?1:0)+((seed%11===0)?-.5:0),.125,12));
+        var hp=Math.round(20+crN*21+((seed>>3)%20)+(spec.style==="dragon"?24:0)+(spec.style==="construct"?18:0)),ac=Math.round(clamp(10+crN*.82+((seed>>5)%3),10,22)),spd=Math.round(clamp(28+crN*2.8+((seed>>2)%14)+(spec.style==="fey"?8:0)+(spec.style==="giant"?-4:0),22,86));
+        var str=Math.round(clamp(9+crN*1.25+((seed>>4)%4)+(spec.style==="dragon"||spec.style==="giant"?3:0),6,30)),dex=Math.round(clamp(9+crN*.78+((seed>>6)%5)+(spec.style==="fey"||spec.style==="beast"?2:0),5,26)),con=Math.round(clamp(9+crN*1.1+((seed>>8)%4)+(spec.style==="undead"||spec.style==="construct"?2:0),6,30));
+        var fx=spec.fx[seed%spec.fx.length],anim=spec.anim[(seed>>4)%spec.anim.length];
+        return{id:slugify(author+"-"+slug),name:toTitle(slug),type:spec.type,analog:spec.analog,cr:crLabel(crN),hp:hp,ac:ac,speed:spd,img:url,str:str,dex:dex,con:con,monStyle:spec.style,monFx:fx,monAnim:anim};
+      }
+      function bigBadBosses(){return[
+        {id:slugify("boss-worldscale-dragon"),name:"Worldscale Dragon",type:"dragon",analog:"Ancient Dragon",cr:"20",hp:460,ac:23,speed:54,img:"https://game-icons.net/icons/ffffff/000000/1x1/faithtoken/dragon-head.svg",str:30,dex:16,con:29,monStyle:"dragon",monFx:"fire",monAnim:"shoot",boss:true},
+        {id:slugify("boss-sea-leviathan"),name:"Sea Leviathan",type:"aberration",analog:"Kraken",cr:"18",hp:420,ac:22,speed:46,img:"https://game-icons.net/icons/ffffff/000000/1x1/lorc/sea-dragon.svg",str:29,dex:14,con:28,monStyle:"aberration",monFx:"frost",monAnim:"shoot",boss:true},
+        {id:slugify("boss-apex-hydra"),name:"Apex Hydra",type:"monstrosity",analog:"Mythic Hydra",cr:"16",hp:372,ac:21,speed:44,img:"https://game-icons.net/icons/ffffff/000000/1x1/lorc/hydra.svg",str:28,dex:13,con:27,monStyle:"aberration",monFx:"poison",monAnim:"slam",boss:true},
+        {id:slugify("boss-infernal-archon"),name:"Infernal Archon",type:"fiend",analog:"Pit Fiend",cr:"16",hp:354,ac:21,speed:48,img:"https://game-icons.net/icons/ffffff/000000/1x1/lorc/ifrit.svg",str:27,dex:15,con:26,monStyle:"fiend",monFx:"fire",monAnim:"cast",boss:true},
+        {id:slugify("boss-void-lich"),name:"Void Lich",type:"undead",analog:"Lich",cr:"18",hp:330,ac:22,speed:42,img:"https://game-icons.net/icons/ffffff/000000/1x1/lorc/daemon-skull.svg",str:23,dex:16,con:25,monStyle:"undead",monFx:"shadow",monAnim:"chant",boss:true},
+        {id:slugify("boss-jotun-breaker"),name:"Jotun Breaker",type:"giant",analog:"Storm Giant",cr:"14",hp:332,ac:20,speed:40,img:"https://game-icons.net/icons/ffffff/000000/1x1/delapouite/giant.svg",str:29,dex:11,con:27,monStyle:"giant",monFx:"shock",monAnim:"slam",boss:true},
+        {id:slugify("boss-obsidian-colossus"),name:"Obsidian Colossus",type:"construct",analog:"Iron Golem",cr:"14",hp:346,ac:22,speed:34,img:"https://game-icons.net/icons/ffffff/000000/1x1/delapouite/rock-golem.svg",str:29,dex:9,con:28,monStyle:"construct",monFx:"shock",monAnim:"slam",boss:true},
+        {id:slugify("boss-frost-monolith"),name:"Frost Monolith",type:"construct",analog:"Ice Golem",cr:"14",hp:338,ac:21,speed:36,img:"https://game-icons.net/icons/ffffff/000000/1x1/delapouite/ice-golem.svg",str:28,dex:10,con:27,monStyle:"construct",monFx:"frost",monAnim:"slam",boss:true},
+        {id:slugify("boss-elder-wyvern"),name:"Elder Wyvern",type:"dragon",analog:"Ancient Wyvern",cr:"14",hp:318,ac:20,speed:52,img:"https://game-icons.net/icons/ffffff/000000/1x1/lorc/wyvern.svg",str:27,dex:14,con:25,monStyle:"dragon",monFx:"fire",monAnim:"shoot",boss:true},
+        {id:slugify("boss-deep-kraken"),name:"Deep Kraken",type:"aberration",analog:"Kraken Spawn",cr:"16",hp:388,ac:21,speed:42,img:"https://game-icons.net/icons/ffffff/000000/1x1/delapouite/kraken-tentacle.svg",str:28,dex:13,con:27,monStyle:"aberration",monFx:"poison",monAnim:"shoot",boss:true},
+        {id:slugify("boss-oni-overlord"),name:"Oni Overlord",type:"fiend",analog:"Oni Tyrant",cr:"14",hp:324,ac:20,speed:46,img:"https://game-icons.net/icons/ffffff/000000/1x1/delapouite/oni.svg",str:26,dex:14,con:25,monStyle:"fiend",monFx:"shadow",monAnim:"cast",boss:true},
+        {id:slugify("boss-spine-drake"),name:"Spine Drake",type:"dragon",analog:"Dracolich",cr:"18",hp:404,ac:22,speed:50,img:"https://game-icons.net/icons/ffffff/000000/1x1/delapouite/spiked-dragon-head.svg",str:29,dex:15,con:28,monStyle:"dragon",monFx:"shadow",monAnim:"shoot",boss:true}
+      ];}
+      function iconMonsters(){if(iconMonsters.cache)return iconMonsters.cache.slice(); var list=creatureIconUrls.map(buildMonsterFromIcon).concat(bigBadBosses()); iconMonsters.cache=list; return list.slice();}
+      function renderMonsters(){if(!monTray)return; monTray.innerHTML=""; if(!monsterPool.length){monTray.innerHTML="<div class='pb-mon empty'><b>No monsters found for that CR.</b></div>"; return;}
+        monsterPool.forEach(function(mon){var d=document.createElement("div"),img=document.createElement("img"),tx=document.createElement("div"),nm=document.createElement("b"),meta=document.createElement("small"),bossTag=mon.boss?"BOSS | ":"";
+          d.className="pb-mon"; d.draggable=true; d.dataset.mid=mon.id; img.src=pickMonsterIcon(mon); img.alt=""; img.referrerPolicy="no-referrer"; img.addEventListener("error",function(){if(this.dataset.pbFix==="2")return; if(this.dataset.pbFix==="1"){this.dataset.pbFix="2"; this.src=monsterFallbackSvg; return;} this.dataset.pbFix="1"; this.src=monsterIconPool[0];}); nm.textContent=mon.name; meta.textContent="CR "+mon.cr+" | "+bossTag+(mon.analog||"Creature")+" | HP "+(mon.hp||"?")+" | AC "+(mon.ac||"?");
+          tx.appendChild(nm); tx.appendChild(meta); d.appendChild(img); d.appendChild(tx);
+          d.addEventListener("dragstart",function(e){dragMonsterId=mon.id; setTrashUi(true,false); if(e.dataTransfer)e.dataTransfer.setData("text/plain",mon.id);});
+          d.addEventListener("dragend",function(){dragMonsterId=""; arena.classList.remove("mon-drop"); if(!tokenDrag)setTrashUi(false,false);});
+          monTray.appendChild(d);
+        });
+      }
+      function getMonster(id){var i=0; for(i=0;i<monsterPool.length;i+=1){if(monsterPool[i].id===id)return monsterPool[i];} return null;}
+      async function loadMonsters(){if(!monTray)return; monTray.innerHTML="<div class='pb-mon empty'><b>Loading icon monsters...</b></div>"; var cr=monCrSel?monCrSel.value:"",list=iconMonsters();
+        if(cr)list=list.filter(function(m){return String(m.cr)===cr;});
+        monsterPool=list.sort(function(a,b){var da=parseCr(a.cr)-parseCr(b.cr); if(da!==0)return da; return String(a.name||"").localeCompare(String(b.name||""));});
+        renderMonsters();
+        status.textContent=monsterPool.length?("Watcher ready: "+monsterPool.length+" creatures loaded"):("No icon monsters match that CR");
+      }
+      function spawnMonster(mon,x,y,opts){if(!mon)return; opts=opts||{}; var preMatch=!!opts.preMatch,fromStage=!!opts.fromStage,silent=!!opts.silent,stageId=opts.stageId||("stg"+(stageSeq++)),cr=parseCr(mon.cr),isBoss=!!mon.boss,hpBase=mon.hp||Math.round(54+cr*22),acBase=mon.ac||Math.round(10+cr*1.3),powBase=Math.round(7+cr*1.7+((mon.str||10)-10)*.22),spdBase=clamp(34+parseSpeed(mon.speed)*1.2,34,126),rangeBase=(String(mon.type||"").toLowerCase().indexOf("dragon")>=0||cr>=5)?62:48;
+        var s={className:"Monster",maxHp:Math.round(clamp(hpBase,40,520)),power:Math.round(clamp(powBase,6,52)),defense:Math.round(clamp((acBase-8)*.9,2,26)),speed:spdBase,aggro:1.2,crit:clamp(.05+cr*.008,.05,.32),evade:clamp(.03+((mon.dex||10)-10)*.006,.01,.26),cd:clamp(.92-cr*.018,.34,1.08),range:rangeBase};
+        if(isBoss){s.maxHp=Math.round(s.maxHp*1.4); s.power=Math.round(s.power*1.22); s.defense=Math.round(clamp(s.defense+3,2,30)); s.speed=clamp(s.speed*1.06,34,136); s.crit=clamp(s.crit+.05,.05,.38); s.evade=clamp(s.evade+.03,.01,.3);}
+        var size=Math.round(clamp(30+cr*2.1+(isBoss?7:0),30,64)),nd=mkNode({name:mon.name,img:pickMonsterIcon(mon)},"M",size),f={name:mon.name,team:"M",className:"Monster",node:nd.node,bar:nd.bar,x:x,y:y,vx:0,vy:0,hp:s.maxHp,maxHp:s.maxHp,power:s.power,defense:s.defense,speed:s.speed,aggro:s.aggro*chaos(),crit:s.crit,evade:s.evade,cdBase:s.cd/chaos(),range:s.range,cd:rr(.1,.5),heavyCd:rr(isBoss?.7:1,isBoss?1.8:2.4),healCd:999,dashCd:rr(1.6,3.1),blockCd:999,blockTimer:0,blockHeat:0,shieldCd:999,shieldTimer:0,stunTimer:0,bleedTimer:0,bleedDps:0,stamina:rr(66,100),maxStamina:100,fury:rr(12,44),hit:0,alive:true,kills:0,damage:0,deathOrder:0,buffP:0,buffS:0,dragging:false,heroTonyWizard:false,heroChristianSword:false,monType:String(mon.type||"").toLowerCase(),monCr:cr,monStyle:String(mon.monStyle||""),monFx:String(mon.monFx||""),monAnim:String(mon.monAnim||""),monAnalog:String(mon.analog||""),monBoss:isBoss,stageId:(preMatch||fromStage)?stageId:"",prePlaced:preMatch};
+        if(preMatch)f.node.classList.add("drag-handle");
+        f.node.title=(f.name||"Monster")+" [CR "+mon.cr+" | "+(f.monBoss?"BOSS | ":"")+(f.monAnalog||"Creature")+"]\\nHP "+f.maxHp+" | POW "+f.power+" | DEF "+f.defense+" | SPD "+f.speed.toFixed(1); fighters.push(f); if(preMatch&&!fromStage)stagedMonsters.push({stageId:stageId,monsterId:mon.id,x:x,y:y}); render(); updateHud(); if(!silent)addLog((preMatch?"Watcher staged ":"Watcher unleashed ")+(f.monBoss?"BOSS ":"")+(f.name||"a monster"),"ev");
+      }
       function nearEnemy(me){var n=null,d0=1e9; fighters.forEach(function(x){if(!x.alive||x.team===me.team)return; var dx=x.x-me.x,dy=x.y-me.y,d=Math.sqrt(dx*dx+dy*dy)||.001; if(d<d0){d0=d;n=x;}}); return n;}
       function nearestAlive(px,py){var n=null,d0=1e9; fighters.forEach(function(x){if(!x.alive)return; var dx=x.x-px,dy=x.y-py,d=Math.sqrt(dx*dx+dy*dy)||.001; if(d<d0){d0=d;n=x;}}); return n;}
       function crowdCoverPoint(me,threat,bx){var best=null,bestScore=-1,mdx=threat.x-me.x,mdy=threat.y-me.y,ml=Math.sqrt(mdx*mdx+mdy*mdy)||1;
@@ -317,7 +577,7 @@
         var dx=threat.x-best.x,dy=threat.y-best.y,dl=Math.sqrt(dx*dx+dy*dy)||1,nx=-dy/dl,ny=dx/dl,side=((me.x-best.x)*nx+(me.y-best.y)*ny)>=0?1:-1,px=best.x+nx*side*58,py=best.y+ny*side*58;
         return {x:clamp(px,24,bx.w-24),y:clamp(py,24,bx.h-24),anchor:best};
       }
-      function ko(target,attacker,cause){if(!target.alive)return; deathCount+=1; target.alive=false; target.hp=0; target.deathOrder=deathCount; target.node.classList.add("dead"); if(attacker){attacker.kills+=1; addLog((attacker.name||"Fighter")+" eliminated "+(target.name||"Fighter"),"ko");} else if(cause){addLog((target.name||"Fighter")+" was taken out by "+cause,"ko");}}
+      function ko(target,attacker,cause){if(!target.alive)return; deathCount+=1; target.alive=false; target.hp=0; target.deathOrder=deathCount; target.dragging=false; target.node.classList.remove("dragging-token"); target.node.classList.add("dead"); if(attacker){attacker.kills+=1; addLog((attacker.name||"Fighter")+" eliminated "+(target.name||"Fighter"),"ko");} else if(cause){addLog((target.name||"Fighter")+" was taken out by "+cause,"ko");}}
       function pickMove(a){var m={name:"Strike",mult:1,crit:0,pierce:0,stun:0,bleed:0,bleedTime:0,heal:0,splash:0,bonusHit:0,push:0,anim:"atk",fx:"steel",vfx:"slash",cool:rr(.78,1.16),cost:rr(4,8),special:false},roll=Math.random();
         if(a.className===swordClass){
           m.name="Measured Cut"; m.mult=1.1; m.crit=.08; m.cost=rr(4,7); m.anim="lunge"; m.fx="steel";
@@ -391,6 +651,28 @@
           else if(roll<.5){m.name="Discordant Note"; m.mult=1.1; m.stun=rr(.1,.2); m.anim="shoot";}
           else if(roll<.74){m.name="Encore Slice"; m.mult=1.1; m.crit=.1; m.heal=.16; m.anim="spin";}
           if(a.heavyCd<=0&&Math.random()<.33){m.name="Finale Crescendo"; m.mult=1.22; m.splash=.42; m.stun=rr(.1,.2); m.bonusHit=.22; m.anim="chant"; m.fx="sonic"; m.special=true; a.heavyCd=rr(3,4.7)/chaos();}
+        } else if(a.className==="Monster"){
+          var t=String(a.monType||""),style=String(a.monStyle||""),alias=((a.name||"Creature").split(" ")[0]||"Creature"),dragon=style==="dragon"||t.indexOf("dragon")>=0,beast=style==="beast"||t.indexOf("beast")>=0,ooze=style==="ooze"||t.indexOf("ooze")>=0,undead=style==="undead"||t.indexOf("undead")>=0,fiend=style==="fiend"||t.indexOf("fiend")>=0,construct=style==="construct",giant=style==="giant",fey=style==="fey",aberr=style==="aberration"||t.indexOf("aberration")>=0,sigFx=a.monFx||(dragon?"fire":(undead?"shadow":(ooze?"poison":"steel"))),sigAnim=a.monAnim||"lunge";
+          m.name=alias+" Strike"; m.mult=1.1; m.anim=sigAnim; m.fx=sigFx; m.cost=rr(4,8);
+          if(dragon){m.name=alias+" Claw"; m.mult=1.16; m.pierce=.14; if(roll<.42){m.name=alias+" Wing Slam"; m.splash=.28; m.anim="slam"; m.fx="shock";} else if(roll<.7){m.name=alias+" Ember Fang"; m.bleed=rr(1.8,3.2); m.bleedTime=rr(2.4,3.6); m.fx="fire";}}
+          else if(aberr||ooze){m.name=alias+" Lash"; m.mult=1.12; m.fx=ooze?"poison":sigFx; if(roll<.4){m.name=alias+" Mind Pulse"; m.stun=rr(.08,.2); m.anim="chant"; m.fx=aberr?"shadow":"poison";} else if(roll<.72){m.name=alias+" Splatter"; m.splash=.34; m.anim="shoot"; m.push=rr(1.8,3.8);}}
+          else if(undead){m.name=alias+" Grave Slash"; m.mult=1.12; m.fx="shadow"; if(roll<.44){m.name=alias+" Chill Touch"; m.stun=rr(.1,.2); m.anim="cast"; m.fx="frost";} else if(roll<.74){m.name=alias+" Life Leech"; m.heal=.24; m.pierce=.12;}}
+          else if(fiend){m.name=alias+" Infernal Swipe"; m.mult=1.14; m.fx=sigFx||"fire"; if(roll<.44){m.name=alias+" Cinder Lash"; m.bleed=rr(1.6,3); m.bleedTime=rr(2,3.2); m.fx="fire";} else if(roll<.74){m.name=alias+" Hex Claw"; m.pierce=.18; m.stun=rr(.08,.18); m.fx="shadow";}}
+          else if(construct||giant){m.name=alias+" Smash"; m.mult=1.16; m.anim="slam"; m.fx=construct?"shock":"steel"; if(roll<.45){m.name=alias+" Quake Hit"; m.stun=rr(.1,.22); m.push=rr(2.2,4.8);} else if(roll<.76){m.name=alias+" Sweep"; m.splash=.3; m.anim="spin";}}
+          else if(fey){m.name=alias+" Arc"; m.mult=1.08; m.anim="cast"; m.fx=sigFx||"holy"; if(roll<.46){m.name=alias+" Gleam Bolt"; m.stun=rr(.08,.18); m.anim="shoot";} else if(roll<.76){m.name=alias+" Spirit Cut"; m.crit=.1; m.bonusHit=.2;}}
+          else if(beast){m.name=alias+" Pounce"; m.mult=1.14; m.anim="lunge"; if(roll<.44){m.name=alias+" Rend"; m.bleed=rr(1.6,3.2); m.bleedTime=rr(2.2,3.4);} else if(roll<.74){m.name=alias+" Snarl"; m.stun=rr(.08,.18); m.anim="chant"; m.fx="sonic";}}
+          else {m.name=alias+" Assault"; m.mult=1.1; if(roll<.45){m.bonusHit=.22; m.anim="spin";} else if(roll<.76){m.pierce=.14; m.stun=rr(.08,.16);}}
+          if(a.heavyCd<=0&&Math.random()<.34){
+            if(dragon){m.name=alias+" Breath Nova"; m.mult=1.36; m.splash=.52; m.bleed=rr(2,3.8); m.bleedTime=rr(2.4,3.8); m.anim="shoot"; m.fx="fire";}
+            else if(undead){m.name=alias+" Death Wail"; m.mult=1.3; m.splash=.4; m.stun=rr(.12,.24); m.anim="chant"; m.fx="shadow";}
+            else if(fiend){m.name=alias+" Hell Rend"; m.mult=1.34; m.pierce=.28; m.stun=rr(.1,.22); m.anim="slam"; m.fx="fire";}
+            else if(construct||giant){m.name=alias+" Cataclysm Smash"; m.mult=1.34; m.splash=.46; m.stun=rr(.1,.24); m.anim="slam"; m.fx="shock";}
+            else if(fey){m.name=alias+" Arcane Bloom"; m.mult=1.28; m.splash=.38; m.heal=.18; m.anim="cast"; m.fx="holy";}
+            else if(aberr||ooze){m.name=alias+" Aberrant Surge"; m.mult=1.3; m.splash=.44; m.stun=rr(.1,.2); m.anim="shoot"; m.fx=ooze?"poison":"shadow";}
+            else {m.name=alias+" Frenzy"; m.mult=1.3; m.bonusHit=.34; m.anim="spin"; m.fx=sigFx;}
+            m.special=true; a.heavyCd=rr(3.1,5.3)/chaos();
+          }
+          if(a.monBoss){m.mult*=1.18; m.crit+=.06; m.pierce=Math.max(m.pierce,.12); m.cool*=.88; m.stun=Math.max(m.stun,rr(.1,.22)); if(!m.special&&Math.random()<.3){m.special=true; m.name="Overlord "+m.name; m.splash=Math.max(m.splash,.34); m.bonusHit=Math.max(m.bonusHit,.26); a.heavyCd=rr(2.4,3.8)/chaos();}}
         }
         if(a.heroTonyWizard&&a.className==="Wizard"&&a.heavyCd<=0&&Math.random()<.94){m.name="Fireball"; m.mult=1.48; m.splash=.68; m.bleed=rr(2.1,3.9); m.bleedTime=rr(2.4,4); m.anim="cast"; m.fx="fire"; m.special=true; m.pierce=Math.max(m.pierce,.16); a.heavyCd=rr(2.9,4.4)/chaos();}
         if(a.heroTonyWizard&&a.className==="Wizard"){m.mult*=1.22; m.crit+=.08; m.pierce=Math.min(.45,m.pierce+.08); m.cool*=.82; m.cost=Math.max(1,m.cost-2); if(m.name&&m.name.indexOf("Fireball")>=0){m.noBlock=true; m.mult*=1.08; m.fx="fire";} if(!m.special&&Math.random()<.32)m.name="Sage "+m.name;}
@@ -493,7 +775,7 @@
         }
         return false;
       }
-      function tickBuffs(dt){["A","B"].forEach(function(tm){if(buff[tm].t>0){buff[tm].t=Math.max(0,buff[tm].t-dt); if(buff[tm].t===0){buff[tm].p=0;buff[tm].s=0;}}});}
+      function tickBuffs(dt){["A","B","M"].forEach(function(tm){if(buff[tm].t>0){buff[tm].t=Math.max(0,buff[tm].t-dt); if(buff[tm].t===0){buff[tm].p=0;buff[tm].s=0;}}});}
       function scheduleEvent(){nextEvent=battleSeconds+rr(6.2,10.8)/chaos();}
       function arenaEvent(){var bx=box(),pick=Math.floor(rr(0,4));
         if(pick===0){var tm=Math.random()<.5?"A":"B"; buff[tm].t=4.2; buff[tm].p=.17; buff[tm].s=.2; addLog("Crowd roar buffs Team "+tm,"ev");}
@@ -502,8 +784,9 @@
         else{var live=fighters.filter(function(f){return f.alive;}); if(live.length){var t=live[Math.floor(rr(0,live.length))],d=Math.round(rr(7,15)*chaos()); t.hp-=d; t.hit=.2; addLog("Arena trap hit "+(t.name||"Fighter"),"ev"); if(t.hp<=0)ko(t,null,"arena trap");}}
       }
       function sim(dt){var bx=box(); tickBuffs(dt);
-        fighters.forEach(function(f){if(!f.alive)return; f.buffP=buff[f.team].p; f.buffS=buff[f.team].s; f.cd=Math.max(0,f.cd-dt); f.heavyCd=Math.max(0,f.heavyCd-dt); f.healCd=Math.max(0,f.healCd-dt); f.dashCd=Math.max(0,f.dashCd-dt); f.blockCd=Math.max(0,f.blockCd-dt); f.blockTimer=Math.max(0,f.blockTimer-dt); f.blockHeat=Math.max(0,f.blockHeat-dt); f.shieldCd=Math.max(0,f.shieldCd-dt); f.shieldTimer=Math.max(0,f.shieldTimer-dt); f.stunTimer=Math.max(0,f.stunTimer-dt); f.hit=Math.max(0,f.hit-dt); f.stamina=clamp(f.stamina+rr(5,10)*dt,0,f.maxStamina); f.fury=clamp(f.fury+rr(1.2,3.4)*dt,0,100);
+        fighters.forEach(function(f){if(!f.alive)return; var fb=buff[f.team]||buff.A; f.buffP=fb.p; f.buffS=fb.s; f.cd=Math.max(0,f.cd-dt); f.heavyCd=Math.max(0,f.heavyCd-dt); f.healCd=Math.max(0,f.healCd-dt); f.dashCd=Math.max(0,f.dashCd-dt); f.blockCd=Math.max(0,f.blockCd-dt); f.blockTimer=Math.max(0,f.blockTimer-dt); f.blockHeat=Math.max(0,f.blockHeat-dt); f.shieldCd=Math.max(0,f.shieldCd-dt); f.shieldTimer=Math.max(0,f.shieldTimer-dt); f.stunTimer=Math.max(0,f.stunTimer-dt); f.hit=Math.max(0,f.hit-dt); f.stamina=clamp(f.stamina+rr(5,10)*dt,0,f.maxStamina); f.fury=clamp(f.fury+rr(1.2,3.4)*dt,0,100);
           if(f.bleedTimer>0){f.bleedTimer=Math.max(0,f.bleedTimer-dt); f.hp-=f.bleedDps*dt; if(f.hp<=0){ko(f,null,"bleed"); return;}}
+          if(f.dragging){f.vx=0; f.vy=0; return;}
           if(f.className==="Paladin"&&f.shieldCd<=0&&f.hp<f.maxHp*.58){f.shieldTimer=rr(2.6,3.7); f.shieldCd=rr(7,10)/chaos(); addLog((f.name||"Fighter")+" raised a holy shield","sp");}
           if(f.className===swordClass&&f.blockCd<=0&&f.blockHeat<=0&&f.blockTimer<=0){var br=f.hp/f.maxHp,bt=f.heroChristianSword?.78:.56,bc=f.heroChristianSword?.46:.24; if(br<bt&&f.stamina>9&&Math.random()<bc){f.blockTimer=rr(f.heroChristianSword?1.5:.7,f.heroChristianSword?2.5:1.4); f.blockCd=rr(f.heroChristianSword?2.2:3.8,f.heroChristianSword?3.6:5.6)/chaos(); f.stamina=clamp(f.stamina-rr(5,9),0,f.maxStamina); if(Math.random()<.34)addLog((f.name||"Fighter")+" raised a guard","sp");}}
           if(f.stunTimer>0){f.vx*=.84; f.vy*=.84; f.x+=f.vx*dt*9; f.y+=f.vy*dt*9; f.x=clamp(f.x,24,bx.w-24); f.y=clamp(f.y,24,bx.h-24); return;}
@@ -524,22 +807,43 @@
         if(!sudden&&battleSeconds>=60){sudden=true; arena.classList.add("sudden"); addLog("Sudden Death started: damage boosted","ev");}
         if(eventsChk&&eventsChk.checked&&battleSeconds>=nextEvent){arenaEvent();scheduleEvent();}
         sim(dt); separate(); render(); updateHud();
-        var teams=aliveTeams(); if(teams.length<=1){running=false; confetti(); status.textContent="Battle finished: Team "+(teams[0]||"A")+" wins"; showModal(teams[0]||"A"); return;}
+        var teams=aliveTeams(),counts=aliveCounts();
+        if(battleMode.pve){
+          var playerAlive=battleMode.pveTeam==="A"?counts.A:counts.B,monAlive=counts.M||0;
+          if(playerAlive<=0){running=false; confetti(); status.textContent=monAlive>0?"Battle finished: Watcher monsters overrun the arena":"Battle finished"; showModal(monAlive>0?"M":(battleMode.pveTeam==="A"?"B":"A")); return;}
+          status.textContent=monAlive>0?("PVE live | "+fmt(battleSeconds)+" | Monsters:"+monAlive):("PVE live | "+fmt(battleSeconds)+" | Drag monsters into arena");
+          raf=requestAnimationFrame(tick); return;
+        }
+        if(teams.length<=1){running=false; confetti(); var winTeam=teams[0]||"A"; status.textContent=winTeam==="M"?"Battle finished: Watcher monsters overrun the arena":"Battle finished: Team "+winTeam+" wins"; showModal(winTeam); return;}
         status.textContent="Battle live | "+fmt(battleSeconds); raf=requestAnimationFrame(tick);
       }
-      function roster(){return rows.filter(function(r){return r.cb.checked;}).map(function(r){return{name:r.data.name||"",img:r.data.img||"",team:r.sel.value==="B"?"B":"A",className:sanitizeClass(r.cls.value,r.data)};});}
-      function spawn(list){var teamA=list.filter(function(x){return x.team==="A";}),teamB=list.filter(function(x){return x.team==="B";}),bx=box(),sz=Math.round(clamp((bx.w*.05)*clamp(1-Math.max(list.length-14,0)*.018,.62,1),30,46)),cz=chaos();
-        function add(m,idx,total,side){var s=pickClassStats(m.className),lane=(idx+1)/(total+1),nd=mkNode(m,m.team,sz),xb=side==="L"?bx.w*.24:bx.w*.76;
-          var f={name:m.name,team:m.team,className:s.className,node:nd.node,bar:nd.bar,x:xb+rr(-32,32),y:bx.h*clamp(lane,.12,.88)+rr(-18,18),vx:0,vy:0,hp:s.maxHp,maxHp:s.maxHp,power:s.power,defense:s.defense,speed:s.speed,aggro:s.aggro*cz,crit:s.crit,evade:s.evade,cdBase:s.cd/cz,range:s.range,cd:rr(.2,.8),heavyCd:rr(1.2,3.2),healCd:rr(1.8,3.6),dashCd:rr(1.8,4.3),blockCd:rr(1.1,2.6),blockTimer:0,blockHeat:0,shieldCd:rr(2.3,5.2),shieldTimer:0,stunTimer:0,bleedTimer:0,bleedDps:0,stamina:rr(72,100),maxStamina:100,fury:s.className==="Barbarian"?rr(30,56):rr(8,30),hit:0,alive:true,kills:0,damage:0,deathOrder:0,buffP:0,buffS:0,heroTonyWizard:false,heroChristianSword:false};
+      function roster(){return rows.filter(function(r){return r.cb.checked;}).map(function(r){return{rid:r.rid,name:r.data.name||"",img:r.data.img||"",team:r.sel.value==="B"?"B":"A",className:sanitizeClass(r.cls.value,r.data)};});}
+      function spawn(list,opts){opts=opts||{}; var preStage=!!opts.preStage,teamA=list.filter(function(x){return x.team==="A";}),teamB=list.filter(function(x){return x.team==="B";}),bx=box(),sz=Math.round(clamp((bx.w*.05)*clamp(1-Math.max(list.length-14,0)*.018,.62,1),30,46)),cz=chaos();
+        function add(m,idx,total,side){var s=pickClassStats(m.className),lane=(idx+1)/(total+1),nd=mkNode(m,m.team,sz),xb=side==="L"?bx.w*.24:bx.w*.76,stageId=playerStageId(m.rid==null?(side+"-"+idx):m.rid),saved=getStagedPlayerPos(stageId),px=saved?clamp(saved.x,24,bx.w-24):(xb+rr(-32,32)),py=saved?clamp(saved.y,24,bx.h-24):(bx.h*clamp(lane,.12,.88)+rr(-18,18));
+          var f={name:m.name,team:m.team,className:s.className,node:nd.node,bar:nd.bar,x:px,y:py,vx:0,vy:0,hp:s.maxHp,maxHp:s.maxHp,power:s.power,defense:s.defense,speed:s.speed,aggro:s.aggro*cz,crit:s.crit,evade:s.evade,cdBase:s.cd/cz,range:s.range,cd:rr(.2,.8),heavyCd:rr(1.2,3.2),healCd:rr(1.8,3.6),dashCd:rr(1.8,4.3),blockCd:rr(1.1,2.6),blockTimer:0,blockHeat:0,shieldCd:rr(2.3,5.2),shieldTimer:0,stunTimer:0,bleedTimer:0,bleedDps:0,stamina:rr(72,100),maxStamina:100,fury:s.className==="Barbarian"?rr(30,56):rr(8,30),hit:0,alive:true,kills:0,damage:0,deathOrder:0,buffP:0,buffS:0,dragging:false,stageId:stageId,prePlaced:preStage,heroTonyWizard:false,heroChristianSword:false,monType:"",monCr:0};
           var nm=(f.name||"").trim().toLowerCase();
           if(nm==="tony healy"&&f.className==="Wizard"){f.heroTonyWizard=true; f.maxHp=Math.round(clamp(f.maxHp*1.24,90,240)); f.hp=f.maxHp; f.power=Math.round(clamp(f.power+6,8,34)); f.defense=Math.round(clamp(f.defense+2,1,20)); f.speed=clamp(f.speed*1.1,40,138); f.crit=clamp(f.crit+.09,.04,.55); f.evade=clamp(f.evade+.05,.01,.36); f.range=clamp(f.range+20,46,150); f.cdBase*=.76; f.healCd*=.68;}
           if(nm==="christian"&&f.className===swordClass){f.heroChristianSword=true; f.maxHp=Math.round(clamp(f.maxHp*1.16,90,220)); f.hp=f.maxHp; f.power=Math.round(clamp(f.power+4,8,32)); f.defense=Math.round(clamp(f.defense+2,1,20)); f.speed=clamp(f.speed*1.08,38,132); f.crit=clamp(f.crit+.06,.04,.52); f.evade=clamp(f.evade+.03,.01,.34); f.cdBase*=.88; f.blockCd*=.72;}
+          if(preStage)setStagedPlayerPos(stageId,f.x,f.y);
+          f.node.classList.add("drag-handle");
           var titleTag=f.heroTonyWizard?" | Greatest Wizard":(f.heroChristianSword?" | Blessed Swordsman":"");
           f.node.title=(f.name||"Fighter")+" ["+f.className+titleTag+"]\\nHP "+f.maxHp+" | POW "+f.power+" | DEF "+f.defense+" | SPD "+f.speed.toFixed(1); fighters.push(f);}
         teamA.forEach(function(m,i){add(m,i,teamA.length,"L");}); teamB.forEach(function(m,i){add(m,i,teamB.length,"R");});
       }
-      function start(){clearArena(); log.innerHTML=""; var list=roster(); if(list.length<2){status.textContent="Pick at least 2 fighters"; return;} var hasA=list.some(function(x){return x.team==="A";}),hasB=list.some(function(x){return x.team==="B";}); if(!hasA||!hasB){status.textContent="Assign at least one fighter to each team"; return;}
-        spawn(list); render(); scheduleEvent(); running=true; last=0; status.textContent="Battle live | Team A vs Team B"; addLog("Combatants entered the arena","ev"); raf=requestAnimationFrame(tick);
+      function rebuildPlayerStaging(){if(running)return; var list=roster(),staged=stagedMonsters.slice(); pruneStagedPlayers(list); clearArena(true); log.innerHTML="";
+        if(list.length)spawn(list,{preStage:true});
+        staged.forEach(function(s){var mon=getMonster(s.monsterId); if(mon)spawnMonster(mon,s.x,s.y,{preMatch:true,fromStage:true,stageId:s.stageId,silent:true});});
+        render(); updateHud();
+        status.textContent=list.length?("Players staged: "+list.length+" | Watchers: "+stagedMonsters.length+" | Press Go"):("No fighters selected");
+      }
+      function start(){var list=roster(); if(list.length<1){status.textContent="Pick at least 1 fighter"; return;} var hasA=list.some(function(x){return x.team==="A";}),hasB=list.some(function(x){return x.team==="B";});
+        if(!hasA&&!hasB){status.textContent="Assign at least one fighter to a team"; return;}
+        var staged=stagedMonsters.slice(); pruneStagedPlayers(list); clearArena(true); log.innerHTML="";
+        battleMode.pve=!(hasA&&hasB); battleMode.pveTeam=hasA&&!hasB?"A":(!hasA&&hasB?"B":"");
+        spawn(list,{preStage:false}); staged.forEach(function(s){var mon=getMonster(s.monsterId); if(mon)spawnMonster(mon,s.x,s.y,{fromStage:true,stageId:s.stageId});}); render(); scheduleEvent(); running=true; last=0;
+        if(battleMode.pve){status.textContent="PVE live | Drag monsters into arena"; addLog("PVE mode active: drag Watcher monsters into the arena","ev");}
+        else {status.textContent="Battle live | Team A vs Team B"; addLog("Combatants entered the arena","ev");}
+        raf=requestAnimationFrame(tick);
       }
       function buildPicker(data){picks.innerHTML=""; rows=[]; var baseClassOpts=["<option value=''>Random Class</option>"].concat(classPool.map(function(c){return"<option value='"+c+"'>"+c+"</option>";}));
         data.forEach(function(d,i){var row=document.createElement("label"),cb=document.createElement("input"),img=document.createElement("img"),name=document.createElement("span"),sel=document.createElement("select"),cls=document.createElement("select"),bench=document.createElement("div"),benchHead=document.createElement("div"),benchMeta=document.createElement("span"),benchTitle=document.createElement("strong"),benchBody=document.createElement("div"),opts=baseClassOpts.slice(),preset=sanitizeClass(d.className||d.class||"",d);
@@ -549,23 +853,48 @@
           cls.className="pb-class"; cls.innerHTML=opts.join(""); cls.value=preset;
           bench.className="pb-bench"; benchHead.className="pb-bh"; benchMeta.textContent="vs Arena Avg"; benchTitle.textContent=preset||"Random Mix"; benchBody.className="pb-brows"; benchHead.appendChild(benchMeta); benchHead.appendChild(benchTitle); bench.appendChild(benchHead); bench.appendChild(benchBody);
           row.appendChild(cb); row.appendChild(img); row.appendChild(name); row.appendChild(sel); row.appendChild(cls); row.appendChild(bench); picks.appendChild(row);
-          var rowRef={cb:cb,sel:sel,cls:cls,data:d,bench:bench,benchMeta:benchMeta,benchTitle:benchTitle,benchBody:benchBody}; rows.push(rowRef); updateRowBench(rowRef);
+          var rowRef={rid:i,cb:cb,sel:sel,cls:cls,data:d,bench:bench,benchMeta:benchMeta,benchTitle:benchTitle,benchBody:benchBody}; rows.push(rowRef); updateRowBench(rowRef);
+          cb.addEventListener("change",function(){rebuildPlayerStaging();});
+          sel.addEventListener("change",function(){rebuildPlayerStaging();});
+          cls.addEventListener("change",function(){rebuildPlayerStaging();});
           bindRowBench(row,cls,rowRef);
         });
       }
 
       var data=parse().filter(function(x){return x&&x.name&&x.img;}); if(!data.length){status.textContent="No fighter data found"; return;}
       rebuildBenchmarks(); buildPicker(data); updateHud();
-      btnAll.addEventListener("click",function(){rows.forEach(function(r){r.cb.checked=true;}); status.textContent="All fighters selected";});
+      btnAll.addEventListener("click",function(){rows.forEach(function(r){r.cb.checked=true;}); rebuildPlayerStaging();});
       btnNone.addEventListener("click",function(){rows.forEach(function(r){r.cb.checked=false;}); clearArena(); status.textContent="No fighters selected";});
-      btnRand.addEventListener("click",function(){rows.forEach(function(r){r.sel.value=Math.random()<.5?"A":"B";}); status.textContent="Teams randomized";});
-      if(btnRandClass)btnRandClass.addEventListener("click",function(){rows.forEach(function(r){r.cls.value=classPool[Math.floor(Math.random()*classPool.length)]; updateRowBench(r);}); status.textContent="Classes randomized";});
+      btnRand.addEventListener("click",function(){rows.forEach(function(r){r.sel.value=Math.random()<.5?"A":"B";}); rebuildPlayerStaging();});
+      if(btnRandClass)btnRandClass.addEventListener("click",function(){rows.forEach(function(r){r.cls.value=classPool[Math.floor(Math.random()*classPool.length)]; updateRowBench(r);}); rebuildPlayerStaging();});
       btnGo.addEventListener("click",start);
-      btnReset.addEventListener("click",function(){clearArena(); log.innerHTML=""; rows.forEach(function(r,i){r.cb.checked=true; r.sel.value=i%2===0?"A":"B"; r.cls.value=sanitizeClass(r.data.className||r.data.class||"",r.data); updateRowBench(r);}); status.textContent="Select fighters, assign teams, then press Go";});
+      btnReset.addEventListener("click",function(){clearArena(); log.innerHTML=""; rows.forEach(function(r,i){r.cb.checked=true; r.sel.value=i%2===0?"A":"B"; r.cls.value=sanitizeClass(r.data.className||r.data.class||"",r.data); updateRowBench(r);}); rebuildPlayerStaging();});
+      if(monLoadBtn)monLoadBtn.addEventListener("click",function(){loadMonsters();});
+      arena.addEventListener("dragover",function(e){if(!dragMonsterId)return; e.preventDefault(); arena.classList.add("mon-drop"); setTrashUi(true,false);});
+      arena.addEventListener("dragleave",function(){arena.classList.remove("mon-drop"); if(!tokenDrag)setTrashUi(false,false);});
+      arena.addEventListener("drop",function(e){if(!dragMonsterId&&!(e.dataTransfer&&e.dataTransfer.getData("text/plain")))return; e.preventDefault(); arena.classList.remove("mon-drop"); setTrashUi(false,false); var id=dragMonsterId||(e.dataTransfer?e.dataTransfer.getData("text/plain"):""); dragMonsterId=""; var mon=getMonster(id); if(!mon)return;
+        var r=arena.getBoundingClientRect(),x=clamp(e.clientX-r.left,24,r.width-24),y=clamp(e.clientY-r.top,24,r.height-24),pre=!running; spawnMonster(mon,x,y,{preMatch:pre});
+        if(pre)status.textContent="Players staged: "+roster().length+" | Watchers: "+stagedMonsters.length+" | Press Go";
+      });
+      arena.addEventListener("pointerdown",function(e){var node=e.target&&e.target.closest?e.target.closest(".pb-f.drag-handle"):null; if(!node)return; var f=findFighterFromNode(node); if(!canDragFighter(f))return;
+        e.preventDefault(); var r=arena.getBoundingClientRect(),canTrash=(f.team==="M"&&f.prePlaced&&!running&&!!f.stageId);
+        tokenDrag={pid:e.pointerId,f:f,ox:(e.clientX-r.left)-f.x,oy:(e.clientY-r.top)-f.y,canTrash:canTrash}; f.dragging=true; f.node.classList.add("dragging-token"); if(f.node.setPointerCapture)f.node.setPointerCapture(e.pointerId); setTrashUi(canTrash,false);
+      });
+      arena.addEventListener("pointermove",function(e){if(!tokenDrag||e.pointerId!==tokenDrag.pid)return; e.preventDefault(); var r=arena.getBoundingClientRect(),x=clamp(e.clientX-r.left-tokenDrag.ox,24,r.width-24),y=clamp(e.clientY-r.top-tokenDrag.oy,24,r.height-24);
+        tokenDrag.f.x=x; tokenDrag.f.y=y; if(tokenDrag.canTrash)setStagedPos(tokenDrag.f.stageId,x,y); else if(!running&&tokenDrag.f.team!=="M"&&tokenDrag.f.stageId)setStagedPlayerPos(tokenDrag.f.stageId,x,y); render(); if(tokenDrag.canTrash)setTrashUi(true,pointOnTrash(e.clientX,e.clientY));
+      });
+      function endTokenDrag(e){if(!tokenDrag||e.pointerId!==tokenDrag.pid)return; var drag=tokenDrag,f=drag.f,hot=drag.canTrash&&pointOnTrash(e.clientX,e.clientY); f.node.classList.remove("dragging-token"); f.dragging=false;
+        if(hot){removeStaged(f.stageId); f.alive=false; f.node.remove(); fighters=fighters.filter(function(x){return x!==f;}); addLog("Watcher removed "+(f.name||"monster"),"ev"); updateHud();}
+        tokenDrag=null; setTrashUi(false,false); render(); if(!running)status.textContent="Players staged: "+roster().length+" | Watchers: "+stagedMonsters.length+" | Press Go";
+      }
+      arena.addEventListener("pointerup",endTokenDrag);
+      arena.addEventListener("pointercancel",endTokenDrag);
       btnClose.addEventListener("click",hideModal);
       modal.addEventListener("click",function(e){if(e.target===modal)hideModal();});
       document.addEventListener("keydown",function(e){if(e.key==="Escape")hideModal();});
       if("ResizeObserver" in window){new ResizeObserver(function(){var bx=box(); fighters.forEach(function(f){f.x=clamp(f.x,24,bx.w-24); f.y=clamp(f.y,24,bx.h-24);}); render();}).observe(arena);}
+      loadMonsters();
+      rebuildPlayerStaging();
       root.pbGladStop=clearArena;
     })();
   </script>
