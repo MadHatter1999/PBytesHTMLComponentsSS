@@ -50,6 +50,10 @@
     .pb-f.cast .pb-token{animation:pbcast .28s ease-out}
     .pb-f.slam .pb-token{animation:pbslam .22s ease-out}
     .pb-f.dash .pb-token{animation:pbdash .2s ease-out}
+    .pb-f.lunge .pb-token{animation:pblunge .2s ease-out}
+    .pb-f.spin .pb-token{animation:pbspin .24s ease-out}
+    .pb-f.shoot .pb-token{animation:pbshoot .2s ease-out}
+    .pb-f.chant .pb-token{animation:pbchant .28s ease-out}
     .pb-token{position:relative;width:100%;height:100%;border-radius:999px;background:#fff;border:2px solid var(--t,#111);box-shadow:0 5px 10px rgba(0,0,0,.22);overflow:hidden;transform-origin:center center}
     .pb-swordfx{position:absolute;left:0;top:0;width:18px;height:3px;border-radius:2px;background:linear-gradient(90deg,#3f3f3f,#d8d8d8,#fff);transform-origin:2px 50%;opacity:0;pointer-events:none;z-index:42;will-change:transform,opacity;--sa:0deg}
     .pb-swordfx::before{content:"";position:absolute;left:-4px;top:-2px;width:4px;height:7px;border-radius:2px;background:#936721}
@@ -62,11 +66,27 @@
     .pb-trail{position:absolute;height:3px;transform-origin:left center;border-radius:999px;opacity:0}
     .pb-trail.slash{background:linear-gradient(90deg,rgba(255,255,255,.06),rgba(246,198,47,.95),rgba(255,255,255,.05));animation:pbtrail .2s ease-out forwards}
     .pb-trail.arcane{height:4px;background:linear-gradient(90deg,rgba(129,200,255,.06),rgba(129,200,255,.98),rgba(255,255,255,.1));box-shadow:0 0 10px rgba(129,200,255,.75);animation:pbtrail .28s ease-out forwards}
+    .pb-trail.fire{height:4px;background:linear-gradient(90deg,rgba(255,157,60,.05),rgba(255,95,38,.98),rgba(255,208,92,.1));box-shadow:0 0 10px rgba(255,102,54,.72);animation:pbtrail .25s ease-out forwards}
+    .pb-trail.frost{height:4px;background:linear-gradient(90deg,rgba(198,244,255,.05),rgba(125,225,255,.98),rgba(217,252,255,.12));box-shadow:0 0 10px rgba(125,225,255,.68);animation:pbtrail .24s ease-out forwards}
+    .pb-trail.lightning{height:3px;background:linear-gradient(90deg,rgba(255,245,183,.03),rgba(255,236,74,.98),rgba(255,255,255,.2));box-shadow:0 0 12px rgba(255,230,64,.74);animation:pbtrail .16s ease-out forwards}
+    .pb-trail.poison{height:4px;background:linear-gradient(90deg,rgba(150,255,143,.04),rgba(70,217,121,.96),rgba(205,255,181,.1));box-shadow:0 0 10px rgba(70,217,121,.68);animation:pbtrail .24s ease-out forwards}
+    .pb-trail.holy{height:4px;background:linear-gradient(90deg,rgba(255,255,230,.05),rgba(255,233,133,.98),rgba(255,255,255,.16));box-shadow:0 0 12px rgba(255,233,133,.74);animation:pbtrail .24s ease-out forwards}
+    .pb-trail.shadow{height:4px;background:linear-gradient(90deg,rgba(88,76,124,.05),rgba(111,90,178,.96),rgba(191,174,255,.12));box-shadow:0 0 10px rgba(130,108,203,.62);animation:pbtrail .24s ease-out forwards}
+    .pb-trail.nature{height:4px;background:linear-gradient(90deg,rgba(115,188,83,.04),rgba(117,210,92,.96),rgba(212,255,177,.1));box-shadow:0 0 10px rgba(117,210,92,.66);animation:pbtrail .24s ease-out forwards}
+    .pb-trail.sonic{height:3px;background:linear-gradient(90deg,rgba(255,151,201,.04),rgba(255,99,181,.96),rgba(255,228,244,.14));box-shadow:0 0 10px rgba(255,99,181,.66);animation:pbtrail .18s ease-out forwards}
     .pb-burst{position:absolute;width:18px;height:18px;transform:translate(-50%,-50%);border-radius:999px;opacity:0}
     .pb-burst.hit{background:radial-gradient(circle,rgba(255,255,255,.95),rgba(246,198,47,.25) 54%,rgba(246,198,47,0) 78%);animation:pbburst .22s ease-out forwards}
     .pb-burst.shock{border:2px solid rgba(246,198,47,.7);background:rgba(246,198,47,.2);animation:pbshock .34s ease-out forwards}
     .pb-burst.arcane{border:2px solid rgba(129,200,255,.82);background:rgba(129,200,255,.18);box-shadow:0 0 14px rgba(129,200,255,.7);animation:pbshock .4s ease-out forwards}
     .pb-burst.heal{border:2px solid rgba(83,219,112,.92);background:radial-gradient(circle,rgba(206,255,214,.95),rgba(83,219,112,.28) 55%,rgba(83,219,112,0) 80%);box-shadow:0 0 14px rgba(83,219,112,.8);animation:pbhealburst .42s ease-out forwards}
+    .pb-burst.fire{border:2px solid rgba(255,122,62,.88);background:radial-gradient(circle,rgba(255,236,180,.95),rgba(255,122,62,.28) 56%,rgba(255,122,62,0) 82%);box-shadow:0 0 14px rgba(255,122,62,.75);animation:pbshock .36s ease-out forwards}
+    .pb-burst.frost{border:2px solid rgba(125,225,255,.88);background:radial-gradient(circle,rgba(226,253,255,.95),rgba(125,225,255,.25) 56%,rgba(125,225,255,0) 82%);box-shadow:0 0 14px rgba(125,225,255,.72);animation:pbshock .38s ease-out forwards}
+    .pb-burst.lightning{border:2px solid rgba(255,234,94,.9);background:radial-gradient(circle,rgba(255,255,210,.95),rgba(255,234,94,.26) 56%,rgba(255,234,94,0) 82%);box-shadow:0 0 15px rgba(255,234,94,.8);animation:pbshock .28s ease-out forwards}
+    .pb-burst.poison{border:2px solid rgba(71,214,120,.88);background:radial-gradient(circle,rgba(217,255,221,.95),rgba(71,214,120,.26) 56%,rgba(71,214,120,0) 82%);box-shadow:0 0 14px rgba(71,214,120,.74);animation:pbshock .38s ease-out forwards}
+    .pb-burst.holy{border:2px solid rgba(255,233,133,.9);background:radial-gradient(circle,rgba(255,255,233,.96),rgba(255,233,133,.24) 56%,rgba(255,233,133,0) 82%);box-shadow:0 0 15px rgba(255,233,133,.76);animation:pbshock .4s ease-out forwards}
+    .pb-burst.shadow{border:2px solid rgba(130,108,203,.86);background:radial-gradient(circle,rgba(235,226,255,.9),rgba(130,108,203,.22) 56%,rgba(130,108,203,0) 82%);box-shadow:0 0 14px rgba(130,108,203,.62);animation:pbshock .4s ease-out forwards}
+    .pb-burst.nature{border:2px solid rgba(117,210,92,.88);background:radial-gradient(circle,rgba(231,255,219,.95),rgba(117,210,92,.24) 56%,rgba(117,210,92,0) 82%);box-shadow:0 0 14px rgba(117,210,92,.7);animation:pbshock .4s ease-out forwards}
+    .pb-burst.sonic{border:2px solid rgba(255,109,189,.86);background:radial-gradient(circle,rgba(255,224,243,.95),rgba(255,109,189,.22) 56%,rgba(255,109,189,0) 82%);box-shadow:0 0 14px rgba(255,109,189,.66);animation:pbshock .32s ease-out forwards}
     .pb-heal-p{position:absolute;left:0;top:0;width:6px;height:6px;border-radius:999px;background:radial-gradient(circle,#c7ffd3 0 35%,#53db70 75%);opacity:0;pointer-events:none;z-index:44;will-change:transform,opacity;animation:pbhealp .55s ease-out forwards;--hx:0px;--hy:0px}
     .pb-firefx{position:absolute;left:0;top:0;font-size:15px;line-height:1;transform:translate(-50%,-50%);opacity:0;pointer-events:none;z-index:46;will-change:transform,opacity;animation:pbfirefx .46s ease-out forwards;--fx:0px;--fy:0px}
     .pb-feed{border-radius:14px;background:rgba(255,255,255,.78);box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);display:flex;flex-direction:column;overflow:hidden;min-height:290px;height:clamp(260px,42vh,420px);max-height:420px}
@@ -93,6 +113,10 @@
     @keyframes pbcast{0%{transform:scale(1);filter:drop-shadow(0 0 0 rgba(129,200,255,0))}45%{transform:scale(1.1);filter:drop-shadow(0 0 7px rgba(129,200,255,.75))}100%{transform:scale(1);filter:drop-shadow(0 0 0 rgba(129,200,255,0))}}
     @keyframes pbslam{0%{transform:scale(1)}44%{transform:scale(1.18)}100%{transform:scale(1)}}
     @keyframes pbdash{0%{transform:scale(1)}50%{transform:scale(.86)}100%{transform:scale(1)}}
+    @keyframes pblunge{0%{transform:translateX(0) scale(1)}46%{transform:translateX(2px) scale(1.09)}100%{transform:translateX(0) scale(1)}}
+    @keyframes pbspin{0%{transform:scale(1) rotate(0)}40%{transform:scale(1.08) rotate(-16deg)}100%{transform:scale(1) rotate(0)}}
+    @keyframes pbshoot{0%{transform:translateX(0) scale(1)}45%{transform:translateX(-1px) scale(1.06)}100%{transform:translateX(0) scale(1)}}
+    @keyframes pbchant{0%{transform:scale(1);filter:drop-shadow(0 0 0 rgba(255,233,133,0))}44%{transform:scale(1.08);filter:drop-shadow(0 0 8px rgba(255,233,133,.72))}100%{transform:scale(1);filter:drop-shadow(0 0 0 rgba(255,233,133,0))}}
     @keyframes pbswing{
       0%{opacity:0;transform:translate(-50%,-50%) rotate(calc(var(--sa,0deg) - 76deg)) scale(.64) scaleY(-1)}
       14%{opacity:1}
@@ -228,10 +252,22 @@
       function pulse(node,cls,d){if(!node)return; node.classList.add(cls); setTimeout(function(){node.classList.remove(cls);},d||180);}
       function vfxLine(x1,y1,x2,y2,kind){if(!vfx)return; var n=document.createElement("i"),dx=x2-x1,dy=y2-y1,dist=Math.sqrt(dx*dx+dy*dy)||1,ang=Math.atan2(dy,dx)*180/Math.PI; n.className="pb-trail "+(kind||"slash"); n.style.left=x1.toFixed(1)+"px"; n.style.top=y1.toFixed(1)+"px"; n.style.width=dist.toFixed(1)+"px"; n.style.setProperty("--ang",ang.toFixed(2)+"deg"); vfx.appendChild(n); setTimeout(function(){n.remove();},420);}
       function vfxBurst(x,y,kind){if(!vfx)return; var n=document.createElement("i"),ttl=(kind==="heal"?620:430); n.className="pb-burst "+(kind||"hit"); n.style.left=x.toFixed(1)+"px"; n.style.top=y.toFixed(1)+"px"; vfx.appendChild(n); setTimeout(function(){n.remove();},ttl);}
+      function vfxPathBursts(x1,y1,x2,y2,kind,count,jitter){if(!vfx)return; var c=count||3,j=jitter||6,dx=x2-x1,dy=y2-y1; for(var i=0;i<c;i+=1){(function(idx){setTimeout(function(){var p=(idx+1)/(c+1),x=x1+dx*p+rr(-j,j),y=y1+dy*p+rr(-j,j); vfxBurst(x,y,kind);},idx*24);})(i);}}
+      function trailKindFromFx(fx){if(fx==="fire"||fx==="frost"||fx==="lightning"||fx==="poison"||fx==="holy"||fx==="shadow"||fx==="nature"||fx==="sonic")return fx; if(fx==="arcane")return "arcane"; return "slash";}
+      function burstKindFromFx(fx){if(fx==="fire"||fx==="frost"||fx==="lightning"||fx==="poison"||fx==="holy"||fx==="shadow"||fx==="nature"||fx==="sonic")return fx; if(fx==="arcane")return "arcane"; if(fx==="shock")return "shock"; return "hit";}
       function vfxHeal(x,y){if(!vfx)return; vfxBurst(x,y,"heal"); for(var i=0;i<11;i+=1){var p=document.createElement("i"),a=rr(0,Math.PI*2),r=rr(10,26); p.className="pb-heal-p"; p.style.left=x.toFixed(1)+"px"; p.style.top=y.toFixed(1)+"px"; p.style.setProperty("--hx",(Math.cos(a)*r).toFixed(1)+"px"); p.style.setProperty("--hy",(Math.sin(a)*r).toFixed(1)+"px"); p.style.animationDelay=(rr(0,.08)).toFixed(3)+"s"; p.addEventListener("animationend",function(){this.remove();},{once:true}); vfx.appendChild(p);} }
-      function vfxFireEmoji(x1,y1,x2,y2){if(!vfx)return; var dx=x2-x1,dy=y2-y1,count=7; for(var i=0;i<count;i+=1){var p=(i+1)/(count+1),n=document.createElement("i"),jx=rr(-6,6),jy=rr(-5,5); n.className="pb-firefx"; n.textContent="🔥"; n.style.left=(x1+dx*p+jx).toFixed(1)+"px"; n.style.top=(y1+dy*p+jy).toFixed(1)+"px"; n.style.setProperty("--fx",rr(-8,8).toFixed(1)+"px"); n.style.setProperty("--fy",rr(-22,-10).toFixed(1)+"px"); n.style.animationDelay=(i*.028).toFixed(3)+"s"; vfx.appendChild(n); setTimeout((function(el){return function(){el.remove();};})(n),620+i*28);} }
+      function vfxFireEmoji(x1,y1,x2,y2){if(!vfx)return; var dx=x2-x1,dy=y2-y1,count=7; for(var i=0;i<count;i+=1){var p=(i+1)/(count+1),n=document.createElement("i"),jx=rr(-6,6),jy=rr(-5,5); n.className="pb-firefx"; n.textContent="\uD83D\uDD25"; n.style.left=(x1+dx*p+jx).toFixed(1)+"px"; n.style.top=(y1+dy*p+jy).toFixed(1)+"px"; n.style.setProperty("--fx",rr(-8,8).toFixed(1)+"px"); n.style.setProperty("--fy",rr(-22,-10).toFixed(1)+"px"); n.style.animationDelay=(i*.028).toFixed(3)+"s"; vfx.appendChild(n); setTimeout((function(el){return function(){el.remove();};})(n),620+i*28);} }
       function vfxSwordSwing(x,y,ang,delay){if(!vfx)return; var n=document.createElement("i"),d=delay||0; n.className="pb-swordfx go"; n.style.left=x.toFixed(1)+"px"; n.style.top=y.toFixed(1)+"px"; n.style.setProperty("--sa",(ang||0).toFixed(2)+"deg"); if(d>0)n.style.animationDelay=d.toFixed(3)+"s"; vfx.appendChild(n); setTimeout(function(){n.remove();},340+Math.round(d*1000));}
-      function classActionFx(attacker,target,move){if(!attacker||!target||!move)return; if(attacker.className===swordClass){var ang=Math.atan2(target.y-attacker.y,target.x-attacker.x)*180/Math.PI; vfxSwordSwing(attacker.x,attacker.y,ang-10,0); vfxSwordSwing(target.x,target.y,ang+18,.07);} if(move.anim==="cast"){var tonyFire=attacker.heroTonyWizard&&move.name&&move.name.indexOf("Fireball")>=0; pulse(attacker.node,"cast",280); if(tonyFire)vfxFireEmoji(attacker.x,attacker.y,target.x,target.y); else vfxLine(attacker.x,attacker.y,target.x,target.y,move.vfx||"arcane");} else if(move.anim==="slam"){pulse(attacker.node,"slam",220); vfxLine(attacker.x,attacker.y,target.x,target.y,move.vfx||"slash"); vfxBurst(target.x,target.y,"shock");} else {pulse(attacker.node,"atk",170); vfxLine(attacker.x,attacker.y,target.x,target.y,move.vfx||"slash");} vfxBurst(target.x,target.y,(move.vfx==="arcane")?"arcane":"hit");}
+      function classActionFx(attacker,target,move){if(!attacker||!target||!move)return; var fx=move.fx||move.vfx||"slash",trail=trailKindFromFx(fx),burst=burstKindFromFx(fx),anim=move.anim||"atk",tonyFire=attacker.heroTonyWizard&&move.name&&move.name.indexOf("Fireball")>=0,dur=anim==="cast"?280:anim==="slam"?230:anim==="chant"?280:anim==="spin"?230:anim==="shoot"?200:anim==="lunge"?190:170;
+        pulse(attacker.node,anim,dur);
+        if(attacker.className===swordClass||fx==="steel"){var ang=Math.atan2(target.y-attacker.y,target.x-attacker.x)*180/Math.PI; vfxSwordSwing(attacker.x,attacker.y,ang-10,0); if(anim!=="shoot"&&anim!=="chant")vfxSwordSwing(target.x,target.y,ang+18,.06);}
+        if(tonyFire){vfxFireEmoji(attacker.x,attacker.y,target.x,target.y);}
+        else if(anim==="slam"){vfxLine(attacker.x,attacker.y,target.x,target.y,trail); vfxPathBursts(attacker.x,attacker.y,target.x,target.y,burst,4,7);}
+        else if(anim==="shoot"){vfxLine(attacker.x,attacker.y,target.x,target.y,trail); if(Math.random()<.52)vfxPathBursts(attacker.x,attacker.y,target.x,target.y,burst,2,4);}
+        else if(anim==="chant"){vfxLine(attacker.x,attacker.y,target.x,target.y,trail); vfxPathBursts(attacker.x,attacker.y,target.x,target.y,trail,3,10);}
+        else{vfxLine(attacker.x,attacker.y,target.x,target.y,trail); if(fx==="lightning"||fx==="frost"||fx==="sonic"||fx==="shadow")vfxPathBursts(attacker.x,attacker.y,target.x,target.y,burst,3,6);}
+        vfxBurst(target.x,target.y,burst);
+      }
       function nearestToTarget(target,pred,maxDist){var n=null,d0=maxDist||1e9; fighters.forEach(function(x){if(!x.alive||x===target||!pred(x))return; var dx=x.x-target.x,dy=x.y-target.y,d=Math.sqrt(dx*dx+dy*dy)||.001; if(d<d0){d0=d;n=x;}}); return n;}
       function confetti(){clearConf(); var colors=["#f6c62f","#111","#fff","#ffe183"]; for(var i=0;i<78;i+=1){var p=document.createElement("i"); p.style.setProperty("--w",Math.round(rr(5,10))+"px"); p.style.setProperty("--h",Math.round(rr(8,15))+"px"); p.style.setProperty("--c",colors[Math.floor(Math.random()*colors.length)]); p.style.setProperty("--d",Math.round(rr(1800,3200))+"ms"); p.style.setProperty("--dl",Math.round(rr(0,500))+"ms"); p.style.setProperty("--tx",Math.round(rr(-620,620))+"px"); p.style.setProperty("--rt",Math.round(rr(320,960))+"deg"); p.style.left=Math.round(rr(8,92))+"%"; conf.appendChild(p);} }
       function updateHud(){var c=aliveCounts(); hudTime.textContent=fmt(battleSeconds); hudAlive.textContent="A:"+c.A+" | B:"+c.B; if(!running)hudPhase.textContent="Idle"; else if(sudden)hudPhase.textContent="Sudden Death"; else if(battleSeconds<18)hudPhase.textContent="Opening"; else if(battleSeconds<40)hudPhase.textContent="Clash"; else hudPhase.textContent="Chaos";}
@@ -282,83 +318,84 @@
         return {x:clamp(px,24,bx.w-24),y:clamp(py,24,bx.h-24),anchor:best};
       }
       function ko(target,attacker,cause){if(!target.alive)return; deathCount+=1; target.alive=false; target.hp=0; target.deathOrder=deathCount; target.node.classList.add("dead"); if(attacker){attacker.kills+=1; addLog((attacker.name||"Fighter")+" eliminated "+(target.name||"Fighter"),"ko");} else if(cause){addLog((target.name||"Fighter")+" was taken out by "+cause,"ko");}}
-      function pickMove(a){var m={name:"Strike",mult:1,crit:0,pierce:0,stun:0,bleed:0,bleedTime:0,heal:0,splash:0,bonusHit:0,push:0,anim:"atk",vfx:"slash",cool:rr(.78,1.16),cost:rr(4,8),special:false},roll=Math.random();
+      function pickMove(a){var m={name:"Strike",mult:1,crit:0,pierce:0,stun:0,bleed:0,bleedTime:0,heal:0,splash:0,bonusHit:0,push:0,anim:"atk",fx:"steel",vfx:"slash",cool:rr(.78,1.16),cost:rr(4,8),special:false},roll=Math.random();
         if(a.className===swordClass){
-          m.name="Steel Cut"; m.mult=1.12; m.crit=.08; m.cost=rr(4,7);
-          if(roll<.24){m.name="Cross Slash"; m.mult=1.2; m.bonusHit=.28; m.cool=rr(.72,1.02);}
-          else if(roll<.47){m.name="Guard Break"; m.mult=1.18; m.pierce=.18; m.stun=rr(.08,.16);}
-          else if(roll<.66){m.name="Blade Feint"; m.mult=1.05; m.crit=.12; m.cost=rr(3,6);}
-          if(a.heavyCd<=0&&a.fury>34&&Math.random()<.33){m.name="Sword Rush"; m.mult=1.4; m.bonusHit=.46; m.push=rr(2.2,4.6); m.anim="slam"; m.special=true; a.heavyCd=rr(3.4,5.1)/chaos(); a.fury=clamp(a.fury-16,0,100);}
+          m.name="Measured Cut"; m.mult=1.1; m.crit=.08; m.cost=rr(4,7); m.anim="lunge"; m.fx="steel";
+          if(roll<.22){m.name="Crosswind Slice"; m.mult=1.18; m.bonusHit=.24; m.cool=rr(.72,.98); m.anim="spin";}
+          else if(roll<.44){m.name="Guardbreaker Chop"; m.mult=1.16; m.pierce=.2; m.stun=rr(.08,.16); m.fx="shock"; m.anim="slam";}
+          else if(roll<.66){m.name="Feint Riposte"; m.mult=1.06; m.crit=.14; m.cost=rr(3,6);}
+          if(a.heavyCd<=0&&a.fury>30&&Math.random()<.34){m.name="Bladestorm Rush"; m.mult=1.38; m.bonusHit=.44; m.push=rr(2.4,4.8); m.anim="lunge"; m.special=true; a.heavyCd=rr(3.2,4.9)/chaos(); a.fury=clamp(a.fury-16,0,100);}
         } else if(a.className==="Fighter"){
-          m.name="Longsword Slash"; m.mult=1.06;
-          if(roll<.22){m.name="Pommel Strike"; m.mult=1.08; m.stun=rr(.12,.24);}
-          else if(roll<.44){m.name="Sweeping Cleave"; m.mult=1.14; m.splash=.34;}
-          else if(roll<.66){m.name="Riposte Cut"; m.mult=1.12; m.crit=.08; m.pierce=.1;}
-          if(a.heavyCd<=0&&Math.random()<.24){m.name="Shield Bash"; m.mult=1.28; m.stun=rr(.2,.4); m.anim="slam"; m.special=true; a.heavyCd=rr(3.6,5.2)/chaos();}
+          m.name="Frontline Slash"; m.mult=1.08; m.fx="steel";
+          if(roll<.22){m.name="Pommel Crash"; m.mult=1.1; m.stun=rr(.12,.24); m.anim="slam"; m.fx="shock";}
+          else if(roll<.44){m.name="Sweeping Arc"; m.mult=1.14; m.splash=.32; m.anim="spin";}
+          else if(roll<.68){m.name="Counter Cut"; m.mult=1.12; m.crit=.08; m.pierce=.1;}
+          if(a.heavyCd<=0&&Math.random()<.26){m.name="Bulwark Break"; m.mult=1.3; m.stun=rr(.22,.42); m.anim="slam"; m.fx="shock"; m.special=true; a.heavyCd=rr(3.4,5)/chaos();}
         } else if(a.className==="Rogue"){
-          m.name="Backstab"; m.crit=.1; m.cool=rr(.62,.96); m.cost=rr(3,6);
-          if(roll<.24){m.name="Shadow Slice"; m.mult=1.12; m.crit=.14; m.pierce=.12;}
-          else if(roll<.5){m.name="Hamstring"; m.mult=1.03; m.stun=rr(.1,.22); m.push=rr(1.4,2.8);}
-          else if(roll<.7){m.name="Feint Stab"; m.mult=1.08; m.bonusHit=.24; m.cost=rr(3,5);}
-          if(a.heavyCd<=0&&Math.random()<.33){if(Math.random()<.58){m.name="Poison Shiv"; m.mult=1.34; m.crit=.16; m.bleed=rr(2.8,4.8); m.bleedTime=rr(2.8,4); m.special=true;} else {m.name="Eviscerate"; m.mult=1.3; m.pierce=.2; m.bonusHit=.36; m.crit=.14; m.special=true;} a.heavyCd=rr(3.1,4.8)/chaos();}
+          m.name="Night Needle"; m.crit=.12; m.cool=rr(.62,.94); m.cost=rr(3,6); m.anim="lunge"; m.fx="shadow";
+          if(roll<.24){m.name="Venom Flick"; m.mult=1.1; m.bleed=rr(2.2,3.6); m.bleedTime=rr(2.4,3.8); m.fx="poison"; m.anim="atk";}
+          else if(roll<.5){m.name="Hamstring Slice"; m.mult=1.04; m.stun=rr(.1,.2); m.push=rr(1.6,3); m.anim="lunge";}
+          else if(roll<.72){m.name="Mirror Stab"; m.mult=1.1; m.bonusHit=.24; m.crit=.14; m.anim="spin";}
+          if(a.heavyCd<=0&&Math.random()<.34){if(Math.random()<.56){m.name="Poison Shiv"; m.mult=1.34; m.crit=.16; m.bleed=rr(2.8,4.8); m.bleedTime=rr(2.8,4); m.fx="poison"; m.anim="lunge";} else {m.name="Eviscerate"; m.mult=1.32; m.pierce=.22; m.bonusHit=.36; m.crit=.14; m.fx="shadow"; m.anim="lunge";} m.special=true; a.heavyCd=rr(3,4.7)/chaos();}
         } else if(a.className==="Barbarian"){
-          m.name="Greataxe Chop"; m.mult=1.12; m.cost=rr(6,10);
-          if(roll<.23){m.name="Brutal Swing"; m.mult=1.2; m.splash=.3;}
-          else if(roll<.49){m.name="Skull Maul"; m.mult=1.16; m.stun=rr(.1,.2);}
-          else if(roll<.68){m.name="Rage Cleave"; m.mult=1.1; m.bonusHit=.26; m.cost=rr(5,9);}
-          if(a.heavyCd<=0&&a.fury>42&&Math.random()<.34){m.name="Whirlwind"; m.mult=1.44; m.splash=.54; m.stun=rr(.12,.24); m.anim="slam"; m.special=true; a.heavyCd=rr(4.2,6.2)/chaos(); a.fury=clamp(a.fury-26,0,100);}
+          m.name="Ruin Chop"; m.mult=1.12; m.cost=rr(6,10); m.anim="slam"; m.fx="shock";
+          if(roll<.23){m.name="Bonebreaker"; m.mult=1.18; m.stun=rr(.1,.2);}
+          else if(roll<.49){m.name="Rage Cleave"; m.mult=1.14; m.splash=.3; m.anim="spin"; m.fx="steel";}
+          else if(roll<.7){m.name="Savage Follow-through"; m.mult=1.1; m.bonusHit=.28; m.cost=rr(5,9);}
+          if(a.heavyCd<=0&&a.fury>40&&Math.random()<.34){m.name="Earthsplitter"; m.mult=1.46; m.splash=.56; m.stun=rr(.14,.26); m.anim="slam"; m.fx="shock"; m.special=true; a.heavyCd=rr(4,6)/chaos(); a.fury=clamp(a.fury-26,0,100);}
         } else if(a.className==="Paladin"){
-          m.name="Warhammer"; m.mult=1.08;
-          if(roll<.23){m.name="Judgement Strike"; m.mult=1.16; m.stun=rr(.1,.2); m.pierce=.1;}
-          else if(roll<.47){m.name="Radiant Slash"; m.mult=1.08; m.heal=.18; m.anim="cast"; m.vfx="arcane";}
-          else if(roll<.68){m.name="Sanctified Cleave"; m.mult=1.12; m.splash=.28; m.heal=.14; m.anim="cast"; m.vfx="arcane";}
-          if(a.heavyCd<=0&&Math.random()<.29){m.name="Divine Smite"; m.mult=1.34; m.heal=.32; m.stun=rr(.08,.18); m.anim="cast"; m.vfx="arcane"; m.special=true; a.heavyCd=rr(4.1,5.9)/chaos();}
+          m.name="Sunblade"; m.mult=1.08; m.fx="holy";
+          if(roll<.23){m.name="Judgement Brand"; m.mult=1.15; m.stun=rr(.1,.2); m.pierce=.1; m.anim="cast";}
+          else if(roll<.47){m.name="Radiant Cleave"; m.mult=1.1; m.heal=.2; m.splash=.24; m.anim="cast";}
+          else if(roll<.7){m.name="Sanctified Hammer"; m.mult=1.12; m.stun=rr(.08,.18); m.anim="slam";}
+          if(a.heavyCd<=0&&Math.random()<.3){m.name="Divine Smite"; m.mult=1.36; m.heal=.34; m.stun=rr(.1,.2); m.anim="cast"; m.fx="holy"; m.special=true; a.heavyCd=rr(3.9,5.6)/chaos();}
         } else if(a.className==="Ranger"){
-          m.name="Arrow Shot"; m.crit=.06; m.anim="cast"; m.vfx="slash"; m.cool=rr(.7,1.02);
-          if(roll<.24){m.name="Pinning Shot"; m.mult=1.08; m.stun=rr(.1,.2); m.push=rr(2.2,4.2);}
-          else if(roll<.5){m.name="Twin Shot"; m.mult=1.06; m.bonusHit=.34; m.cool=rr(.68,.98);}
-          else if(roll<.72){m.name="Piercing Arrow"; m.mult=1.14; m.pierce=.22; m.crit=.08;}
-          if(a.heavyCd<=0&&Math.random()<.32){if(Math.random()<.5){m.name="Volley"; m.mult=1.22; m.splash=.46; m.push=rr(3.5,6.8);} else {m.name="Rain of Arrows"; m.mult=1.18; m.splash=.5; m.bonusHit=.22;} m.special=true; a.heavyCd=rr(3.7,5.4)/chaos();}
+          m.name="Falcon Shot"; m.crit=.06; m.anim="shoot"; m.fx="arrow"; m.cool=rr(.7,1);
+          if(roll<.24){m.name="Pinning Arrow"; m.mult=1.1; m.stun=rr(.1,.2); m.push=rr(2.2,4.4);}
+          else if(roll<.5){m.name="Frost Arrow"; m.mult=1.08; m.stun=rr(.08,.16); m.fx="frost";}
+          else if(roll<.72){m.name="Storm Arrow"; m.mult=1.12; m.pierce=.22; m.crit=.08; m.fx="lightning";}
+          if(a.heavyCd<=0&&Math.random()<.33){if(Math.random()<.5){m.name="Volley Storm"; m.mult=1.22; m.splash=.48; m.push=rr(3.5,6.8);} else {m.name="Rain of Arrows"; m.mult=1.18; m.splash=.52; m.bonusHit=.2;} m.anim="shoot"; m.fx="arrow"; m.special=true; a.heavyCd=rr(3.6,5.2)/chaos();}
         } else if(a.className==="Monk"){
-          m.name="Palm Strike"; m.cool=rr(.56,.86); m.cost=rr(2,5); m.crit=.04;
-          if(roll<.24){m.name="Roundhouse Kick"; m.mult=1.1; m.stun=rr(.1,.2); m.push=rr(2.4,4.6);}
-          else if(roll<.5){m.name="Qi Jab"; m.mult=1.04; m.bonusHit=.32; m.cool=rr(.52,.8);}
-          else if(roll<.7){m.name="Elbow Combo"; m.mult=1.12; m.crit=.1; m.cost=rr(3,6);}
-          if(a.heavyCd<=0&&Math.random()<.36){if(Math.random()<.56){m.name="Flurry of Blows"; m.mult=1.18; m.bonusHit=.58;} else {m.name="Cyclone Kick"; m.mult=1.2; m.splash=.34; m.push=rr(2.8,5.2);} m.special=true; a.heavyCd=rr(2.6,4.1)/chaos();}
+          m.name="Open Palm"; m.cool=rr(.56,.84); m.cost=rr(2,5); m.crit=.04; m.anim="lunge"; m.fx="sonic";
+          if(roll<.24){m.name="Roundhouse"; m.mult=1.12; m.stun=rr(.1,.2); m.push=rr(2.4,4.8); m.anim="spin";}
+          else if(roll<.5){m.name="Qi Jab"; m.mult=1.06; m.bonusHit=.34; m.cool=rr(.52,.78);}
+          else if(roll<.72){m.name="Elbow Chain"; m.mult=1.1; m.crit=.1; m.cost=rr(3,6);}
+          if(a.heavyCd<=0&&Math.random()<.36){if(Math.random()<.56){m.name="Flurry of Blows"; m.mult=1.2; m.bonusHit=.6; m.anim="spin";} else {m.name="Cyclone Kick"; m.mult=1.22; m.splash=.36; m.push=rr(2.8,5.4); m.anim="spin";} m.fx="sonic"; m.special=true; a.heavyCd=rr(2.5,4)/chaos();}
         } else if(a.className==="Wizard"){
-          m.name="Arcane Bolt"; m.anim="cast"; m.vfx="arcane"; m.crit=.05; m.pierce=.1; m.cool=rr(.84,1.2);
-          if(roll<.24){m.name="Frost Spike"; m.mult=1.08; m.stun=rr(.1,.22);}
-          else if(roll<.5){m.name="Lightning Lance"; m.mult=1.12; m.pierce=.24; m.crit=.08;}
-          else if(roll<.72){m.name="Chaos Orb"; m.mult=1.16; m.splash=.34; m.bleed=rr(1.2,2.4); m.bleedTime=rr(1.8,2.8);}
-          if(a.heavyCd<=0&&Math.random()<.36){if(Math.random()<.58){m.name="Fireball"; m.mult=1.36; m.splash=.6; m.bleed=rr(1.8,3.2); m.bleedTime=rr(2.1,3.2);} else {m.name="Meteor Spark"; m.mult=1.3; m.splash=.5; m.stun=rr(.12,.2); m.pierce=.12;} m.anim="cast"; m.vfx="arcane"; m.special=true; a.heavyCd=rr(4.6,6.5)/chaos();}
+          m.name="Arcane Dart"; m.anim="cast"; m.fx="arcane"; m.vfx="arcane"; m.crit=.06; m.pierce=.12; m.cool=rr(.82,1.18);
+          if(roll<.22){m.name="Frost Spike"; m.mult=1.1; m.stun=rr(.12,.24); m.fx="frost";}
+          else if(roll<.44){m.name="Lightning Lance"; m.mult=1.14; m.pierce=.26; m.crit=.08; m.fx="lightning";}
+          else if(roll<.68){m.name="Void Orb"; m.mult=1.16; m.splash=.34; m.bleed=rr(1.2,2.4); m.bleedTime=rr(1.8,2.8); m.fx="shadow";}
+          if(a.heavyCd<=0&&Math.random()<.38){if(Math.random()<.6){m.name="Fireball"; m.mult=1.36; m.splash=.62; m.bleed=rr(1.8,3.2); m.bleedTime=rr(2.1,3.2); m.fx="fire";} else {m.name="Meteor Spark"; m.mult=1.3; m.splash=.5; m.stun=rr(.12,.2); m.pierce=.12; m.fx="lightning";} m.anim="cast"; m.special=true; a.heavyCd=rr(4.3,6.2)/chaos();}
         } else if(a.className==="Cleric"){
-          m.name="Radiant Mace"; m.mult=1.04; m.anim="cast"; m.vfx="arcane"; m.heal=.12; m.cool=rr(.8,1.14);
-          if(roll<.25){m.name="Blessed Strike"; m.mult=1.12; m.heal=.18; m.pierce=.12;}
-          else if(roll<.5){m.name="Penance Ray"; m.mult=1.08; m.stun=rr(.08,.16); m.anim="cast";}
-          else if(roll<.72){m.name="Sanctum Pulse"; m.mult=1.02; m.splash=.3; m.heal=.16; m.anim="cast";}
-          if(a.heavyCd<=0&&Math.random()<.31){m.name="Radiant Nova"; m.mult=1.24; m.splash=.44; m.heal=.26; m.stun=rr(.1,.22); m.anim="cast"; m.vfx="arcane"; m.special=true; a.heavyCd=rr(3.9,5.7)/chaos();}
+          m.name="Radiant Seal"; m.mult=1.04; m.anim="chant"; m.fx="holy"; m.heal=.14; m.cool=rr(.8,1.12);
+          if(roll<.25){m.name="Blessed Strike"; m.mult=1.12; m.heal=.2; m.pierce=.12; m.anim="cast";}
+          else if(roll<.5){m.name="Penance Ray"; m.mult=1.08; m.stun=rr(.1,.18); m.anim="cast";}
+          else if(roll<.74){m.name="Aegis Pulse"; m.mult=1.02; m.splash=.3; m.heal=.18; m.anim="chant";}
+          if(a.heavyCd<=0&&Math.random()<.32){m.name="Radiant Nova"; m.mult=1.24; m.splash=.46; m.heal=.28; m.stun=rr(.1,.22); m.anim="chant"; m.fx="holy"; m.special=true; a.heavyCd=rr(3.7,5.4)/chaos();}
         } else if(a.className==="Druid"){
-          m.name="Thorn Lash"; m.mult=1.06; m.anim="cast"; m.vfx="slash"; m.cool=rr(.76,1.08);
-          if(roll<.24){m.name="Entangling Vines"; m.mult=1.04; m.stun=rr(.12,.24); m.push=rr(1.8,3.8); m.anim="cast";}
-          else if(roll<.5){m.name="Bramble Shot"; m.mult=1.1; m.bleed=rr(1.6,2.8); m.bleedTime=rr(2.2,3.4); m.anim="cast";}
-          else if(roll<.72){m.name="Lunar Seed"; m.mult=1.08; m.splash=.28; m.heal=.12; m.anim="cast"; m.vfx="arcane";}
-          if(a.heavyCd<=0&&Math.random()<.34){m.name="Wildstorm"; m.mult=1.26; m.splash=.42; m.bleed=rr(1.8,3.2); m.bleedTime=rr(2.4,3.8); m.stun=rr(.1,.18); m.anim="cast"; m.vfx="arcane"; m.special=true; a.heavyCd=rr(3.8,5.4)/chaos();}
+          m.name="Thorn Lash"; m.mult=1.06; m.anim="cast"; m.fx="nature"; m.cool=rr(.74,1.06);
+          if(roll<.24){m.name="Entangle"; m.mult=1.04; m.stun=rr(.12,.24); m.push=rr(1.8,3.8);}
+          else if(roll<.5){m.name="Bramble Shot"; m.mult=1.12; m.bleed=rr(1.8,3); m.bleedTime=rr(2.2,3.4); m.fx="poison";}
+          else if(roll<.74){m.name="Moonseed"; m.mult=1.08; m.splash=.3; m.heal=.14; m.anim="chant";}
+          if(a.heavyCd<=0&&Math.random()<.34){m.name="Wildstorm"; m.mult=1.28; m.splash=.44; m.bleed=rr(1.8,3.2); m.bleedTime=rr(2.4,3.8); m.stun=rr(.1,.2); m.anim="cast"; m.fx="nature"; m.special=true; a.heavyCd=rr(3.6,5.2)/chaos();}
         } else if(a.className==="Warlock"){
-          m.name="Eldritch Bolt"; m.mult=1.12; m.anim="cast"; m.vfx="arcane"; m.pierce=.16; m.crit=.06; m.cool=rr(.78,1.1);
-          if(roll<.24){m.name="Hex Lash"; m.mult=1.06; m.bleed=rr(1.6,2.8); m.bleedTime=rr(2,3.2); m.pierce=.2;}
-          else if(roll<.5){m.name="Void Spike"; m.mult=1.16; m.stun=rr(.08,.16); m.pierce=.24;}
-          else if(roll<.72){m.name="Soul Siphon"; m.mult=1.1; m.heal=.24; m.crit=.08;}
-          if(a.heavyCd<=0&&Math.random()<.34){if(Math.random()<.56){m.name="Hellfire Orb"; m.mult=1.34; m.splash=.46; m.bleed=rr(2.2,3.6); m.bleedTime=rr(2.4,3.8);} else {m.name="Abyss Rift"; m.mult=1.3; m.pierce=.3; m.stun=rr(.1,.2); m.bonusHit=.24;} m.anim="cast"; m.vfx="arcane"; m.special=true; a.heavyCd=rr(3.7,5.6)/chaos();}
+          m.name="Eldritch Bolt"; m.mult=1.12; m.anim="cast"; m.fx="shadow"; m.pierce=.16; m.crit=.06; m.cool=rr(.76,1.08);
+          if(roll<.24){m.name="Hex Lash"; m.mult=1.08; m.bleed=rr(1.8,3); m.bleedTime=rr(2,3.2); m.pierce=.2;}
+          else if(roll<.5){m.name="Void Spike"; m.mult=1.16; m.stun=rr(.08,.18); m.pierce=.24;}
+          else if(roll<.74){m.name="Soul Siphon"; m.mult=1.1; m.heal=.26; m.crit=.08;}
+          if(a.heavyCd<=0&&Math.random()<.34){if(Math.random()<.56){m.name="Hellfire Orb"; m.mult=1.34; m.splash=.48; m.bleed=rr(2.2,3.6); m.bleedTime=rr(2.4,3.8); m.fx="fire";} else {m.name="Abyss Rift"; m.mult=1.3; m.pierce=.3; m.stun=rr(.1,.2); m.bonusHit=.24; m.fx="shadow";} m.anim="cast"; m.special=true; a.heavyCd=rr(3.5,5.4)/chaos();}
         } else if(a.className==="Bard"){
-          m.name="Rapier Verse"; m.mult=1.03; m.crit=.06; m.cool=rr(.7,1.02); m.cost=rr(3,6);
-          if(roll<.24){m.name="Tempo Jab"; m.mult=1.06; m.bonusHit=.24; m.cool=rr(.64,.94);}
-          else if(roll<.5){m.name="Discordant Note"; m.mult=1.08; m.stun=rr(.08,.18); m.anim="cast"; m.vfx="arcane";}
-          else if(roll<.72){m.name="Encore Slice"; m.mult=1.1; m.crit=.1; m.heal=.14;}
-          if(a.heavyCd<=0&&Math.random()<.32){m.name="Crescendo"; m.mult=1.2; m.splash=.4; m.stun=rr(.1,.2); m.bonusHit=.2; m.anim="cast"; m.vfx="arcane"; m.special=true; a.heavyCd=rr(3.1,4.9)/chaos();}
+          m.name="Rapier Verse"; m.mult=1.04; m.crit=.06; m.cool=rr(.68,1); m.cost=rr(3,6); m.anim="atk"; m.fx="sonic";
+          if(roll<.24){m.name="Tempo Jab"; m.mult=1.08; m.bonusHit=.26; m.cool=rr(.62,.92); m.anim="lunge";}
+          else if(roll<.5){m.name="Discordant Note"; m.mult=1.1; m.stun=rr(.1,.2); m.anim="shoot";}
+          else if(roll<.74){m.name="Encore Slice"; m.mult=1.1; m.crit=.1; m.heal=.16; m.anim="spin";}
+          if(a.heavyCd<=0&&Math.random()<.33){m.name="Finale Crescendo"; m.mult=1.22; m.splash=.42; m.stun=rr(.1,.2); m.bonusHit=.22; m.anim="chant"; m.fx="sonic"; m.special=true; a.heavyCd=rr(3,4.7)/chaos();}
         }
-        if(a.heroTonyWizard&&a.className==="Wizard"&&a.heavyCd<=0&&Math.random()<.92){m.name="Fireball"; m.mult=1.46; m.splash=.66; m.bleed=rr(2.1,3.8); m.bleedTime=rr(2.4,3.9); m.anim="cast"; m.vfx="arcane"; m.special=true; m.pierce=Math.max(m.pierce,.16); a.heavyCd=rr(3.1,4.6)/chaos();}
-        if(a.heroTonyWizard&&a.className==="Wizard"){m.mult*=1.22; m.crit+=.08; m.pierce=Math.min(.45,m.pierce+.08); m.cool*=.82; m.cost=Math.max(1,m.cost-2); if(m.name&&m.name.indexOf("Fireball")>=0){m.noBlock=true; m.mult*=1.08;} if(!m.special&&Math.random()<.32)m.name="Sage "+m.name;}
+        if(a.heroTonyWizard&&a.className==="Wizard"&&a.heavyCd<=0&&Math.random()<.94){m.name="Fireball"; m.mult=1.48; m.splash=.68; m.bleed=rr(2.1,3.9); m.bleedTime=rr(2.4,4); m.anim="cast"; m.fx="fire"; m.special=true; m.pierce=Math.max(m.pierce,.16); a.heavyCd=rr(2.9,4.4)/chaos();}
+        if(a.heroTonyWizard&&a.className==="Wizard"){m.mult*=1.22; m.crit+=.08; m.pierce=Math.min(.45,m.pierce+.08); m.cool*=.82; m.cost=Math.max(1,m.cost-2); if(m.name&&m.name.indexOf("Fireball")>=0){m.noBlock=true; m.mult*=1.08; m.fx="fire";} if(!m.special&&Math.random()<.32)m.name="Sage "+m.name;}
         if(a.heroChristianSword&&a.className===swordClass){m.mult*=1.15; m.crit+=.05; m.cool*=.9; m.cost=Math.max(2,m.cost-1); if(!m.special&&Math.random()<.24)m.name="Champion "+m.name; if(a.heavyCd<=0&&Math.random()<.18){m.special=true; m.name="Lionheart "+m.name; m.stun=Math.max(m.stun,rr(.1,.22)); m.bonusHit=Math.max(m.bonusHit,.24); a.heavyCd=rr(3,4.6)/chaos();}}
+        m.vfx=(m.fx==="arcane"?"arcane":"slash");
         return m;
       }
       function hitUnit(attacker,target,base,move){var mit=Math.max(1,base-(target.defense*rr(.34,.88))*(1-(move.pierce||0))); if(target.shieldTimer>0)mit*=.66; var crit=Math.random()<(attacker.crit+(move.crit||0)+attacker.fury/560),dmg=Math.max(1,Math.round(mit*(crit?1.46:1))); target.hp-=dmg; target.hit=.17; attacker.damage+=dmg; return {dmg:dmg,crit:crit};}
@@ -378,8 +415,8 @@
         if(move.heal>0){var heal=Math.max(2,Math.round(main.dmg*move.heal)); a.hp=clamp(a.hp+heal,0,a.maxHp);}
         if(move.push>0){t.vx+=(knockDx/knockLen)*move.push; t.vy+=(knockDy/knockLen)*move.push;}
         classActionFx(a,t,move);
-        if(move.splash>0){var s=nearestToTarget(t,function(x){return x.team===t.team;},46); if(s){var sd=Math.max(1,Math.round(main.dmg*move.splash)); s.hp-=sd; s.hit=.16; a.damage+=sd; vfxBurst(s.x,s.y,(move.vfx==="arcane")?"arcane":"shock"); if(s.hp<=0)ko(s,a,"");}}
-        if(move.bonusHit>0&&t.hp>0){var bd=Math.max(1,Math.round(main.dmg*move.bonusHit*rr(.82,1.14))); t.hp-=bd; a.damage+=bd; t.hit=.2; vfxBurst(t.x,t.y,"hit");}
+        if(move.splash>0){var s=nearestToTarget(t,function(x){return x.team===t.team;},46); if(s){var sd=Math.max(1,Math.round(main.dmg*move.splash)); s.hp-=sd; s.hit=.16; a.damage+=sd; vfxBurst(s.x,s.y,burstKindFromFx(move.fx||move.vfx)); if(s.hp<=0)ko(s,a,"");}}
+        if(move.bonusHit>0&&t.hp>0){var bd=Math.max(1,Math.round(main.dmg*move.bonusHit*rr(.82,1.14))); t.hp-=bd; a.damage+=bd; t.hit=.2; vfxBurst(t.x,t.y,burstKindFromFx(move.fx||move.vfx));}
         if(move.special)addLog((a.name||"Fighter")+" used "+move.name,"sp"); else if(main.crit&&Math.random()<.34)addLog((a.name||"Fighter")+" crit on "+(t.name||"Fighter"),"sp");
         if(t.hp<=0)ko(t,a,"");
       }
