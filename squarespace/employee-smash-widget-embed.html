@@ -36,6 +36,11 @@
     .sm-pct{position:absolute;left:50%;bottom:-9px;transform:translateX(-50%);min-width:36px;text-align:center;border-radius:999px;padding:2px 5px;background:rgba(0,0,0,.72);color:#fff;font-size:.64rem;font-weight:900}
     .sm-swing{position:absolute;left:0;top:0;width:var(--len,70px);height:4px;border-radius:999px;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.97));transform-origin:0 50%;animation:smSwing .24s ease-out forwards}
     .sm-hit{position:absolute;left:0;top:0;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:999px;background:#fff;box-shadow:0 0 0 4px rgba(255,255,255,.24),0 0 10px rgba(255,255,255,.72);animation:smHit .22s ease-out forwards}
+    .sm-ko-blast{position:absolute;left:0;top:0;width:0;height:0;transform:translate(-50%,-50%);pointer-events:none;z-index:34}
+    .sm-ko-core{position:absolute;left:0;top:0;width:24px;height:24px;margin:-12px 0 0 -12px;border-radius:999px;background:radial-gradient(circle,#fff 0%,#ffe487 38%,#ffb347 62%,rgba(255,144,43,0) 100%);box-shadow:0 0 16px rgba(255,197,76,.95),0 0 34px rgba(255,120,24,.6);animation:smKoCore .46s ease-out forwards}
+    .sm-ko-ray{position:absolute;left:0;top:0;width:var(--len,86px);height:5px;margin-top:-2.5px;border-radius:999px;transform-origin:0 50%;background:linear-gradient(90deg,#fff,#ffe186,#ff9b33,rgba(255,146,51,0));transform:rotate(var(--ang,0deg)) scaleX(.2);animation:smKoRay .48s cubic-bezier(.2,.82,.24,1) forwards}
+    .sm-ko-label{position:absolute;left:0;top:0;transform:translate(-50%,-50%) scale(.65);padding:2px 8px;border-radius:999px;background:rgba(10,10,10,.7);color:#fff;font-size:.64rem;letter-spacing:.12em;font-weight:900;animation:smKoLabel .5s ease-out forwards}
+    .sm-arena.ko-shake{animation:smKoShake .28s ease-out}
     .sm-board{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}
     .sm-card{display:grid;grid-template-columns:30px 1fr;gap:8px;padding:7px 8px;border-radius:10px;background:rgba(255,255,255,.84);box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
     .sm-card img{width:30px;height:30px;border-radius:999px;object-fit:contain;background:#fff;border:1px solid rgba(0,0,0,.16);padding:2px}
@@ -43,15 +48,19 @@
     .sm-meta{display:flex;justify-content:space-between;font-size:.66rem;font-weight:900;text-transform:uppercase}
     .sm-bar{height:5px;margin-top:4px;border-radius:999px;background:rgba(0,0,0,.15);overflow:hidden}
     .sm-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#6cd17a,#f6c62f,#e56758)}
-    .sm-feed{border-radius:14px;background:rgba(255,255,255,.84);box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);display:flex;flex-direction:column;overflow:hidden;min-height:390px}
+    .sm-feed{border-radius:14px;background:rgba(255,255,255,.84);box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);display:flex;flex-direction:column;overflow:hidden;min-height:390px;height:390px;max-height:390px}
     .sm-feed h4{margin:0;padding:9px 10px;border-bottom:1px solid rgba(0,0,0,.08);font-size:.72rem;font-weight:900;text-transform:uppercase;opacity:.82}
-    .sm-log{margin:0;padding:8px 10px;list-style:none;overflow:auto;display:grid;gap:6px;min-height:0}
+    .sm-log{margin:0;padding:8px 10px;list-style:none;overflow:auto;display:grid;gap:6px;min-height:0;flex:1 1 auto}
     .sm-log li{padding:6px 7px;border-radius:8px;background:rgba(0,0,0,.06);font-size:.72rem;line-height:1.3}
     .sm-log li.hit{background:rgba(255,255,255,.7)}
     .sm-log li.ko{background:rgba(229,103,88,.2);font-weight:900}
     .sm-log li.ev{background:rgba(246,198,47,.2)}
     @keyframes smSwing{0%{opacity:1;transform:translate(-50%,-50%) rotate(var(--ang,0deg)) scaleX(.45)}100%{opacity:0;transform:translate(-50%,-50%) rotate(var(--ang,0deg)) scaleX(1.06)}}
     @keyframes smHit{0%{opacity:1;transform:scale(.4)}100%{opacity:0;transform:scale(1.8)}}
+    @keyframes smKoCore{0%{opacity:1;transform:scale(.3)}55%{opacity:1;transform:scale(1.28)}100%{opacity:0;transform:scale(1.7)}}
+    @keyframes smKoRay{0%{opacity:1;transform:rotate(var(--ang,0deg)) scaleX(.16)}70%{opacity:1;transform:rotate(var(--ang,0deg)) scaleX(1.05)}100%{opacity:0;transform:rotate(var(--ang,0deg)) scaleX(1.2)}}
+    @keyframes smKoLabel{0%{opacity:0;transform:translate(-50%,-50%) scale(.45)}30%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}100%{opacity:0;transform:translate(-50%,-72%) scale(.92)}}
+    @keyframes smKoShake{0%{transform:translateX(0)}18%{transform:translateX(-4px)}40%{transform:translateX(5px)}62%{transform:translateX(-3px)}84%{transform:translateX(2px)}100%{transform:translateX(0)}}
     @media(max-width:1020px){.sm-layout{grid-template-columns:1fr}.sm-feed{min-height:180px;max-height:260px}}
     @media(max-width:860px){.sm-head{flex-direction:column;align-items:flex-start}.sm-picks{grid-template-columns:1fr}.sm-arena{min-height:270px}}
   </style>
@@ -115,8 +124,9 @@
       { "name": "Matthew", "img": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/a8a86b9b-7c26-44db-aefe-85875b809f5d/mattB2.png" },
       { "name": "Chris", "img": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/1744116592738-XGSNL3X78N2PU8FB4BIL/ChrisC.png" },
       { "name": "Alex M", "img": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/1741203878915-N9VRXIKYSOXGC0H113ZE/AlexM.png" },
-      { "name": "Alex U", "img": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/1741797378044-GB2FP49Z3AIYK1X03PJL/Pineapple%2BBytes%2BRound%2BHeadshots-AlexU.png" }
-    ]
+      { "name": "Alex U", "img": "https://images.squarespace-cdn.com/content/v1/5df7c51443f9977f278c3a46/1741797378044-GB2FP49Z3AIYK1X03PJL/Pineapple%2BBytes%2BRound%2BHeadshots-AlexU.png" },
+      { "name": "Bobby","img": "https://images.squarespace-cdn.com/content/5df7c51443f9977f278c3a46/21690d9f-4aae-4ae1-a04b-052cbba7e88f/bobby.png?content-type=image%2Fpng"}    
+      ]
   </script>
 
   <script>
@@ -158,6 +168,26 @@
       function nearest(f){var n=null,d0=1e9; fighters.forEach(function(o){if(o===f||o.stocks<=0)return; var dx=o.x-f.x,dy=o.y-f.y,d=Math.sqrt(dx*dx+dy*dy)||.001; if(d<d0){d0=d;n=o;}}); return n;}
       function swing(ax,ay,tx,ty){var dx=tx-ax,dy=ty-ay,d=Math.sqrt(dx*dx+dy*dy)||1,ang=Math.atan2(dy,dx)*(180/Math.PI); var s=document.createElement("i"); s.className="sm-swing"; s.style.left=ax+"px"; s.style.top=ay+"px"; s.style.setProperty("--len",clamp(d*.9,40,120)+"px"); s.style.setProperty("--ang",ang+"deg"); fx.appendChild(s); setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s);},260);}
       function hitFx(x,y){var h=document.createElement("i"); h.className="sm-hit"; h.style.left=x+"px"; h.style.top=y+"px"; fx.appendChild(h); setTimeout(function(){if(h.parentNode)h.parentNode.removeChild(h);},240);}
+      function koBlast(f,bx){
+        var x=f.x,y=f.y;
+        if(x<0)x=12; else if(x>bx.w)x=bx.w-12; else x=clamp(x,16,bx.w-16);
+        if(y<0)y=12; else if(y>bx.h)y=bx.h-12; else y=clamp(y,16,bx.h-16);
+        var n=document.createElement("div"), core=document.createElement("i"), tag=document.createElement("b");
+        n.className="sm-ko-blast"; n.style.left=x+"px"; n.style.top=y+"px";
+        core.className="sm-ko-core"; n.appendChild(core);
+        for(var i=0;i<11;i+=1){
+          var ray=document.createElement("i");
+          ray.className="sm-ko-ray";
+          ray.style.setProperty("--ang",(i*(360/11)+rr(-8,8)).toFixed(1)+"deg");
+          ray.style.setProperty("--len",rr(70,120).toFixed(1)+"px");
+          n.appendChild(ray);
+        }
+        tag.className="sm-ko-label"; tag.textContent="K.O.!"; n.appendChild(tag);
+        fx.appendChild(n);
+        arena.classList.remove("ko-shake"); void arena.offsetWidth; arena.classList.add("ko-shake");
+        setTimeout(function(){arena.classList.remove("ko-shake");},320);
+        setTimeout(function(){if(n.parentNode)n.parentNode.removeChild(n);},620);
+      }
 
       function spawn(list){
         clearAll();
@@ -189,6 +219,7 @@
       }
       function loseStock(f,bx){
         if(f.stocks<=0)return;
+        koBlast(f,bx);
         f.stocks-=1;
         if(f.stocks<=0){f.damage=0; f.vx=0; f.vy=0; f.node.classList.add("out"); addLog(f.name+" is OUT","ko"); return;}
         addLog(f.name+" lost a stock ("+f.stocks+" left)","ko");
